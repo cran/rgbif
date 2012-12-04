@@ -1,12 +1,12 @@
-#' Get values to be used for (taxonomic) rank arguments in GBIF API methods. 
-#' @export
+#' Get the possible values to be used for (taxonomic) rank arguments in GBIF 
+#' 		API methods.
+#' 
 #' @examples \dontrun{
 #' taxrank()
 #' }
-taxrank <- function()
+#' @export
+taxrank <- function() 
 {
-  c(
-    'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 
-    'infraspecific'
-    )
+	c("kingdom", "phylum", "class", "order", "family", "genus","species", 
+		"infraspecific")
 }
