@@ -1,8 +1,8 @@
-\name{gbifmap}
-\alias{gbifmap}
-\title{Make a simple map to visualize GBIF data.}
+\name{gbifmap_list}
+\alias{gbifmap_list}
+\title{Make a simple map to visualize GBIF point data.}
 \usage{
-  gbifmap(input = NULL, mapdatabase = "world",
+  gbifmap_list(input = NULL, mapdatabase = "world",
     region = ".", geom = geom_point, jitter = NULL,
     customize = NULL)
 }
@@ -34,11 +34,11 @@
   \item{customize}{Further arguments passed on to ggplot.}
 }
 \value{
-  Map (using ggplot2 package) of points or tiles on a world
-  map.
+  Map (using ggplot2 package) of points on a map or tiles
+  on a map.
 }
 \description{
-  Basic function to plot your lat/long data on a map.
+  Make a simple map to visualize GBIF point data.
 }
 \details{
   gbifmap takes care of cleaning up the data.frame
@@ -51,48 +51,49 @@
 \examples{
 \dontrun{
 # Point map, using output from occurrencelist, example 1
-out <- occurrencelist(scientificname = 'Accipiter erythronemius', coordinatestatus = TRUE, maxresults = 100)
-gbifmap(input = out) # make a map using vertmap
+out <- occurrencelist(scientificname = 'Accipiter erythronemius',
+   coordinatestatus = TRUE, maxresults = 100)
+gbifmap_list(input = out) # make a map using vertmap
 
 # Point map, using output from occurrencelist, example 2, a species with more data
-out <- occurrencelist(scientificname = 'Puma concolor', coordinatestatus = TRUE, maxresults = 100)
-gbifmap(input = out) # make a map
-gbifmap(input = out, region = 'USA') # make a map, just plotting data for
+out <- occurrencelist(scientificname = 'Puma concolor', coordinatestatus = TRUE,
+   maxresults = 100)
+gbifmap_list(input = out) # make a map
+gbifmap_list(input = out, region = 'USA') # make a map, just using the US map
 
 # Point map, using output from occurrencelist, many species
 splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
-out <- llply(splist, function(x) occurrencelist(x, coordinatestatus = T, maxresults = 20))
-gbifmap(out)
+out <- occurrencelist_many(splist, coordinatestatus = TRUE, maxresults = 20)
+gbifmap_list(out)
 
-# Tile map, using output from densitylist, Canada
-out2 <- densitylist(originisocountrycode = "CA") # data for Canada
-gbifmap(out2) # on world map
-gbifmap(out2, region="Canada") # on Canada map
-
-# Tile map, using gbifdensity, a specific data provider key
-# 191 for 'University of Texas at El Paso'
-out2 <- densitylist(dataproviderkey = 191) # data for the US
-gbifmap(out2) # on world map
+# Point map, using output from occurrencelist, many species
+splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa', 'Ceyx fallax',
+   'Picoides lignarius', 'Campephilus leucopogon')
+out <- occurrencelist_many(splist, coordinatestatus = TRUE, maxresults = 100)
+gbifmap_list(out)
 
 # Get occurrences or density by area, using min/max lat/long coordinates
-out <- occurrencelist(minlatitude=30, maxlatitude=35, minlongitude=-100, maxlongitude=-95,
-		coordinatestatus = T, maxresults = 5000, latlongdf = T)
+# Setting scientificname="*" so we just get any species
+out <- occurrencelist(scientificname="*", minlatitude=30, maxlatitude=35,
+   minlongitude=-100, maxlongitude=-95, coordinatestatus = TRUE, maxresults = 500)
 
 # Using `geom_point`
-gbifmap(out, "state", "texas", geom_point)
+gbifmap_list(out, "state", "texas", geom_point)
 
 # Using geom_jitter to move the points apart from one another
-gbifmap(out, "state", "texas", geom_jitter, position_jitter(width = 0.3, height = 0.3))
+gbifmap_list(out, "state", "texas", geom_jitter, position_jitter(width = 0.3,
+   height = 0.3))
 
 # And move points a lot
-gbifmap(out, "state", "texas", geom_jitter, position_jitter(width = 1, height = 1))
+gbifmap_list(out, "state", "texas", geom_jitter, position_jitter(width = 1, height = 1))
 
 # Customize the plot by passing options to `ggplot()`
 mycustom <- function(){
-		list(geom_point(size=9)
-				)}
-out <- occurrencelist(scientificname = 'Accipiter erythronemius', coordinatestatus = TRUE, maxresults = 100)
-gbifmap(out, customize = mycustom())
+   list(geom_point(size=9)
+       )}
+out <- occurrencelist(scientificname = 'Accipiter erythronemius',
+   coordinatestatus = TRUE, maxresults = 100)
+gbifmap_list(out, customize = mycustom())
 }
 }
 

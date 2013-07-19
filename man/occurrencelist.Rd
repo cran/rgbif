@@ -3,7 +3,7 @@
 \title{Occurrencelist searches for taxon concept records matching a range of filters.}
 \usage{
   occurrencelist(scientificname = NULL,
-    taxonconceptKey = NULL, dataproviderkey = NULL,
+    taxonconceptkey = NULL, dataproviderkey = NULL,
     dataresourcekey = NULL, institutioncode = NULL,
     collectioncode = NULL, catalognumber = NULL,
     resourcenetworkkey = NULL, basisofrecordcode = NULL,
@@ -18,17 +18,16 @@
     startdate = NULL, enddate = NULL, startyear = NULL,
     endyear = NULL, year = NULL, month = NULL, day = NULL,
     modifiedsince = NULL, startindex = NULL,
-    maxresults = 10, format = NA, icon = NULL, mode = NULL,
-    stylesheet = NULL, removeZeros = FALSE,
-    writecsv = NULL,
-    url = "http://data.gbif.org/ws/rest/occurrence/list",
-    ..., curl = getCurlHandle())
+    maxresults = 10, format = "brief", icon = NULL,
+    mode = NULL, stylesheet = NULL, removeZeros = FALSE,
+    writecsv = NULL, curl = getCurlHandle(),
+    fixnames = "none")
 }
 \arguments{
   \item{scientificname}{scientitic name of taxon
   (character, see example)}
 
-  \item{taxonconceptKey}{unique key for taxon (numeric)}
+  \item{taxonconceptkey}{unique key for taxon (numeric)}
 
   \item{dataproviderkey}{Filter records to those provided
   by the supplied numeric key for a data provider. See
@@ -150,7 +149,7 @@
   records that starts at the supplied (zero-based index).}
 
   \item{maxresults}{max number of results (integer)
-  (1-10000)}
+  (1-10000); defaults to 10}
 
   \item{format}{specifies the format in which the records
   are to be returned,}
@@ -174,15 +173,14 @@
   is written out and a success message is returned to the
   console (logical)}
 
-  \item{url}{the base GBIF API url for the function (should
-  be left to default)}
-
-  \item{...}{optional additional curl options (debugging
-  tools mostly)}
-
   \item{curl}{If using in a loop, call getCurlHandle()
   first and pass the returned value in here (avoids
   unnecessary footprint)}
+
+  \item{fixnames}{One of "match","change","none", just keep
+  those records that match original search term, change all
+  names to the original search term (beware using this
+  option), or do nothing, respectively. Default is "none".}
 }
 \description{
   Occurrencelist searches for taxon concept records
@@ -191,19 +189,24 @@
 \examples{
 \dontrun{
 # Query for a single species
-occurrencelist(scientificname = 'Accipiter erythronemius', coordinatestatus = TRUE, maxresults = 100)
-occurrencelist(scientificname = 'Accipiter erythronemius', coordinatestatus = TRUE, maxresults = 5)
+occurrencelist(scientificname = 'Puma concolor', coordinatestatus = TRUE,
+   maxresults = 40)
+occurrencelist(scientificname = 'Accipiter erythronemius', coordinatestatus = TRUE,
+   maxresults = 5)
 
 # Query for many species, in this case using parallel fuctionality with plyr::llply
+# Also, see \\code{\\link{occurrencelist_many}} as an alternative way to search for
+# many species, which is better for going straight to a map with the output data.
 library(doMC)
 registerDoMC(cores=4)
 splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
-out <- llply(splist, function(x) occurrencelist(x, coordinatestatus = T, maxresults = 100), .parallel=F)
+out <- llply(splist, function(x) occurrencelist(x, coordinatestatus = TRUE,
+   maxresults = 100), .parallel=T)
 lapply(out, head)
 
 # Write the output to csv file
-occurrencelist(scientificname = 'Accipiter erythronemius', coordinatestatus = TRUE, maxresults = 100, writecsv="~/myyyy.csv")
-occurrencelist(scientificname = 'Erebia gorge*', coordinatestatus = TRUE, maxresults = 2000, writecsv="~/adsdf.csv")
+occurrencelist(scientificname = 'Erebia gorge*',
+   coordinatestatus = TRUE, maxresults = 200, writecsv="~/adsdf.csv")
 }
 }
 
