@@ -5,8 +5,8 @@
 #' @param ... Further arguments passed on to agrep or grep
 #' @export
 #' @examples
-#' country_codes(country_name="United")
-country_codes <- function(country_name, fuzzy=FALSE, ...)
+#' rgb_country_codes(country_name="United")
+rgb_country_codes <- function(country_name, fuzzy=FALSE, ...)
 {
   if(fuzzy){
     isocodes[agrep(country_name, isocodes$name, ...),]

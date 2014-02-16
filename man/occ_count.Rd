@@ -2,12 +2,10 @@
 \alias{occ_count}
 \title{Get number of occurrence records.}
 \usage{
-  occ_count(nubKey = NULL, georeferenced = NULL,
-    basisOfRecord = NULL, datasetKey = NULL, date = NULL,
-    catalogNumber = NULL, country = NULL,
-    hostCountry = NULL, year = NULL, from = 2000,
-    to = 2012, type = "count", publishingCountry = "US",
-    callopts = list())
+occ_count(nubKey = NULL, georeferenced = NULL, basisOfRecord = NULL,
+  datasetKey = NULL, date = NULL, catalogNumber = NULL, country = NULL,
+  hostCountry = NULL, year = NULL, from = 2000, to = 2012,
+  type = "count", publishingCountry = "US", callopts = list())
 }
 \arguments{
   \item{nubKey}{Species key}
@@ -37,16 +35,16 @@
   \item{to}{Year to end at}
 
   \item{type}{One of count (default), schema,
-  basis_of_record, countries, year}
+  basis_of_record, countries, year, or publishingCountry.}
 
   \item{callopts}{Pass on options to httr::GET for more
   refined control of http calls, and error handling}
 }
 \value{
-  A single numeric value
+A single numeric value
 }
 \description{
-  Get number of occurrence records.
+Get number of occurrence records.
 }
 \examples{
 \dontrun{
@@ -73,11 +71,14 @@ occ_count(type='basis_of_record')
 # Counts by countries. publishingCountry must be supplied (default to US)
 occ_count(type='countries')
 
+# Counts by publishingCountry, must supply a country (default to US)
+occ_count(type='publishingCountry')
+
 # Counts by year. from and to years have to be supplied, default to 2000 and 2012
 occ_count(type='year', from=2000, to=2012)
 }
 }
 \references{
-  \url{http://www.gbif.org/developer/summary}
+\url{http://www.gbif.org/developer/summary}
 }
 

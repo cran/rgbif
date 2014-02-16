@@ -16,7 +16,7 @@ test_that("keyword query returns the correct class", {
   expect_is(tt$data[1,1], "factor")
 })
 test_that("keyword query returns the correct value", {
-  expect_equal(as.character(tt$data[2,1]), "Carnet en Ligne")
+  expect_equal(as.character(tt$data$publishingCountry[1]), "FR")
   expect_equal(as.character(tt$data[1,4]), "OCCURRENCE")
 })
  
@@ -46,8 +46,5 @@ test_that("limited search returns the correct dims", {
 tt <- dataset_search(type="OCCURRENCE", return="descriptions")
 test_that("limited fields query returns the correct class", {
   expect_is(tt, "list")
-  expect_is(tt[[1]], "character")
-})
-test_that("limited fields query returns the correct value", {
-  expect_equal(tt$`Vermes ZMK`, "Vermes")
+  expect_is(tt[[3]], "character")
 })

@@ -2,9 +2,8 @@
 \alias{gbifmap}
 \title{Make a map to visualize GBIF occurrence data.}
 \usage{
-  gbifmap(input = NULL, mapdatabase = "world",
-    region = ".", geom = geom_point, jitter = NULL,
-    customize = NULL)
+gbifmap(input = NULL, mapdatabase = "world", region = ".",
+  geom = geom_point, jitter = NULL, customize = NULL)
 }
 \arguments{
   \item{input}{Either a single data.frame or a list of
@@ -34,35 +33,43 @@
   \item{customize}{Further arguments passed on to ggplot.}
 }
 \value{
-  Map (using ggplot2 package) of points on a map or tiles
-  on a map.
+Map (using ggplot2 package) of points on a map or tiles on
+a map.
 }
 \description{
-  Make a map to visualize GBIF occurrence data.
+Make a map to visualize GBIF occurrence data.
 }
 \details{
-  gbifmap takes care of cleaning up the data.frame
-  (removing NA's, etc.)  returned from rgbif functions, and
-  creating the map. This function gives a simple map of
-  your data.  You can look at the code behing the function
-  itself if you want to build on it to make a map according
-  to your specfications.
+gbifmap takes care of cleaning up the data.frame (removing
+NA's, etc.)  returned from rgbif functions, and creating
+the map. This function gives a simple map of your data.
+You can look at the code behing the function itself if you
+want to build on it to make a map according to your
+specfications.
 
-  Note that this function removes values that are
-  impossible on the globe, and those rows that have both
-  lat and long as NA or zeros.
+Note that this function removes values that are impossible
+on the globe, and those rows that have both lat and long as
+NA or zeros.
 }
 \examples{
 \dontrun{
 # Make a map of Puma concolor occurrences
-key <- gbif_lookup(name='Puma concolor', kingdom='plants')$speciesKey
-dat <- occ_search(taxonKey=key, return='data', limit=300)
+key <- name_backbone(name='Puma concolor', kingdom='plants')$speciesKey
+dat <- occ_search(taxonKey=key, return='data', limit=100)
 gbifmap(input=dat)
 
 # Plot more Puma concolor occurrences
 dat <- occ_search(taxonKey=key, return='data', limit=1200)
 nrow(dat)
 gbifmap(input=dat)
+
+# More than 1 species
+library(plyr)
+splist <- c('Cyanocitta stelleri', 'Junco hyemalis', 'Aix sponsa')
+keys <- sapply(splist, function(x) name_backbone(name=x, kingdom='plants')$speciesKey,
+   USE.NAMES=FALSE)
+dat <- occ_search(taxonKey=keys, return='data', limit=50)
+gbifmap(ldply(dat))
 }
 }
 

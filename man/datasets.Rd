@@ -2,10 +2,17 @@
 \alias{datasets}
 \title{Search for datasets and dataset metadata.}
 \usage{
-  datasets(data = "all", type = NULL, uuid = NULL,
-    query = NULL, id = NULL, callopts = list())
+datasets(data = "all", type = NULL, uuid = NULL, query = NULL,
+  id = NULL, limit = 20, start = NULL, callopts = list())
 }
 \arguments{
+  \item{callopts}{Pass on options to httr::GET for more
+  refined control of http calls, and error handling}
+
+  \item{limit}{Number of records to return}
+
+  \item{start}{Record number to start at}
+
   \item{data}{The type of data to get. Default is all
   data.}
 
@@ -18,14 +25,12 @@
   \item{query}{Query term(s). Only used when data='all'}
 
   \item{id}{A metadata document id.}
-
-  \item{callopts}{Further args passed on to GET.}
 }
 \value{
-  A list.
+A list.
 }
 \description{
-  Search for datasets and dataset metadata.
+Search for datasets and dataset metadata.
 }
 \examples{
 \dontrun{
@@ -36,9 +41,10 @@ datasets(data='contact', uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
 datasets(data='metadata', uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
 datasets(data='metadata', uuid="a6998220-7e3a-485d-9cd6-73076bd85657", id=598)
 datasets(data=c('deleted','duplicate'))
+datasets(data=c('deleted','duplicate'), limit=1)
 }
 }
 \references{
-  \url{http://www.gbif.org/developer/summary}
+\url{http://www.gbif.org/developer/summary}
 }
 
