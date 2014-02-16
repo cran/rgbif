@@ -36,7 +36,7 @@
 #' in the new package version, and any reasoning in the third column.
 #' 
 #' \tabular{lll}{
-#'   country_codes \tab same \tab none \cr
+#'   rgb_country_codes \tab same \tab none \cr
 #'   density_spplist \tab deprecated \tab service no longer provided \cr
 #'   densitylist \tab deprecated \tab service not provided anymore \cr
 #'   gbifdata \tab deprecated \tab not needed \cr
@@ -92,7 +92,15 @@ NULL
 #' @name rgbif-deprecated
 NULL
 
-#' Lookup-table for 2 character country ISO codes
+#' Table of country two character ISO codes, and GBIF names
+#' 
+#' \itemize{
+#'   \item code. Two character ISO country code.
+#'   \item name. Name of country.
+#'   \item gbif_name. Name of country used by GBIF - this is the name
+#'   you want to use when searching by country in this package.
+#' }
+#' 
 #' @name isocodes
 #' @docType data
 #' @keywords data

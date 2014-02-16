@@ -1,9 +1,11 @@
 #' Parser for gbif data
 #' @param input A list
-#' @param minimal Get minimal input, default to TRUE
+#' @param fields (character) Default ('minimal') will return just taxon name, key, latitude, and 
+#'    longitute. 'all' returns all fields. Or specify each field you want returned by name, e.g.
+#'    fields = c('name','latitude','altitude').
 #' @export
 #' @keywords internal
-gbifparser <- function(input, minimal=TRUE){
+gbifparser <- function(input, fields='minimal'){
   parse <- function(x){
     x[sapply(x, length) == 0] <- "none"
     h1 <- c('kingdom','phylum','clazz','order','family','genus','species')
@@ -11,19 +13,39 @@ gbifparser <- function(input, minimal=TRUE){
     name <- t(data.frame(x[names(x) %in% h1]))
     key <- t(data.frame(x[names(x) %in% h2]))
     hier <- data.frame(name=name, key=key, rank=row.names(name), row.names=NULL)
-    usename <- hier[[nrow(hier),"name"]]
+    if(nrow(hier) == 0){
+      if(!is.null(x[['species']])){
+        usename <- x[['species']]       
+      } else if(!is.null(x[['scientificName']]))
+      {
+        usename <- x[['scientificName']]
+      } else
+      {
+        usename <- "none"
+      }
+    } else
+    {
+      usename <- hier[[nrow(hier),"name"]]      
+    }
     #     geog <- data.frame(name=usename, x[!names(x) %in% c(h1,h2)])
     alldata <- data.frame(name=usename, x)
-    if(minimal)
+    if(any(fields=='minimal')){
       if(all(c('latitude','longitude') %in% names(alldata)))
       {
         alldata <- alldata[c('name','key','longitude','latitude')]
       } else
       {
         alldata <- alldata['name']
-        alldata <- data.frame(alldata, latitude=NA, longitude=NA)
+        alldata <- data.frame(alldata, key=NA, latitude=NA, longitude=NA)
       }
-    list(hierarch=hier, data=alldata)
+    } else if(any(fields == 'all')) 
+    { 
+      NULL 
+    } else
+    {
+      alldata <- alldata[names(alldata) %in% fields]
+    }
+    list(hierarchy=hier, data=alldata)
   }
   if(is.numeric(input[[1]])){
     parse(input)
@@ -35,13 +57,15 @@ gbifparser <- function(input, minimal=TRUE){
 
 #' Parser for gbif data
 #' @param input A list
-#' @param minimal Get minimal input, default to TRUE
+#' @param fields (character) Default ('minimal') will return just taxon name, key, latitude, and 
+#'    longitute. 'all' returns all fields. Or specify each field you want returned by name, e.g.
+#'    fields = c('name','latitude','altitude').
 #' @export
 #' @keywords internal
-gbifparser_verbatim <- function(input, minimal=TRUE){
+gbifparser_verbatim <- function(input, fields='minimal'){
   parse <- function(x){
     alldata <- data.frame(key=x$key, x$fields)
-    if(minimal){
+    if(any(fields=='minimal')){
       if(all(c('verbatimLatitude','verbatimLongitude') %in% names(alldata)))
       {
         alldata[c('scientificName','key','verbatimLatitude','verbatimLongitude')]
@@ -50,9 +74,12 @@ gbifparser_verbatim <- function(input, minimal=TRUE){
         name <- alldata['scientificName']
         data.frame(name, verbatimLatitude=NA, verbatimLongitude=NA)
       }
-    } else
+    } else if(any(fields == 'all'))
     {
       alldata
+    } else
+    {
+      alldata[names(alldata) %in% fields]
     }
   }
   if(is.numeric(input[[1]])){
@@ -146,15 +173,15 @@ blanktheme <- function(){
 gbif_capwords <- function(s, strict = FALSE, onlyfirst = FALSE) {
   cap <- function(s) paste(toupper(substring(s,1,1)),
 {s <- substring(s,2); if(strict) tolower(s) else s}, sep = "", collapse = " " )
-  if(!onlyfirst){
-    sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
-  } else
-  {
-    sapply(s, function(x) 
-      paste(toupper(substring(x,1,1)), 
-            tolower(substring(x,2)), 
-            sep="", collapse=" "), USE.NAMES=F)
-  }
+if(!onlyfirst){
+  sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
+} else
+{
+  sapply(s, function(x) 
+    paste(toupper(substring(x,1,1)), 
+          tolower(substring(x,2)), 
+          sep="", collapse=" "), USE.NAMES=F)
+}
 }
 
 #' Get the possible values to be used for (taxonomic) rank arguments in GBIF 
@@ -195,30 +222,30 @@ namelkupparser <- function(x){
 #' @keywords internal
 parseresults <- function(x, ..., removeZeros=removeZeros)
 {
-df <- gbifxmlToDataFrame(x, ...)
-
-if(nrow(df[!is.na(df$decimalLatitude),])==0){
-return( df )
-} else
-{ 
-df <- commas_to_periods(df)
-
-df_num <- df[!is.na(df$decimalLatitude),]
-df_nas <- df[is.na(df$decimalLatitude),]
-
-df_num$decimalLongitude <- as.numeric(df_num$decimalLongitude)
-df_num$decimalLatitude <- as.numeric(df_num$decimalLatitude)
-i <- df_num$decimalLongitude == 0 & df_num$decimalLatitude == 0
-if (removeZeros) {
-df_num <- df_num[!i, ]
-} else
-{
-df_num[i, "decimalLatitude"] <- NA
-df_num[i, "decimalLongitude"] <- NA
-}
-temp <- rbind(df_num, df_nas)
-return( temp )
-}
+  df <- gbifxmlToDataFrame(x, ...)
+  
+  if(nrow(df[!is.na(df$decimalLatitude),])==0){
+    return( df )
+  } else
+  { 
+    df <- commas_to_periods(df)
+    
+    df_num <- df[!is.na(df$decimalLatitude),]
+    df_nas <- df[is.na(df$decimalLatitude),]
+    
+    df_num$decimalLongitude <- as.numeric(df_num$decimalLongitude)
+    df_num$decimalLatitude <- as.numeric(df_num$decimalLatitude)
+    i <- df_num$decimalLongitude == 0 & df_num$decimalLatitude == 0
+    if (removeZeros) {
+      df_num <- df_num[!i, ]
+    } else
+    {
+      df_num[i, "decimalLatitude"] <- NA
+      df_num[i, "decimalLongitude"] <- NA
+    }
+    temp <- rbind(df_num, df_nas)
+    return( temp )
+  }
 }
 
 
@@ -229,9 +256,9 @@ return( temp )
 #' @keywords internal
 commas_to_periods <- function(dataframe)
 {
-dataframe$decimalLatitude <- gsub("\\,", ".", dataframe$decimalLatitude)
-dataframe$decimalLongitude <- gsub("\\,", ".", dataframe$decimalLongitude)
-return( dataframe )
+  dataframe$decimalLatitude <- gsub("\\,", ".", dataframe$decimalLatitude)
+  dataframe$decimalLongitude <- gsub("\\,", ".", dataframe$decimalLongitude)
+  return( dataframe )
 }
 
 

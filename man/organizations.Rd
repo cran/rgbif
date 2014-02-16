@@ -2,10 +2,17 @@
 \alias{organizations}
 \title{Organizations metadata.}
 \usage{
-  organizations(data = "all", uuid = NULL, query = NULL,
-    callopts = list())
+organizations(data = "all", uuid = NULL, query = NULL, limit = 20,
+  start = NULL, callopts = list())
 }
 \arguments{
+  \item{callopts}{Pass on options to httr::GET for more
+  refined control of http calls, and error handling}
+
+  \item{limit}{Number of records to return}
+
+  \item{start}{Record number to start at}
+
   \item{data}{The type of data to get. Default is all
   data.}
 
@@ -13,14 +20,12 @@
   specified if data is anything other than 'all'.}
 
   \item{query}{Query nodes. Only used when data='all'}
-
-  \item{callopts}{Further args passed on to GET.}
 }
 \value{
-  A list.
+A list.
 }
 \description{
-  Organizations metadata.
+Organizations metadata.
 }
 \examples{
 \dontrun{
@@ -32,6 +37,6 @@ organizations(data='pending')
 }
 }
 \references{
-  \url{http://www.gbif.org/developer/summary}
+\url{http://www.gbif.org/developer/summary}
 }
 

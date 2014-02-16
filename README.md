@@ -1,10 +1,15 @@
 rgbif
 =====
 
-[![Build Status](https://api.travis-ci.org/ropensci/rgbif.png?branch=newapi)](https://travis-ci.org/ropensci/rgbif)
+<!-- master branch [![Build Status](https://api.travis-ci.org/ropensci/rgbif.png?branch=master)](https://travis-ci.org/ropensci/rgbif) -->
+<!-- dev branch [![Build Status](https://api.travis-ci.org/ropensci/rgbif.png?branch=dev)](https://travis-ci.org/ropensci/rgbif) -->
 
 ## About
 This package gives you access to data from [GBIF](http://www.gbif.org/) via their API.
+
+## Branches
+
+Note: The most recent changes are now on the `dev` branch, and thus code may have more bugs. The `master` branch should always be stable. 
 
 ## Transitioning to the new GBIF API
 
@@ -21,7 +26,7 @@ Changes in the new GBIF API from last with respect to `rgbif`:
 
 | Function in old API | New API | Notes |
 | ------ | ------- | ------ |
-| country_codes | same | none |
+| rgb_country_codes | same | none |
 | density_spplist | deprecated | service not provided anymore |
 | densitylist | deprecated | service not provided anymore |
 | gbifdata | deprecated | not needed |
@@ -148,6 +153,35 @@ gbifmap(datdf)
 
 ![](inst/assets/img/gbifmap.png)
 
-<br><br>
+Please report any issues or bugs](https://github.com/ropensci/rgbif/issues).
+
+License: CC0
+
+This package is part of the [rOpenSci](http://ropensci.org/packages) project.
+
+To cite package `rgbif` in publications use:
+
+```coffee
+To cite package ‘rgbif’ in publications use:
+
+  Scott Chamberlain, Carl Boettiger, Karthik Ram, Vijay Barve and Dan
+  Mcglinn (2013). rgbif: Interface to the Global Biodiversity
+  Information Facility API. R package version 0.4.0.
+  http://CRAN.R-project.org/package=rgbif
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {rgbif: Interface to the Global Biodiversity Information Facility API},
+    author = {Scott Chamberlain and Carl Boettiger and Karthik Ram and Vijay Barve and Dan Mcglinn},
+    year = {2013},
+    note = {R package version 0.4.0},
+    url = {http://CRAN.R-project.org/package=rgbif},
+  }
+```
+
+Get citation information for `rgbif` in R doing `citation(package = 'rgbif')`
+
+<br>
 
 [![](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
