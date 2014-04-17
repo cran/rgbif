@@ -1,15 +1,12 @@
 rgbif
 =====
 
-<!-- master branch [![Build Status](https://api.travis-ci.org/ropensci/rgbif.png?branch=master)](https://travis-ci.org/ropensci/rgbif) -->
+[![Build Status](https://api.travis-ci.org/ropensci/rgbif.png?branch=master)](https://travis-ci.org/ropensci/rgbif)
 <!-- dev branch [![Build Status](https://api.travis-ci.org/ropensci/rgbif.png?branch=dev)](https://travis-ci.org/ropensci/rgbif) -->
 
 ## About
-This package gives you access to data from [GBIF](http://www.gbif.org/) via their API.
 
-## Branches
-
-Note: The most recent changes are now on the `dev` branch, and thus code may have more bugs. The `master` branch should always be stable. 
+This package gives you access to data from [GBIF](http://www.gbif.org/) via their REST API.
 
 ## Transitioning to the new GBIF API
 
@@ -53,7 +50,7 @@ Changes in the new GBIF API from last with respect to `rgbif`:
 * Note 1: See `?datasets`, `?networks`, `?nodes`, and `?organizations`.
 * Note 2: See `?name_lookup` for names across all of GBIF and `name_backbone` for names only in the GBIF backbone taxonomy.
 
-## Install
+## Quick start
 
 ### Install stable version on CRAN
 
@@ -65,10 +62,10 @@ install.packages("rgbif")
 
 ```coffee
 install.packages("devtools")
-require(devtools)
+library("devtools")
 
-install_github("rgbif", "ropensci")
-require(rgbif)
+install_github("ropensci/rgbif")
+library("rgbif")
 ```
 
 Note: Windows users have to first install [Rtools](http://cran.r-project.org/bin/windows/Rtools/).
@@ -111,7 +108,7 @@ occ_search(taxonKey=key, limit=20, return='data')
 splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
 keys <- sapply(splist, function(x) name_backbone(name=x, kingdom='plants')$speciesKey, USE.NAMES=FALSE)
 
-occ_search(taxonKey=keys, limit=5, return='data', georeferenced=TRUE)
+occ_search(taxonKey=keys, limit=5, return='data', hasCoordinate=TRUE)
 
 $`2480598`
                      name longitude   latitude
@@ -145,7 +142,7 @@ $`2498387`
 ```coffee
 splist <- c('Cyanocitta stelleri', 'Junco hyemalis', 'Aix sponsa')
 keys <- sapply(splist, function(x) name_backbone(name=x, kingdom='plants')$speciesKey, USE.NAMES=FALSE)
-dat <- occ_search(taxonKey=keys, limit=100, return='data', georeferenced=TRUE)
+dat <- occ_search(taxonKey=keys, limit=100, return='data', hasCoordinate=TRUE)
 library(plyr)
 datdf <- ldply(dat)
 gbifmap(datdf)
@@ -164,19 +161,18 @@ To cite package `rgbif` in publications use:
 ```coffee
 To cite package ‘rgbif’ in publications use:
 
-  Scott Chamberlain, Carl Boettiger, Karthik Ram, Vijay Barve and Dan
-  Mcglinn (2013). rgbif: Interface to the Global Biodiversity
-  Information Facility API. R package version 0.4.0.
-  http://CRAN.R-project.org/package=rgbif
+  Scott Chamberlain, Carl Boettiger, Karthik Ram, Vijay Barve and Dan Mcglinn (2014). rgbif: Interface
+  to the Global Biodiversity Information Facility API. R package version 0.5.0.
+  https://github.com/ropensci/rgbif
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rgbif: Interface to the Global Biodiversity Information Facility API},
     author = {Scott Chamberlain and Carl Boettiger and Karthik Ram and Vijay Barve and Dan Mcglinn},
-    year = {2013},
-    note = {R package version 0.4.0},
-    url = {http://CRAN.R-project.org/package=rgbif},
+    year = {2014},
+    note = {R package version 0.5.0},
+    url = {https://github.com/ropensci/rgbif},
   }
 ```
 

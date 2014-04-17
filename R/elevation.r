@@ -1,8 +1,7 @@
 #' Get elevation for lat/long points from a data.frame or list of points.
 #' 
-#' @import httr data.table plyr
+#' @import httr data.table plyr assertthat
 #' @importFrom stringr str_trim
-#' @importFrom assertthat assert_that
 #' @param input A data.frame of lat/long data.
 #' @param latitude A vector of latitude's. Must be the same length as the longitude 
 #' vector.
@@ -16,8 +15,8 @@
 #' \url{https://developers.google.com/maps/documentation/elevation/}
 #' @export
 #' @examples \dontrun{
-#' key <- name_backbone(name='Puma concolor', kingdom='plants')$speciesKey
-#' dat <- occ_search(taxonKey=key, return='data', limit=300, georeferenced=TRUE)
+#' key <- name_suggest('Puma concolor')$key[1]
+#' dat <- occ_search(taxonKey=key, return='data', limit=300, hasCoordinate=TRUE)
 #' elevation(dat)
 #' 
 #' # Pass in a vector of lat's and a vector of long's
@@ -27,6 +26,7 @@
 #' pairs <- list(c(31.8496,-110.576060), c(29.15503,-103.59828))
 #' elevation(latlong=pairs)
 #' }
+
 elevation <- function(input=NULL, latitude=NULL, longitude=NULL, latlong=NULL, 
                       callopts=list())
 {
@@ -51,11 +51,14 @@ elevation <- function(input=NULL, latitude=NULL, longitude=NULL, latlong=NULL,
       args <- compact(list(locations=locations[[i]], sensor='false'))
       tt <- GET(url, query=args, callopts)
       stop_for_status(tt)
-      out <- content(tt)
-      df <- data.frame(elevation=sapply(out$results, '[[', 'elevation'))
+      assert_that(tt$headers$`content-type`=='application/json; charset=UTF-8')
+      res <- content(tt, as = 'text', encoding = "UTF-8")
+      out <- RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
+      
+      df <- data.frame(elevation=sapply(out$results, '[[', 'elevation'), stringsAsFactors=FALSE)
       outout[[i]] <- df
     }
-    datdf <- data.frame(rbindlist(outout))
+    datdf <- data.frame(rbindlist(outout), stringsAsFactors=FALSE)
     return( cbind(x, datdf) )
   }
   
@@ -65,13 +68,13 @@ elevation <- function(input=NULL, latitude=NULL, longitude=NULL, latlong=NULL,
   {
     if(!is.null(input)) stop("If you use latitude and longitude, input must be left as default")
     assert_that(length(latitude)==length(longitude))
-    dat <- data.frame(latitude=latitude, longitude=longitude)
+    dat <- data.frame(latitude=latitude, longitude=longitude, stringsAsFactors=FALSE)
     getdata(dat)
   } else
   {
     dat <- data.frame(rbindlist(
       lapply(latlong, function(x) data.frame(t(x)))
-    ))
+    ), stringsAsFactors=FALSE)
     names(dat) <- c("latitude","longitude")
     getdata(dat)
   }

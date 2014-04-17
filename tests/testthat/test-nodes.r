@@ -17,7 +17,7 @@ test_that("returns the correct class", {
 })
 
 test_that("returns the correct value", {
-  expect_identical(tt$results[[1]]$tags, list())
+  expect_true(typeof(tt$results[[1]]$tags)=="list")
   expect_equal(uu$title, "Republic of Congo")
   expect_equal(vv[[1]]$key, 13587)
   expect_equal(vv[[1]]$modifiedBy, NULL)
@@ -26,7 +26,7 @@ test_that("returns the correct value", {
 test_that("returns the correct dimensions", {
   expect_equal(length(tt), 5)
   expect_equal(length(tt$results), 20)
-  expect_equal(length(uu), 28)
+  expect_equal(length(uu), 29)
   expect_equal(length(vv), 1)
   expect_equal(length(vv[[1]]), 5)
 })
