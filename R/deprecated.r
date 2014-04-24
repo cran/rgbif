@@ -34,7 +34,7 @@
 #' @param listcount Return a species list ('splist') or a data.frame of the
 #'    species and the count for each species ('counts').
 #' @return A vector of scientific species names for one degree grid cells.
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Just return the data.frame of counts by cells.
 #' density_spplist(originisocountrycode = "CO")
 #'
@@ -137,7 +137,7 @@ density_spplist <- function(taxonconceptKey = NULL, dataproviderkey = NULL,
 #'  \item{"maxLongitude"}{Maximum longitude of the cell}
 #'  \item{"count"}{Number of occurrences found}
 #' }
-#' @examples \dontrun{
+#' @examples \donttest{
 #' head( out <- densitylist(originisocountrycode = "CA") )
 #' }
 #' @export
@@ -242,7 +242,7 @@ densitylist <- function(taxonconceptKey = NULL, dataproviderkey = NULL,
 #'    (format YYYY-MM-DD, e.g. 2006-11-28). 
 #' @return A single numeric value - the number of records found in GBIF matching 
 #'    the query.
-#' @examples \dontrun{
+#' @examples \donttest{
 #' occurrencecount(scientificname = 'Accipiter erythronemius', coordinatestatus = TRUE)
 #' occurrencecount(scientificname = 'Helianthus annuus', coordinatestatus = TRUE, 
 #'    year=2009)
@@ -312,7 +312,7 @@ occurrencedensity <- function()
 #' 		(normalised) values used within the data portal (character)
 #' @details Currently, the function returns the record as a list, hopefully
 #' 		in future will return a data.frame.
-#' @examples \dontrun{
+#' @examples \donttest{
 #' occurrenceget(key = 13749100)
 #' }
 #' @export
@@ -334,7 +334,7 @@ occurrenceget <- function(key = NULL, format = NULL, mode = NULL)
 #' This function is deprecated.
 #'
 #' @template oclist
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Query for a single species
 #' occurrencelist(scientificname = 'Puma concolor', coordinatestatus = TRUE)
 #' occurrencelist(scientificname = 'Puma concolor', coordinatestatus = TRUE, 
@@ -475,7 +475,7 @@ occurrencelist <- function(scientificname = NULL, taxonconceptkey = NULL,
 #' @param ranktoget You must specify the taxonomic rank you are searching for 
 #'    so that we can select the correct names.
 #' @param ... Further arguments passed on to occurrencelist_many
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Query for a single species
 #' # compare the names returned by occurrencelist to occurrencelist_all
 #' occurrencelist(scientificname = 'Aristolochia serpentaria', 
@@ -522,7 +522,7 @@ occurrencelist_all <- function(scientificname, ranktoget = 'species', ...)
 #' @param parallel Do calls in parallel or not. (default is FALSE)
 #' @param cores Number of cores to use in parallel call option (only used 
 #'    if parallel=TRUE)
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Query for a many species
 #' splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
 #' out <- occurrencelist_many(scientificname=splist, coordinatestatus = TRUE, 
@@ -690,7 +690,7 @@ occurrencelist_many <- function(scientificname = NULL, taxonconceptkey = NULL,
 #' @param  startindex  return the subset of the matching records that starts at
 #'    the supplied (zero-based index).
 #' @param maxresults max number of results to return
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Test the function for a few providers
 #' providers(maxresults=10)
 #'
@@ -742,7 +742,7 @@ providers <- function(name = "", isocountrycode = NULL, modifiedsince = NULL,
 #' @param  startindex  return the subset of the matching records that starts at
 #'    the supplied (zero-based index).
 #' @param maxresults max number of results to return
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Test the function for a few resources
 #' resources(maxresults=30)
 #'
@@ -785,7 +785,7 @@ resources <- function(name = "", providerkey = NULL, basisofrecordcode = NULL,
 #' @param rank Rank of taxon, see taxrank() (character)
 #' @param dataresourcekey Filter records to those provided by the supplied
 #'    numeric key for a data resource. See resources(). (character)
-#' @examples \dontrun{
+#' @examples \donttest{
 #' taxoncount(scientificname = 'Puma concolor')
 #' taxoncount(scientificname = 'Helianthus annuus')
 #' }
@@ -816,7 +816,7 @@ taxoncount <- function(scientificname = NULL, rank = NULL, dataresourcekey = NUL
 #' @param key A single key, or many keys in a vector, for a taxon.
 #' @return A single data.frame of taxonomic information if  single data.frame is
 #' 		supplied, or a list of data.frame's if a list of keys is supplied.
-#' @examples \dontrun{
+#' @examples \donttest{
 #' keys <- taxonsearch(scientificname = 'Puma concolor')
 #' taxonget(keys$gbifkey)
 #'
@@ -875,7 +875,7 @@ taxonget <- function(key = NULL)
 #' is the GBIF backbone taxonomy. Also, always specify the taxonomic rank you 
 #' are searching for - GBIF says the search is more efficient if rank is given.
 #' @return A data.frame.
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Do specify the taxonomic rank the you are searching for, rank of species here
 #' taxonsearch(scientificname = 'Puma concolor', rank="species")
 #' 
@@ -928,7 +928,7 @@ taxonsearch <- function(scientificname = NULL, rank = NULL, maxresults = 10,
 #' This function is deprecated.
 #'
 #' @template map
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Tile map, using output from densitylist, Canada
 #' out2 <- densitylist(originisocountrycode = "CA") # data for Canada
 #' gbifmap_dens(out2) # on world map
@@ -982,7 +982,7 @@ gbifmap_dens <- function(input = NULL, mapdatabase = "world", region = ".",
 #' This function is deprecated.
 #'
 #' @template map
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # Point map, using output from occurrencelist, example 1
 #' out <- occurrencelist(scientificname = 'Accipiter erythronemius',
 #'    coordinatestatus = TRUE, maxresults = 100)
@@ -1086,7 +1086,7 @@ gbifmap_list <- function(input = NULL, mapdatabase = "world", region = ".",
 #' @details A convienence function to get the raw data in a data.frame format from 
 #'    occurrencelist, occurrencelist_many, and densitylist functions.
 #' @export
-#' @examples \dontrun{
+#' @examples \donttest{
 #' # occurrencelist
 #' out <- occurrencelist(scientificname = 'Puma concolor', coordinatestatus = TRUE, 
 #'    maxresults = 40)
@@ -1239,3 +1239,293 @@ is.gbiflist_na <- function(x) inherits(x, "gbiflist_na")
 #' @export
 #' @rdname is.gbifdens-deprecated
 is.gbifdens <- function(x) inherits(x, "gbifdens")
+
+
+#' Style a data.frame prior to converting to geojson.
+#' 
+#' This function is deprecated.  See the package spocc for similar functionality.
+#' 
+#' @import plyr
+#' @export
+#' @param input A data.frame
+#' @param var A single variable to map colors, symbols, and/or sizes to.
+#' @param var_col The variable to map colors to.
+#' @param var_sym The variable to map symbols to.
+#' @param var_size The variable to map size to.
+#' @param color Valid RGB hex color
+#' @param symbol An icon ID from the Maki project \url{http://www.mapbox.com/maki/} or
+#'    a single alphanumeric character (a-z or 0-9).
+#' @param size One of "small", "medium", or "large"
+#' @seealso \code{\link{togeojson}}
+#' @examples \donttest{
+#' # Get data and save map data
+#' splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
+#' out <- occ_search(scientificName = splist, hasCoordinate = TRUE, limit = 50)
+#' library("plyr")
+#' dat <- ldply(out, "[[", "data")
+#' names(dat)[names(dat) %in% c("decimalLatitude","decimalLongitude")] <- c("latitude","longitude")
+#' dat2 <- stylegeojson(input=dat, var="name", color=c("#976AAE","#6B944D","#BD5945"), 
+#'    size=c("small","medium","large"))
+#' head(dat2)
+#' }
+#' @rdname stylegeojson-deprecated
+
+stylegeojson <- function(input, var = NULL, var_col = NULL, var_sym = NULL, 
+                         var_size = NULL, color = NULL, symbol = NULL, size = NULL)
+{
+  .Deprecated(msg="This function is deprecated, and will be removed in a future version. There is no longer a similar function. See the package spocc for similar functionality.")
+
+  if(!inherits(input,"data.frame"))
+    stop("Your input object needs to be a data.frame")
+  if(nrow(input)==0) 
+    stop("Your data.frame has no rows...")
+  
+  if(is.null(var_col) & is.null(var_sym) & is.null(var_size))
+    var_col <- var_sym <- var_size <- var
+  
+  if(!is.null(color)){
+    if(length(color)==1){
+      color_vec <- rep(color, nrow(input))
+    } else
+    {
+      mapping <- data.frame(var=unique(input[[var_col]]), col2=color, stringsAsFactors=FALSE)
+      stuff <- input[[var_col]]
+      color_vec <- with(mapping, col2[match(stuff, var)])
+    }
+  } else { color_vec <- NULL }
+  
+  if(!is.null(symbol)){
+    if(length(symbol)==1){
+      symbol_vec <- rep(symbol, nrow(input))
+    } else
+    {
+      mapping <- data.frame(var=unique(input[[var_sym]]), symb=symbol, stringsAsFactors=FALSE)
+      stuff <- input[[var_sym]]
+      symbol_vec <- with(mapping, symb[match(stuff, var)])
+    }
+  } else { symbol_vec <- NULL }
+  
+  if(!is.null(size)){
+    if(length(size)==1){
+      size_vec <- rep(size, nrow(input))
+    } else
+    {
+      mapping <- data.frame(var=unique(input[[var_size]]), sz=size, stringsAsFactors=FALSE)
+      stuff <- input[[var_size]]
+      size_vec <- with(mapping, sz[match(stuff, var)])
+    }
+  } else { size_vec <- NULL }
+  
+  output <- do.call(cbind, compact(list(input, `marker-color` = color_vec, 
+                                        `marker-symbol` = symbol_vec, 
+                                        `marker-size` = size_vec)))
+  return( output )
+}
+
+
+#' Convert spatial data files to GeoJSON from various formats.
+#' 
+#' You can use a web interface called Ogre, or do conversions locally using the 
+#' rgdal package.
+#' 
+#' @import httr rgdal maptools
+#' @export
+#' @seealso \code{\link{stylegeojson}}
+#' @param input The file being uploaded, path to the file on your machine.
+#' @param method One of web or local. Matches on partial strings.
+#' @param destpath Destination for output geojson file. Defaults to your root 
+#'    directory ("~/").
+#' @param outfilename The output file name, without file extension.
+#' @description 
+#' This function is deprecated.  See the package spocc for similar functionality.
+#' 
+#' The web option uses the Ogre web API. Ogre currently has an output size limit of 15MB.
+#' See here \url{http://ogre.adc4gis.com/} for info on the Ogre web API.
+#' The local option uses the function \code{\link{writeOGR}} from the package rgdal.
+#' 
+#' Note that for Shapefiles, GML, MapInfo, and VRT, you need to send zip files
+#' to Ogre. For other file types (.bna, .csv, .dgn, .dxf, .gxt, .txt, .json, 
+#' .geojson, .rss, .georss, .xml, .gmt, .kml, .kmz) you send the actual file with
+#' that file extension.
+#' 
+#' If you're having trouble rendering geoJSON files, ensure you have a valid 
+#' geoJSON file by running it through a geoJSON linter \url{http://geojsonlint.com/}.
+#' @examples \donttest{
+#' file <- '~/Downloads/taxon-placemarks-2441176.kml'
+#' 
+#' # KML type file - using the web method
+#' togeojson(file, method='web', outfilename="kml_web")
+#' 
+#' # KML type file - using the local method
+#' togeojson(file, method='local', outfilename="kml_local")
+#'
+#' # Shp type file - using the web method - input is a zipped shp bundle
+#' file <- '~/github/sac/bison.zip'
+#' togeojson(file, method='web', outfilename="shp_web") 
+#' 
+#' # Shp type file - using the local method - input is the actual .shp file
+#' file <- '~/github/sac/bison/bison-Bison_bison-20130704-120856.shp'
+#' togeojson(file, method='local', outfilename="shp_local")
+#' 
+#' # Get data and save map data
+#' splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
+#' keys <- sapply(splist, function(x) name_backbone(name=x, kingdom='plants')$speciesKey, 
+#'    USE.NAMES=FALSE)
+#' out <- occ_search(keys, hasCoordinate=TRUE, limit=50, return="data")
+#' dat <- ldply(out)
+#' datgeojson <- stylegeojson(input=dat, var="name", color=c("#976AAE","#6B944D","#BD5945"), 
+#'    size=c("small","medium","large"))
+#' 
+#' # Put into a github repo to view on the web
+#' write.csv(datgeojson, "~/github/sac/mygeojson/rgbif_data.csv")
+#' file <- "~/github/sac/mygeojson/rgbif_data.csv"
+#' togeojson(file, method="web", destpath="~/github/sac/mygeojson/", outfilename="rgbif_data")
+#' 
+#' # Using rCharts' function create_gist
+#' write.csv(datgeojson, "~/my.csv")
+#' file <- "~/my.csv"
+#' togeojson(input=file, method="web", outfilename="my")
+#' create_gist("~/my.geojson", description = "Map of three bird species occurrences")
+#' }
+#' @rdname togeojson-deprecated
+
+togeojson <- function(input, method="web", destpath="~/", outfilename="myfile")
+{
+  .Deprecated(msg="This function is deprecated, and will be removed in a future version. There is no longer a similar function. See the package spocc for similar functionality.")
+
+  method <- match.arg(method, choices=c("web","local"))
+  
+  if(method=='web'){  
+    url <- 'http://ogre.adc4gis.com/convert'
+    tt <- POST(url, body = list(upload = upload_file(input)))
+    stop_for_status(tt)
+    out <- content(tt, as="text")
+    fileConn <- file(paste0(destpath, outfilename, '.geojson'))
+    writeLines(out, fileConn)
+    close(fileConn)
+    message(paste0("Success! File is at ", destpath, outfilename, '.geojson'))
+  } else
+  {
+    fileext <- strsplit(input, '\\.')[[1]]
+    fileext <- fileext[length(fileext)]
+    if(fileext == 'kml'){
+      my_layer <- ogrListLayers(input)
+      x <- readOGR(input, layer=my_layer[1])
+      unlink(paste0(destpath, outfilename, '.geojson'))
+      writeOGR(x, paste0(outfilename, '.geojson'), outfilename, driver = "GeoJSON")
+      message(paste0("Success! File is at ", destpath, outfilename, '.geojson'))
+    } else
+      if(fileext == 'shp'){  
+        x <- readShapeSpatial(input)
+        unlink(paste0(path.expand(destpath), outfilename, '.geojson'))
+        writeOGR(x, paste0(path.expand(destpath), outfilename, '.geojson'), outfilename, driver = "GeoJSON")
+        message(paste0("Success! File is at ", path.expand(destpath), outfilename, '.geojson'))
+      } else
+      { stop('only .shp and .kml files supported for now') }
+  }
+}
+
+#' Post a file as a Github gist
+#' 
+#' @import httr
+#' @export
+#' @param gist An object
+#' @param description brief description of gist (optional)
+#' @param public whether gist is public (default: TRUE)
+#' @description 
+#' This function is deprecated.  See the package spocc for similar functionality.
+#'
+#' You will be asked ot enter you Github credentials (username, password) during
+#' each session, but only once for each session. Alternatively, you could enter
+#' your credentials into your .Rprofile file with the entries
+#' 
+#' \enumerate{
+#'  \item options(github.username = "your_github_username")
+#'  \item options(github.password = "your_github_password")
+#' }
+#' 
+#' then \code{gist} will simply read those options.
+#' 
+#' \code{gist} was modified from code in the rCharts package by Ramnath Vaidyanathan 
+#' @return Posts your file as a gist on your account, and prints out the url for the 
+#' gist itself in the console.
+#' @examples \donttest{
+#' library(plyr)
+#' splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
+#' keys <- sapply(splist, function(x) name_backbone(name=x, kingdom='plants')$speciesKey, 
+#'    USE.NAMES=FALSE)
+#' out <- occ_search(keys, hasCoordinate=TRUE, limit=50, return="data")
+#' dat <- ldply(out)
+#' datgeojson <- stylegeojson(input=dat, var="name", color=c("#976AAE","#6B944D","#BD5945"),
+#'    size=c("small","medium","large"))
+#' write.csv(datgeojson, "~/my.csv")
+#' togeojson(input="~/my.csv", method="web", outfilename="my")
+#' gist("~/my.geojson", description = "Occurrences of three bird species mapped")
+#' }
+#' @rdname gist-deprecated
+
+gist <- function(gist, description = "", public = TRUE)
+{
+  .Deprecated(msg="This function is deprecated, and will be removed in a future version. There is no longer a similar function. See the package spocc for similar functionality.")
+  dat <- create_gist(gist, description = description, public = public)
+  credentials = get_credentials()
+  response = POST(
+    url = 'https://api.github.com/gists',
+    body = dat,
+    config = c(
+      authenticate(
+        getOption('github.username'), 
+        getOption('github.password'), 
+        type = 'basic'
+      ),
+      add_headers("User-Agent" = "Dummy")
+    )
+  )
+  stop_for_status(response)
+  html_url = content(response)$html_url
+  message('Your gist has been published')
+  message('View gist at ', 
+          paste("https://gist.github.com/", 
+                getOption('github.username'), 
+                "/", basename(html_url), sep=""))
+  invisible(basename(html_url))
+}
+
+#' Function that takes a list of files and creates payload for API
+#' 
+#' This function is deprecated.  See the package spocc for similar functionality.
+#' 
+#' @param filenames names of files to post
+#' @param description brief description of gist (optional)
+#' @param public whether gist is public (defaults to TRUE)
+#' @export
+#' @keywords internal
+#' @rdname create_gist-deprecated
+create_gist <- function(filenames, description = "", public = TRUE){
+  .Deprecated(msg="This function is deprecated, and will be removed in a future version. There is no longer a similar function. See the package spocc for similar functionality.")
+  files = lapply(filenames, function(file){
+    x = list(content =  paste(readLines(file, warn = F), collapse = "\n"))
+  })
+  names(files) = basename(filenames)
+  body = list(description = description, public = public, files = files)
+  RJSONIO::toJSON(body)
+}
+
+#' Get Github credentials from use in console
+#' 
+#' This function is deprecated.  See the package spocc for similar functionality.
+#' 
+#' @export
+#' @keywords internal
+#' @rdname get_credentials-deprecated
+get_credentials = function(){
+  .Deprecated(msg="This function is deprecated, and will be removed in a future version. There is no longer a similar function. See the package spocc for similar functionality.")
+  if (is.null(getOption('github.username'))){
+    username <- readline("Please enter your github username: ")
+    options(github.username = username)
+  }
+  if (is.null(getOption('github.password'))){
+    password <- readline("Please enter your github password: ")
+    options(github.password = password)
+  }
+}
