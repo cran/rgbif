@@ -4,15 +4,17 @@
 #' 
 #' @import httr plyr
 #' @importFrom RJSONIO fromJSON
+#' @export
 #' @template all
 #' @template occ
 #' @template dataset
+#' 
 #' @param subtype NOT YET IMPLEMENTED. Will allow filtering of datasets by their 
 #'    dataset subtypes, DC or EML.
 #' @param continent Not yet implemented, but will eventually allow filtering datasets
 #'    by their continent(s) as given in our Continent enum.
 #' @param description Return descriptions only (TRUE) or all data (FALSE, default)
-#' @export
+#' 
 #' @examples \dontrun{
 #' # Suggest datasets of type "OCCURRENCE".
 #' dataset_suggest(query="Amazon", type="OCCURRENCE")
@@ -22,7 +24,7 @@
 #' 
 #' # Suggest datasets owned by the organization with key 
 #' # "07f617d0-c688-11d8-bf62-b8a03c50a862" (UK NBN).
-#' dataset_suggest(owning_org="07f617d0-c688-11d8-bf62-b8a03c50a862")
+#' dataset_suggest(owningOrg="07f617d0-c688-11d8-bf62-b8a03c50a862")
 #' 
 #' # Fulltext search for all datasets having the word "amsterdam" somewhere in 
 #' # its metadata (title, description, etc).
@@ -40,20 +42,20 @@
 #' 
 #' # Search by country code. Lookup isocodes first, and use US for United States
 #' isocodes[agrep("UNITED", isocodes$gbif_name),]
-#' dataset_suggest(country="UNITED_STATES")
+#' dataset_suggest(country="US")
 #' 
 #' # Search by decade
 #' dataset_suggest(decade=1980)
 #' }
 
 dataset_suggest <- function(query = NULL, country = NULL, type = NULL, subtype = NULL, 
-  keyword = NULL, owning_org = NULL, hosting_org = NULL, publishing_country = NULL, 
+  keyword = NULL, owningOrg = NULL, hostingOrg = NULL, publishingCountry = NULL, 
   decade = NULL, continent = NULL, limit=20, start=NULL, callopts=list(), 
   pretty=FALSE, description=FALSE)
 {
-  url <- 'http://api.gbif.org/v0.9/dataset/suggest'
-  args <- compact(list(q=query,type=type,keyword=keyword,owning_org=owning_org,
-                       hosting_org=hosting_org,publishing_country=publishing_country,
+  url <- 'http://api.gbif.org/v1/dataset/suggest'
+  args <- rgbif_compact(list(q=query,type=type,keyword=keyword,owningOrg=owningOrg,
+                       hostingOrg=hostingOrg,publishingCountry=publishingCountry,
                        decade=decade,limit=limit,offset=start))
   temp <- GET(url, query=args, callopts)
   stop_for_status(temp)
@@ -62,7 +64,7 @@ dataset_suggest <- function(query = NULL, country = NULL, type = NULL, subtype =
   tt <- RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
   
   parse_dataset <- function(x){
-    tmp <- compact(list(
+    tmp <- rgbif_compact(list(
       key=x$key,
       type=x$type,
       title=x$title,

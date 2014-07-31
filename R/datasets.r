@@ -4,14 +4,17 @@
 #' @template occ
 #' @import httr
 #' @import plyr
+#' @export
+#' 
 #' @param data The type of data to get. Default is all data.
 #' @param type Type of dataset, options include OCCURRENCE, etc.
 #' @param uuid UUID of the data node provider. This must be specified if data
 #'    is anything other than 'all'.
 #' @param query Query term(s). Only used when data='all'
 #' @param id A metadata document id.
+#' 
 #' @return A list.
-#' @export
+#' 
 #' @examples \dontrun{
 #' datasets()
 #' datasets(type="OCCURRENCE")
@@ -26,7 +29,7 @@
 datasets <- function(data = 'all', type = NULL, uuid = NULL, query = NULL, id = NULL, 
                      limit = 20, start=NULL, callopts=list())
 {
-  args <- compact(list(q = query, limit=as.integer(limit), offset=start))
+  args <- rgbif_compact(list(q = query, limit=as.integer(limit), offset=start))
   
   data <- match.arg(data, choices=c('all', 'organization', 'contact', 'endpoint', 
                                     'identifier', 'tag', 'machinetag', 'comment', 
@@ -42,23 +45,23 @@ datasets <- function(data = 'all', type = NULL, uuid = NULL, query = NULL, id = 
     
     if(is.null(uuid)){
       if(x=='all'){
-        url <- 'http://api.gbif.org/v0.9/dataset'
+        url <- 'http://api.gbif.org/v1/dataset'
       } else
       {
         if(!is.null(id) && x=='metadata'){
-          url <- sprintf('http://api.gbif.org/v0.9/dataset/metadata/%s/document', id)
+          url <- sprintf('http://api.gbif.org/v1/dataset/metadata/%s/document', id)
         } else
         {
-          url <- sprintf('http://api.gbif.org/v0.9/dataset/%s', x)          
+          url <- sprintf('http://api.gbif.org/v1/dataset/%s', x)          
         }
       }
     } else
     {
       if(x=='all'){
-        url <- sprintf('http://api.gbif.org/v0.9/dataset/%s', uuid)
+        url <- sprintf('http://api.gbif.org/v1/dataset/%s', uuid)
       } else
       {
-        url <- sprintf('http://api.gbif.org/v0.9/dataset/%s/%s', uuid, x)        
+        url <- sprintf('http://api.gbif.org/v1/dataset/%s/%s', uuid, x)        
       }
     }
     tt <- GET(url, query=args, callopts)

@@ -19,6 +19,12 @@
 #' # Just metadata
 #' name_lookup(query='Cnaemidophorus', rank="genus", return="meta")
 #' 
+#' # Just hierarchies
+#' name_lookup(query='Cnaemidophorus', rank="genus", return="hierarchy")
+#' 
+#' # Just vernacular (common) names
+#' name_lookup(query='Cnaemidophorus', rank="genus", return="names")
+#' 
 #' # Fuzzy searching
 #' name_lookup(query='Cnaemidophor', rank="genus")
 #' 
@@ -30,34 +36,34 @@
 #' name_lookup('Helianthus annuus', rank="species", limit=2)
 #' 
 #' # Using faceting
-#' name_lookup(facet='status', facet_only=TRUE, facet_mincount='70000')
-#' name_lookup(facet=c('status','highertaxon_key'), facet_only=TRUE, facet_mincount='700000')
+#' name_lookup(facet='status', limit=0, facetMincount='70000')
+#' name_lookup(facet=c('status','highertaxon_key'), limit=0, facetMincount='700000')
 #' 
-#' name_lookup(facet='name_type', facet_only=TRUE)
-#' name_lookup(facet='habitat', facet_only=TRUE)
-#' name_lookup(facet='dataset_key', facet_only=TRUE)
-#' name_lookup(facet='rank', facet_only=TRUE)
-#' name_lookup(facet='extinct', facet_only=TRUE)
+#' name_lookup(facet='name_type', limit=0)
+#' name_lookup(facet='habitat', limit=0)
+#' name_lookup(facet='dataset_key')
+#' name_lookup(facet='rank', limit=0)
+#' name_lookup(facet='extinct', limit=0)
 #' }
 
 name_lookup <- function(query=NULL, rank=NULL, highertaxon_key=NULL, status=NULL, extinct=NULL, 
   habitat=NULL, name_type=NULL, dataset_key=NULL, nomenclatural_status=NULL,
-  limit=20, facet=NULL, facet_only=NULL, facet_mincount=NULL, 
-  facet_multiselect=NULL, type=NULL, callopts=list(), verbose=FALSE, return="all")
+  limit=20, facet=NULL, facetMincount=NULL, facetMultiselect=NULL, type=NULL, callopts=list(), 
+  verbose=FALSE, return="all")
 {
-  if(!is.null(facet_mincount) && inherits(facet_mincount, "numeric"))
-    stop("Make sure facet_mincount is character")
+  if(!is.null(facetMincount) && inherits(facetMincount, "numeric"))
+    stop("Make sure facetMincount is character")
   if(!is.null(facet)) {
     facetbyname <- facet
     names(facetbyname) <- rep('facet', length(facet))
   } else { facetbyname <- NULL }
   
-  url = 'http://api.gbif.org/v0.9/species/search'
-  args <- as.list(compact(c(q=query, rank=rank, highertaxon_key=highertaxon_key, status=status, 
+  url = 'http://api.gbif.org/v1/species/search'
+  args <- as.list(rgbif_compact(c(q=query, rank=rank, highertaxon_key=highertaxon_key, status=status, 
             extinct=extinct, habitat=habitat, name_type=name_type, dataset_key=dataset_key, 
             nomenclatural_status=nomenclatural_status, limit=limit, facetbyname, 
-            facet_only=facet_only, facet_mincount=facet_mincount, 
-            facet_multiselect=facet_multiselect, type=type)))
+            facetMincount=facetMincount, 
+            facetMultiselect=facetMultiselect, type=type)))
   temp <- GET(url, query=args, callopts)
   stop_for_status(temp)
   assert_that(temp$headers$`content-type`=='application/json')
@@ -81,11 +87,29 @@ name_lookup <- function(query=NULL, rank=NULL, highertaxon_key=NULL, status=NULL
   {
     data <- tt$results
   }
+  
+  # hierarchies
+  hierdat <- sapply(tt$results, function(x){
+    tmp <- x[ names(x) %in% "higherClassificationMap" ]
+    tmpdf <- data.frame(rankkey=names(tmp[[1]]), name=unlist(unname(tmp[[1]])), stringsAsFactors = FALSE)
+    if(NROW(tmpdf) == 0) NULL else tmpdf
+  })
+  names(hierdat) <- vapply(tt$results, "[[", numeric(1), "key")
+  
+  # vernacular names
+  vernames <- lapply(tt$results, function(x){
+    rbind.fill(lapply(x$vernacularNames, data.frame))
+  })
+  names(vernames) <- vapply(tt$results, "[[", numeric(1), "key")
 
   # select output
+  return <- match.arg(return, c('meta','data','facets','hierarchy','names','all'))
   switch(return, 
          meta = data.frame(meta, stringsAsFactors=FALSE),
          data = data,
          facets = facetsdat,
-         all = list(meta=data.frame(meta, stringsAsFactors=FALSE), data=data, facets=facetsdat))
+         hierarchy = compact_null(hierdat),
+         names = compact_null(vernames),
+         all = list(meta=data.frame(meta, stringsAsFactors=FALSE), data=data, facets=facetsdat, 
+                    hierarchies=compact_null(hierdat), names=compact_null(vernames)))
 }

@@ -6,7 +6,9 @@ rgbif
 
 ## About
 
-This package gives you access to data from [GBIF](http://www.gbif.org/) via their REST API.
+This package gives you access to data from [GBIF](http://www.gbif.org/) via their REST API. GBIF versions their API - we are currently using `v1` of their API. Though you can still access their API of the form `http://data.gbif.org/ws/rest/...` through older functions - see `?rgbif-deprecated` and see below for a comparison between old and new.
+
+Note that `rgbif` is being integrated with many other sources of species occurrence data in the package `spocc`. [Check it out](https://github.com/ropensci/spocc).
 
 ## Transitioning to the new GBIF API
 
@@ -72,13 +74,39 @@ Note: Windows users have to first install [Rtools](http://cran.r-project.org/bin
 
 ### Search for occurrence data
 
-#### A single species. Get the taxonKey first with `name_backbone`.
+```coffee
+occ_search(scientificName = "Ursus americanus")
+```
+
+```coffee
+Records found [8330]
+Records returned [20]
+No. unique hierarchies [1]
+No. media records [20]
+Args [scientificName=Ursus americanus, limit=20, fields=minimal]
+First 10 rows of data
+               name       key decimalLatitude decimalLongitude
+1  Ursus americanus 891034709        29.23322       -103.29468
+2  Ursus americanus 891045574        43.73511        -72.52534
+3  Ursus americanus 891041363        29.28284       -103.28908
+4  Ursus americanus 891056344        29.27444       -103.31536
+5  Ursus americanus 911496466        29.27817       -103.30167
+6  Ursus americanus 911500351        37.39940        -79.98851
+7  Ursus americanus 911503296        32.96132       -108.47295
+8  Ursus americanus 911503052        37.79479       -119.86651
+9  Ursus americanus 911501579        47.78411       -122.96344
+10 Ursus americanus 911504089        38.74011        -78.30654
+..              ...       ...             ...              ...
+```
+
+Or you can get the taxon key first with `name_backbone()`. Here, we select to only return the occurrence data.
 
 ```coffee
 key <- name_backbone(name='Helianthus annuus', kingdom='plants')$speciesKey
-
 occ_search(taxonKey=key, limit=20, return='data')
+```
 
+```coffee
                 name  longitude latitude
 1  Helianthus annuus   16.42280 56.57660
 2  Helianthus annuus -116.99648 32.84967
@@ -106,7 +134,7 @@ occ_search(taxonKey=key, limit=20, return='data')
 
 ```coffee
 splist <- c('Accipiter erythronemius', 'Junco hyemalis', 'Aix sponsa')
-keys <- sapply(splist, function(x) name_backbone(name=x, kingdom='plants')$speciesKey, USE.NAMES=FALSE)
+keys <- sapply(splist, function(x) name_backbone(name=x)$speciesKey, USE.NAMES=FALSE)
 
 occ_search(taxonKey=keys, limit=5, return='data', hasCoordinate=TRUE)
 
@@ -137,13 +165,13 @@ $`2498387`
 
 ### Maps
 
-#### Make a simple map of species occurrences. 
+#### Make a simple map of species occurrences.
 
 ```coffee
 splist <- c('Cyanocitta stelleri', 'Junco hyemalis', 'Aix sponsa')
-keys <- sapply(splist, function(x) name_backbone(name=x, kingdom='plants')$speciesKey, USE.NAMES=FALSE)
+keys <- sapply(splist, function(x) name_backbone(name=x)$speciesKey, USE.NAMES=FALSE)
 dat <- occ_search(taxonKey=keys, limit=100, return='data', hasCoordinate=TRUE)
-library(plyr)
+library('plyr')
 datdf <- ldply(dat)
 gbifmap(datdf)
 ```
@@ -156,22 +184,19 @@ License: CC0
 
 This package is part of the [rOpenSci](http://ropensci.org/packages) project.
 
-To cite package `rgbif` in publications use:
-
 ```coffee
 To cite package ‘rgbif’ in publications use:
 
-  Scott Chamberlain, Carl Boettiger, Karthik Ram, Vijay Barve and Dan Mcglinn (2014). rgbif: Interface
-  to the Global Biodiversity Information Facility API. R package version 0.5.0.
-  https://github.com/ropensci/rgbif
+  Scott Chamberlain, Karthik Ram, Vijay Barve and Dan Mcglinn (2014). rgbif: Interface to the Global
+  Biodiversity Information Facility API. R package version 0.7.0. https://github.com/ropensci/rgbif
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rgbif: Interface to the Global Biodiversity Information Facility API},
-    author = {Scott Chamberlain and Carl Boettiger and Karthik Ram and Vijay Barve and Dan Mcglinn},
+    author = {Scott Chamberlain and Karthik Ram and Vijay Barve and Dan Mcglinn},
     year = {2014},
-    note = {R package version 0.5.0},
+    note = {R package version 0.7.0},
     url = {https://github.com/ropensci/rgbif},
   }
 ```

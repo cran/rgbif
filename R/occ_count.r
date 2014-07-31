@@ -12,7 +12,8 @@
 #' @param date Collection date
 #' @param year Year data were collected in
 #' @param catalogNumber Catalog number. PARAMETER GONE.
-#' @param country Country data was collected in
+#' @param country Country data was collected in, two letter abbreviation. See 
+#' \url{http://countrycode.org/} for abbreviations.
 #' @param protocol Protocol. E.g., 'DWC_ARCHIVE'
 #' @param hostCountry Country that hosted the data. PARAMETER GONE.
 #' @param publishingCountry Publishing country, two letter ISO country code
@@ -21,12 +22,12 @@
 #' @param type One of count (default), schema, basis_of_record, countries, or year.
 #' @param callopts Pass on options to httr::GET for more refined control of 
 #'    http calls, and error handling
-#' @return A single numeric value
+#' @return A single numeric value, or a list of numerics.
 #' @examples \dontrun{
 #' occ_count(basisOfRecord='OBSERVATION')
 #' occ_count(georeferenced=TRUE)
-#' occ_count(country='DENMARK')
-#' occ_count(country='CANADA', georeferenced=TRUE, basisOfRecord='OBSERVATION')
+#' occ_count(country='DE')
+#' occ_count(country='CA', georeferenced=TRUE, basisOfRecord='OBSERVATION')
 #' occ_count(datasetKey='9e7ea106-0bf8-4087-bb61-dfe4f29e0f17')
 #' occ_count(year=2012)
 #' occ_count(taxonKey=2435099)
@@ -37,7 +38,7 @@
 #' occ_count(type='schema')
 #' 
 #' # Counts by basisOfRecord types
-#' occ_count(type='basis_of_record')
+#' occ_count(type='basisOfRecord')
 #' 
 #' # Counts by countries. publishingCountry must be supplied (default to US)
 #' occ_count(type='countries')
@@ -60,25 +61,25 @@ occ_count <- function(taxonKey=NULL, georeferenced=NULL, basisOfRecord=NULL,
   if(any(calls_vec))
     stop("Parameter name changes: \n nubKey -> taxonKey\nParameters gone: \n hostCountry\n catalogNumber")
   
-  args <- compact(list(taxonKey=taxonKey, georeferenced=georeferenced, 
+  args <- rgbif_compact(list(taxonKey=taxonKey, isGeoreferenced=georeferenced, 
                        basisOfRecord=basisOfRecord, datasetKey=datasetKey, 
                        date=date, catalogNumber=catalogNumber, country=country,
                        hostCountry=hostCountry, year=year, protocol=protocol))
-  type <- match.arg(type, choices=c("count","schema","basis_of_record","countries","year","publishingCountry"))
+  type <- match.arg(type, choices=c("count","schema","basisOfRecord","countries","year","publishingCountry"))
   url <- switch(type, 
-                count = 'http://api.gbif.org/v0.9/occurrence/count',
-                schema = 'http://api.gbif.org/v0.9/occurrence/count/schema',
-                basis_of_record = 'http://api.gbif.org/v0.9/occurrence/counts/basis_of_record',
-                countries = 'http://api.gbif.org/v0.9/occurrence/counts/countries',
-                year = 'http://api.gbif.org/v0.9/occurrence/counts/year',
-                publishingCountry = 'http://api.gbif.org/v0.9/occurrence/counts/publishing_countries')
+                count = 'http://api.gbif.org/v1/occurrence/count',
+                schema = 'http://api.gbif.org/v1/occurrence/count/schema',
+                basisOfRecord = 'http://api.gbif.org/v1/occurrence/counts/basisOfRecord',
+                countries = 'http://api.gbif.org/v1/occurrence/counts/countries',
+                year = 'http://api.gbif.org/v1/occurrence/counts/year',
+                publishingCountry = 'http://api.gbif.org/v1/occurrence/counts/publishingCountries')
   args <- switch(type,
                 count = args,
                 schema = list(),
-                basis_of_record = list(),
-                countries = compact(list(publishingCountry=publishingCountry)),
-                year = compact(list(from=from, to=to)),
-                publishingCountry = compact(list(country=ifelse(is.null(country), "US", country) )))
+                basisofRecord = list(),
+                countries = rgbif_compact(list(publishingCountry=publishingCountry)),
+                year = rgbif_compact(list(from=from, to=to)),
+                publishingCountry = rgbif_compact(list(country=ifelse(is.null(country), "US", country) )))
   tt <- GET(url, query=args, callopts)
   warn_for_status(tt)
   assert_that(tt$headers$`content-type`=='application/json')

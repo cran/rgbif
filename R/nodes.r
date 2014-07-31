@@ -3,13 +3,15 @@
 #' @template all
 #' @import httr
 #' @import plyr
+#' @export
+#' 
 #' @param data The type of data to get. Default is all data.
 #' @param uuid UUID of the data node provider. This must be specified if data
 #'    is anything other than 'all'.
 #' @param query Query nodes. Only used when data='all'
 #' @param isocode A 2 letter country code. Only used if data='country'.    
 #' @param callopts Further args passed on to GET.
-#' @export
+#' 
 #' @examples \dontrun{
 #' nodes()
 #' nodes(uuid="1193638d-32d1-43f0-a855-8727c94299d8")
@@ -31,10 +33,10 @@
 
 nodes <- function(data = 'all', uuid = NULL, query = NULL, isocode = NULL, callopts=list())
 {
-  args <- compact(list(q = query))
+  args <- rgbif_compact(list(q = query))
   
   data <- match.arg(data, choices=c('all', 'organization', 'endpoint', 
-                                    'identifier', 'tag', 'machinetag', 'comment', 
+                                    'identifier', 'tag', 'machineTag', 'comment', 
                                     'pendingEndorsement', 'country', 'dataset',
                                     'installation'))
   
@@ -45,23 +47,23 @@ nodes <- function(data = 'all', uuid = NULL, query = NULL, isocode = NULL, callo
     
     if(is.null(uuid)){
       if(x=='all'){
-        url <- 'http://api.gbif.org/v0.9/node'
+        url <- 'http://api.gbif.org/v1/node'
       } else
       {
         if(!is.null(isocode) && x=='country'){
-          url <- sprintf('http://api.gbif.org/v0.9/node/country/%s', isocode)
+          url <- sprintf('http://api.gbif.org/v1/node/country/%s', isocode)
         } else
         {
-          url <- sprintf('http://api.gbif.org/v0.9/node/%s', x)          
+          url <- sprintf('http://api.gbif.org/v1/node/%s', x)          
         }
       }
     } else
     {
       if(x=='all'){
-        url <- sprintf('http://api.gbif.org/v0.9/node/%s', uuid)
+        url <- sprintf('http://api.gbif.org/v1/node/%s', uuid)
       } else
       {
-        url <- sprintf('http://api.gbif.org/v0.9/node/%s/%s', uuid, x)        
+        url <- sprintf('http://api.gbif.org/v1/node/%s/%s', uuid, x)        
       }
     }
     temp <- GET(url, query=args, callopts)

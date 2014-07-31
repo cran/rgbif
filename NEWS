@@ -1,3 +1,39 @@
+rgbif 0.7.0
+===============
+
+NEW FEATURES
+
+* `occ_search()` now has a `dplyr` like summary output when `return='all'`. See `?occ_search` for examples. You can still easily access all data, by indexing to `meta`, `hierarchy`, `data`, or `media` via e.g., `$data`, `['data']`, or `[['data']]`. (#95)
+* Media now returned from the GBIF API. Thus, in `occ_search()`, we now return a media slot in the output list by default.
+* New function `gbif_photos()` to view media files (photos in the wild or of museum specimens). Two options are available, `which='map'` creates a single map which presents the image when the user clicks on the point, and `which='table'` in which a table has one row for each image, presenting the image and an interactive map with the single point. (#88)
+* Two new packages are imported: `sp` and `whisker`
+
+IMPROVEMENTS
+
+* GBIF updated their API, now at v1. URL endpoints in `rgbif` changed accordingly. (#92)
+* GBIF switched to using 2-letter country codes. Take note. (#90)
+* GBIF switched all parameters to `camelCase` from `under_score` style - changed accordingly in `rgbif`.
+* Using package custom version of `plyr::compact()` instead of importing from `plyr`.
+* In `name_lookup()` removed `facet_only` parameter as it doesn't do anything - use `limit=0` instead. Further, added two new slots of output: `hierarchy` and `names` (for common/vernacular names) (#96). The output can be determined by user via the `return` parameter.
+* In `name_suggest()`, if the field `higherClassificationMap` is selected to be returned via the `fields` parameter, a list is returned with a data frame, and a list of the hierarchies separately. If `higherClassificationMap` is not selected, only a data frame is returned.
+* `occ_search()` gains new parameters  `mediatype` and `issue` (#93), with detailed list of possible options for the `issue` parameter. Gains new examples for searching for images, examples of calls that will throw errors.
+* Updated the vignette.
+
+BUG FIXES
+
+* Added better error message to `check_wkt()`.
+* `facet_only` parameter removed from `dataset_search()` function as it doesn't do anything - use `limit=0` instead.
+* Fixed some examples that didn't work correctly.
+*
+
+rgbif 0.6.3
+===============
+
+IMPROVEMENTS
+
+* Added functions `gbif_bbox2wkt()` and `gbif_wkt2bbox()` to convert a bounding box to wkt and a wkt object to a bounding box, respectively. Copied from the `spocc` package. Prefixes to fxn names will avoid conflicts.
+* Now spitting out more informative error messages when WKT strings passed in are not properly formed, either from `rgeos::readWKT` or from the returned response from GBIF.
+
 rgbif 0.6.2
 ===============
 
@@ -5,14 +41,14 @@ BUG FIXES
 
 * `gbifmap()` was throwing an error because it was looking for two variables `latitude` and `longitude`, which had been changed to `decimalLatitude` and `decimalLongitude`, respectively, in other functions in this package. Fixed. (#81)
 * `occ_get()` was updated to include changes in the GBIF API for this endpoint. The fix included fixing the parser for verbatim results, see `rgbif::gbifparser_verbatim`. (#83)
-* Fixed bugs in `elevation()` - it was expecting column names to be latitude and longitude, whereas inputs from other `rgbif` functions have changed to decimalLatitude and decimalLongitude. 
-* Fixed bug in `count_facet()` introduced b/c GBIF no longer accepts hostCountry or nubKey parameters. 
+* Fixed bugs in `elevation()` - it was expecting column names to be latitude and longitude, whereas inputs from other `rgbif` functions have changed to decimalLatitude and decimalLongitude.
+* Fixed bug in `count_facet()` introduced b/c GBIF no longer accepts hostCountry or nubKey parameters.
 
 IMPROVEMENTS
 
 * `gist()`, `stylegeojson()`, and `togeojson()` functions now listed as deprecated. Their functionality moved to the `spocc` package (http://cran.r-project.org/web/packages/spocc/index.html). These functions will be removed from this package in a future version. (#82)
 * Added a quick sanity test for `gbifmap()`.
-* Added tests for `occ_get()` for when `verbatim=TRUE`, which gives back different data than when `verbatim=FALSE`. 
+* Added tests for `occ_get()` for when `verbatim=TRUE`, which gives back different data than when `verbatim=FALSE`.
 
 rgbif 0.6.0
 ===============
@@ -20,7 +56,7 @@ rgbif 0.6.0
 BUG FIXES
 
 * A number of variables changed names to better follow the Darwin Core standard. `latitude` is now `decimalLatitude`. `longitude` is now `decimalLongitude`. `clazz` is now `class`. Code in this package changed to accomodate these changes. `date` is now `eventDate`. `georeferenced` is now `hasCoordinate`. Beware of these changes in your own code using `rgbif` - find and replace for these should be easy.
-* Changed `altitude` parameter in `occ_search()` to `elevation` - should have been `elevation` the whole time. 
+* Changed `altitude` parameter in `occ_search()` to `elevation` - should have been `elevation` the whole time.
 * `occ_count()` function with parameter changes: `nubKey` parameter in changed to `taxonKey`. New parameter `protocol`. Parameter `catalogNumber` gone. Parameter `hostCountry` gone. These parameters are still in the function definition, but if called they throw a useful warning telling you the correct parameter names. (#76)
 * Fixed bug in `name_lookup()` function that was labeling facet outputs incorrectly. (#77)
 
@@ -30,7 +66,7 @@ IMPROVEMENTS
 * Across all functions, we now return all potenital character class columns as character class (instead of factor), by passing `stringsAsFactors = FALSE` to all `data.frame()` calls.
 * Now using assertthat package in various places to give better error messages when the wrong input is passed to a function.
 * Four parameters have name changes in the `occ_search()` function. These parameters are still in the function definition, but if called they throw a useful warning telling you the correct parameter names. (#75)
-* Updated docs in `name_usage`, `name_backbone`, `name_lookup`, and `name_suggest` functions. 
+* Updated docs in `name_usage`, `name_backbone`, `name_lookup`, and `name_suggest` functions.
 * `sourceId` parameter in `name_usage()` function doesn't work so error message is thrown when used.
 
 NEW FEATURES
@@ -74,7 +110,7 @@ BUG FIXES
 
 IMPROVEMENTS
 
-* Added missing limit argument in datasets() function man file, also function gains start and callopts parameters. 
+* Added missing limit argument in datasets() function man file, also function gains start and callopts parameters.
 
 rgbif 0.4.0
 ===============
@@ -104,7 +140,7 @@ IMPROVEMENTS
 
 NEW FEATURES
 
-* Added functions to interact with the new GBIF API, notably: country_codes(), dataset_metrics(), dataset_search(), datasets(), name_lookup(), gbifmap(), gist(), name_lookup(), name_usage(), networks(), nodes(), occ_count(), occ_get(), occ_search(), organizations(), stylegeojson(), togeojson(). See the README for a crosswalk from old functions to new ones. 
+* Added functions to interact with the new GBIF API, notably: country_codes(), dataset_metrics(), dataset_search(), datasets(), name_lookup(), gbifmap(), gist(), name_lookup(), name_usage(), networks(), nodes(), occ_count(), occ_get(), occ_search(), organizations(), stylegeojson(), togeojson(). See the README for a crosswalk from old functions to new ones.
 
 BUG FIXES
 
@@ -123,16 +159,16 @@ rgbif 0.3.0
 
 IMPROVEMENTS
 
-* Added S3 objects: Output from calls to occurrencelist() and occurrence list_many() now of class gbiflist, and output from calls to densitylist() now of class gbifdens. 
+* Added S3 objects: Output from calls to occurrencelist() and occurrence list_many() now of class gbiflist, and output from calls to densitylist() now of class gbifdens.
 * Slight changes to gbifmaps() function.
-* url parameter in all functions moved into the function itself as the base GBIF API url doesn't need to be specified by user. 
+* url parameter in all functions moved into the function itself as the base GBIF API url doesn't need to be specified by user.
 * Vignette added.
 
 NEW FEATURES
 
 * Added function country_codes() to look up 2 character ISO country codes for use in searches.
-* Added function occurrencelist_many() to handle searches of many species. 
-* Added functions togeojson() and stylegeosjon() to convert a data.frame with lat/long columns to geojson file format, and to add styling to data.frames before using togeojson() . 
+* Added function occurrencelist_many() to handle searches of many species.
+* Added functions togeojson() and stylegeosjon() to convert a data.frame with lat/long columns to geojson file format, and to add styling to data.frames before using togeojson() .
 * occurrencelist() and occurrencelist_many() gain argument fixnames, which lets user change species names in output data.frame according to a variety of scenarios.
 * taxonsearch() gains argument accepted_status to accept only those names that have a status of accepted. In addition, this function has significant changes, and examples, to improve performance.
 
@@ -147,11 +183,11 @@ IMPROVEMENTS
 NEW FEATURES
 
 * occurrencelist() now handles scientific notation when maxresults are given in that form.
-* occurencelist() now can retrieve any number of records; was previously a max of 1000 records. 
+* occurencelist() now can retrieve any number of records; was previously a max of 1000 records.
 
 BUG FIXES
 
-* Demo "List" was returning incorrect taxon names - corrected now. 
+* Demo "List" was returning incorrect taxon names - corrected now.
 * Removed unused parameter 'latlongdf' in occurencelist().
 
 
@@ -161,7 +197,7 @@ rgbif 0.1.5
 IMPROVEMENTS
 
 * Changed all functions to use RCurl instead of httr as httr was presenting some problems.
-* Two function, capwords and gbifxmlToDataFrame, added with documentation as internal functions. 
+* Two function, capwords and gbifxmlToDataFrame, added with documentation as internal functions.
 
 NEW FEATURES
 
@@ -178,6 +214,6 @@ DEPRECATED
 rgbif 0.1.0
 ===============
 
-NEW FEATURES 
+NEW FEATURES
 
 * released to CRAN

@@ -33,25 +33,28 @@
 #' name_usage(key=3119195, data='references')
 #' 
 #' # Species profiles, descriptions
-#' name_usage(key=3119195, data='species_profiles')
+#' name_usage(key=3119195, data='speciesProfiles')
 #' name_usage(key=3119195, data='descriptions')
 #' res <- name_usage(key=2435099, data='children')
 #' sapply(res$results, "[[", "scientificName")
 #' 
 #' # Vernacular names for a name usage
-#' name_usage(key=3119195, data='vernacular_names')
-#' 
-#' # Select many options
-#' name_usage(key=3119195, data=c('images','synonyms'))
+#' name_usage(key=3119195, data='vernacularNames')
 #' 
 #' # Limit number of results returned
-#' name_usage(key=3119195, data='vernacular_names', limit=3)
+#' name_usage(key=3119195, data='vernacularNames', limit=3)
 #' 
 #' # Search for names by dataset with datasetKey parameter
 #' name_usage(datasetKey="d7dddbf4-2cf0-4f39-9b2a-bb099caae36c")
 #' 
 #' # Search for a particular language
-#' name_usage(key=3119195, language="FRENCH", data='vernacular_names')
+#' name_usage(key=3119195, language="FRENCH", data='vernacularNames')
+#' }
+#' 
+#' @examples \donttest{
+#' ### Not working right now for some unknown reason
+#' # Select many options
+#' name_usage(key=3119195, data=c('images','synonyms'))
 #' }
 
 name_usage <- function(key=NULL, name=NULL, data='all', language=NULL, datasetKey=NULL, uuid=NULL,
@@ -63,13 +66,13 @@ name_usage <- function(key=NULL, name=NULL, data='all', language=NULL, datasetKe
     stop("Parameters not currently accepted: \n sourceId")
   
   
-  args <- compact(list(language=language, name=name, datasetKey=datasetKey, 
+  args <- rgbif_compact(list(language=language, name=name, datasetKey=datasetKey, 
                        rank=rank, offset=start, limit=limit, sourceId=sourceId))
   data <- match.arg(data, 
       choices=c('all', 'verbatim', 'name', 'parents', 'children',
                 'related', 'synonyms', 'descriptions',
-                'distributions', 'images', 'references', 'species_profiles',
-                'vernacular_names', 'type_specimens', 'root'), several.ok=TRUE)
+                'distributions', 'images', 'references', 'speciesProfiles',
+                'vernacularNames', 'typeSpecimens', 'root'), several.ok=TRUE)
   
   # Define function to get data
   getdata <- function(x){
@@ -77,20 +80,20 @@ name_usage <- function(key=NULL, name=NULL, data='all', language=NULL, datasetKe
       stop('You must specify a key if data does not equal "all"')
     
     if(x == 'all' && is.null(key)){
-      url <- 'http://api.gbif.org/v0.9/species'
+      url <- 'http://api.gbif.org/v1/species'
     } else
     {
       if(x=='all' && !is.null(key)){
-        url <- sprintf('http://api.gbif.org/v0.9/species/%s', key)
+        url <- sprintf('http://api.gbif.org/v1/species/%s', key)
       } else
       if(x %in% c('verbatim', 'name', 'parents', 'children', 
          'related', 'synonyms', 'descriptions',
-         'distributions', 'images', 'references', 'species_profiles',
-         'vernacular_names', 'type_specimens')){
-        url <- sprintf('http://api.gbif.org/v0.9/species/%s/%s', key, x)
+         'distributions', 'images', 'references', 'speciesProfiles',
+         'vernacularNames', 'typeSpecimens')){
+        url <- sprintf('http://api.gbif.org/v1/species/%s/%s', key, x)
       } else
       if(x == 'root'){
-        url <- sprintf('http://api.gbif.org/v0.9/species/root/%s/%s', uuid, shortname)
+        url <- sprintf('http://api.gbif.org/v1/species/root/%s/%s', uuid, shortname)
       }
     }
     tt <- GET(url, query=args, callopts)

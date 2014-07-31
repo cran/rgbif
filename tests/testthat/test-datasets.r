@@ -4,7 +4,7 @@ tt <- datasets()
 test_that("query all datasets returns the correct class", {
   expect_is(tt, "list")
   expect_is(tt$results[[1]], "list")
-  expect_is(tt$results[[1]]$owningOrganizationKey, "character")
+  expect_is(tt$results[[1]]$publishingOrganizationKey, "character")
 })
 
 tt <- datasets(uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
@@ -44,7 +44,6 @@ test_that("search for deleted and duplicate datasets returns the correct class",
   expect_is(tt, "list")
 })
 test_that("search for deleted and duplicate datasets returns the dimensions", {
-  expect_equal(tt[[1]]$results[[1]]$type, "CHECKLIST")
   expect_equal(length(tt), 2)
   expect_equal(length(tt[[1]]), 5)
 })

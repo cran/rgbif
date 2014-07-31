@@ -40,8 +40,31 @@ gbifparser <- function(input, fields='minimal'){
     {
       usename <- hier[[nrow(hier),"name"]]
     }
-    #     geog <- data.frame(name=usename, x[!names(x) %in% c(h1,h2)])
+    
+    # issues
     x[names(x) %in% "issues"] <- paste(x[names(x) %in% "issues"][[1]], collapse=",")
+    
+    # media
+    if("media" %in% names(x)){
+      media <- x[names(x) %in% "media"]
+      media <- lapply(media$media, as.list)
+      media2 <- list()
+      iter <- seq(1, length(media), 2)
+      for(i in iter){ 
+        media2[[i]] <- as.list(unlist(c(media[i], media[i+1]))) 
+      }
+      media2 <- rgbif_compact(media2)
+      media2$key <- x$key
+      media2$species <- x$species
+      media2$decimalLatitude <- x$decimalLatitude
+      media2$decimalLongitude <- x$decimalLongitude
+      media2$country <- x$country 
+      media2 <- list(media2)
+      names(media2) <- x$key
+      x <- x[!names(x) %in% "media"] # remove images
+    } else { media2 <- list() }
+    
+    # all other data
     alldata <- data.frame(name=usename, x, stringsAsFactors=FALSE)
     if(any(fields=='minimal')){
       if(all(c('decimalLatitude','decimalLongitude') %in% names(alldata)))
@@ -59,7 +82,7 @@ gbifparser <- function(input, fields='minimal'){
     {
       alldata <- alldata[names(alldata) %in% fields]
     }
-    list(hierarchy=hier, data=alldata)
+    list(hierarchy=hier, media=media2, data=alldata)
   }
   if(is.numeric(input[[1]])){
     parse(input)
@@ -226,7 +249,7 @@ taxrank <- function()
 #' @keywords internal
 namelkupparser <- function(x){
   data.frame(
-    compact(
+    rgbif_compact(
       x[c('key','nubKey','parentKey','parent','kingdom','phylum',"clazz","order","family",
           "genus","kingdomKey","phylumKey","classKey","orderKey","familyKey","genusKey",
           "canonicalName","authorship","nameType","rank","numOccurrences")]
@@ -324,4 +347,67 @@ gbifxmlToDataFrame <- function(doc, format) {
     tax[i, ] = xmlSApply(nodes[[i]], xmlValue)[varNames]
   }
   cbind(tax, ans)
+}
+
+#' Convert a bounding box to a Well Known Text polygon, and a WKT to a bounding box
+#' 
+#' @import rgeos
+#' @importFrom sp bbox
+#' @param minx Minimum x value, or the most western longitude
+#' @param miny Minimum y value, or the most southern latitude
+#' @param maxx Maximum x value, or the most eastern longitude 
+#' @param maxy Maximum y value, or the most northern latitude
+#' @param bbox A vector of length 4, with the elements: minx, miny, maxx, maxy
+#' @return gbif_bbox2wkt returns an object of class charactere, a Well Known Text string
+#' of the form 'POLYGON((minx miny, maxx miny, maxx maxy, minx maxy, minx miny))'. 
+#' 
+#' gbif_wkt2bbox returns a numeric vector of length 4, like c(minx, miny, maxx, maxy).
+#' @export
+#' @examples \dontrun{
+#' # Convert a bounding box to a WKT
+#' library("rgeos")
+#' 
+#' ## Pass in a vector of length 4 with all values
+#' mm <- gbif_bbox2wkt(bbox=c(38.4,-125.0,40.9,-121.8))
+#' plot(readWKT(mm))
+#' 
+#' ## Or pass in each value separately
+#' mm <- gbif_bbox2wkt(minx=38.4, miny=-125.0, maxx=40.9, maxy=-121.8)
+#' plot(readWKT(mm))
+#' 
+#' ========================================
+#' 
+#' # Convert a WKT object to a bounding box
+#' wkt <- "POLYGON((38.4 -125,40.9 -125,40.9 -121.8,38.4 -121.8,38.4 -125))"
+#' gbif_wkt2bbox(wkt)
+#' }
+
+gbif_bbox2wkt <- function(minx=NA, miny=NA, maxx=NA, maxy=NA, bbox=NULL){
+  if(is.null(bbox)) bbox <- c(minx, miny, maxx, maxy)
+  
+  assert_that(length(bbox)==4) #check for 4 digits
+  assert_that(noNA(bbox)) #check for NAs
+  assert_that(is.numeric(as.numeric(bbox))) #check for numeric-ness
+  paste('POLYGON((', 
+        sprintf('%s %s',bbox[1],bbox[2]), ',', sprintf(' %s %s',bbox[3],bbox[2]), ',', 
+        sprintf(' %s %s',bbox[3],bbox[4]), ',', sprintf(' %s %s',bbox[1],bbox[4]), ',', 
+        sprintf(' %s %s',bbox[1],bbox[2]), 
+        '))', sep="")
+}
+
+#' @param wkt A Well Known Text object.
+#' @export
+#' @rdname gbif_bbox2wkt
+
+gbif_wkt2bbox <- function(wkt=NULL){
+  assert_that(!is.null(wkt))
+  tmp <- bbox(readWKT(wkt))
+  as.vector(tmp)
+}
+
+rgbif_compact <- function (l) Filter(Negate(is.null), l)
+
+compact_null <- function (l){
+  tmp <- Filter(Negate(is.null), l)
+  if(length(tmp) == 0) NULL else tmp
 }
