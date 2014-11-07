@@ -1,55 +1,79 @@
 #' Lookup names in all taxonomies in GBIF.
 #'
-#' @template all
 #' @template namelkup
-#' @import httr plyr
 #' @export
+#' @references \url{http://www.gbif.org/developer/species#searching}
 #' @examples \dontrun{
 #' # Look up names like mammalia
 #' name_lookup(query='mammalia')
-#' 
+#'
+#' # Paging
+#' name_lookup(query='mammalia', limit=1)
+#' name_lookup(query='mammalia', limit=1, start=2)
+#'
+#' # large requests, use start parameter
+#' first <- name_lookup(query='mammalia', limit=1000)
+#' second <- name_lookup(query='mammalia', limit=1000, start=1000)
+#' tail(first$data)
+#' head(second$data)
+#' first$meta
+#' second$meta
+#'
 #' # Get all data and parse it, removing descriptions which can be quite long
 #' out <- name_lookup('Helianthus annuus', rank="species", verbose=TRUE)
-#' library("plyr")
-#' llply(out$data, function(x) x[!names(x) %in% c("descriptions","descriptionsSerialized")])
-#' 
+#' lapply(out$data, function(x) x[!names(x) %in% c("descriptions","descriptionsSerialized")])
+#'
 #' # Search for a genus, returning just data
 #' name_lookup(query='Cnaemidophorus', rank="genus", return="data")
-#' 
+#'
 #' # Just metadata
 #' name_lookup(query='Cnaemidophorus', rank="genus", return="meta")
-#' 
+#'
 #' # Just hierarchies
 #' name_lookup(query='Cnaemidophorus', rank="genus", return="hierarchy")
-#' 
+#'
 #' # Just vernacular (common) names
 #' name_lookup(query='Cnaemidophorus', rank="genus", return="names")
-#' 
+#'
 #' # Fuzzy searching
 #' name_lookup(query='Cnaemidophor', rank="genus")
-#' 
-#' # Get more data from the API call
-#' library("httr")
-#' name_lookup(query='Cnaemidophorus', rank="genus", callopts=verbose())
-#' 
+#'
 #' # Limit records to certain number
 #' name_lookup('Helianthus annuus', rank="species", limit=2)
-#' 
+#'
 #' # Using faceting
 #' name_lookup(facet='status', limit=0, facetMincount='70000')
-#' name_lookup(facet=c('status','highertaxon_key'), limit=0, facetMincount='700000')
-#' 
-#' name_lookup(facet='name_type', limit=0)
+#' name_lookup(facet=c('status','higherTaxonKey'), limit=0, facetMincount='700000')
+#'
+#' name_lookup(facet='nameType', limit=0)
 #' name_lookup(facet='habitat', limit=0)
-#' name_lookup(facet='dataset_key')
+#' name_lookup(facet='datasetKey')
 #' name_lookup(facet='rank', limit=0)
-#' name_lookup(facet='extinct', limit=0)
+#' name_lookup(facet='isExtinct', limit=0)
+#' 
+#' name_lookup(isExtinct=TRUE, limit=0)
+#'
+#' # text highlighting
+#' ## turn on highlighting
+#' res <- name_lookup(query='canada', hl=TRUE, limit=5)
+#' res$data
+#' name_lookup(query='canada', hl=TRUE, limit=45, return='data')
+#' ## and you can pass the output to gbif_names() function
+#' res <- name_lookup(query='canada', hl=TRUE, limit=5)
+#' gbif_names(res)
+#'
+#' # Lookup by datasetKey
+#' name_lookup(datasetKey='3f8a1297-3259-4700-91fc-acc4170b27ce')
+#' 
+#' # Pass on httr options
+#' library('httr')
+#' name_lookup(query='Cnaemidophorus', rank="genus", config=verbose())
 #' }
 
-name_lookup <- function(query=NULL, rank=NULL, highertaxon_key=NULL, status=NULL, extinct=NULL, 
-  habitat=NULL, name_type=NULL, dataset_key=NULL, nomenclatural_status=NULL,
-  limit=20, facet=NULL, facetMincount=NULL, facetMultiselect=NULL, type=NULL, callopts=list(), 
-  verbose=FALSE, return="all")
+name_lookup <- function(query=NULL, rank=NULL, higherTaxonKey=NULL, status=NULL, isExtinct=NULL,
+  habitat=NULL, nameType=NULL, datasetKey=NULL, nomenclaturalStatus=NULL,
+  limit=100, start=NULL, facet=NULL, facetMincount=NULL, facetMultiselect=NULL, type = NULL, hl=NULL,
+  verbose=FALSE, return="all", ...)
 {
   if(!is.null(facetMincount) && inherits(facetMincount, "numeric"))
     stop("Make sure facetMincount is character")
@@ -57,19 +81,16 @@ name_lookup <- function(query=NULL, rank=NULL, highertaxon_key=NULL, status=NULL
     facetbyname <- facet
     names(facetbyname) <- rep('facet', length(facet))
   } else { facetbyname <- NULL }
-  
-  url = 'http://api.gbif.org/v1/species/search'
-  args <- as.list(rgbif_compact(c(q=query, rank=rank, highertaxon_key=highertaxon_key, status=status, 
-            extinct=extinct, habitat=habitat, name_type=name_type, dataset_key=dataset_key, 
-            nomenclatural_status=nomenclatural_status, limit=limit, facetbyname, 
-            facetMincount=facetMincount, 
-            facetMultiselect=facetMultiselect, type=type)))
-  temp <- GET(url, query=args, callopts)
-  stop_for_status(temp)
-  assert_that(temp$headers$`content-type`=='application/json')
-  res <- content(temp, as = 'text', encoding = "UTF-8")
-  tt <- RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
-  
+
+  url <- paste0(gbif_base(), '/species/search')
+  args <- rgbif_compact(list(q=query, rank=rank, higherTaxonKey=higherTaxonKey, status=status,
+            isExtinct=isExtinct, habitat=habitat, nameType=nameType, datasetKey=datasetKey,
+            nomenclaturalStatus=nomenclaturalStatus, limit=limit, offset=start,
+            facetMincount=facetMincount,
+            facetMultiselect=facetMultiselect, hl=hl, type=type))
+  args <- c(args, facetbyname)
+  tt <- gbif_GET(url, args, FALSE, ...)
+
   # metadata
   meta <- tt[c('offset','limit','endOfRecords','count')]
 
@@ -79,7 +100,7 @@ name_lookup <- function(query=NULL, rank=NULL, highertaxon_key=NULL, status=NULL
     facetsdat <- lapply(facets, function(x) do.call(rbind, lapply(x$counts, data.frame, stringsAsFactors=FALSE)))
     names(facetsdat) <- tolower(sapply(facets, "[[", "field"))
   } else { facetsdat <- NULL  }
-  
+
   # actual data
   if(!verbose){
     data <- do.call(rbind.fill, lapply(tt$results, namelkupparser))
@@ -87,15 +108,15 @@ name_lookup <- function(query=NULL, rank=NULL, highertaxon_key=NULL, status=NULL
   {
     data <- tt$results
   }
-  
+
   # hierarchies
-  hierdat <- sapply(tt$results, function(x){
+  hierdat <- lapply(tt$results, function(x){
     tmp <- x[ names(x) %in% "higherClassificationMap" ]
     tmpdf <- data.frame(rankkey=names(tmp[[1]]), name=unlist(unname(tmp[[1]])), stringsAsFactors = FALSE)
     if(NROW(tmpdf) == 0) NULL else tmpdf
   })
   names(hierdat) <- vapply(tt$results, "[[", numeric(1), "key")
-  
+
   # vernacular names
   vernames <- lapply(tt$results, function(x){
     rbind.fill(lapply(x$vernacularNames, data.frame))
@@ -104,12 +125,12 @@ name_lookup <- function(query=NULL, rank=NULL, highertaxon_key=NULL, status=NULL
 
   # select output
   return <- match.arg(return, c('meta','data','facets','hierarchy','names','all'))
-  switch(return, 
+  switch(return,
          meta = data.frame(meta, stringsAsFactors=FALSE),
          data = data,
          facets = facetsdat,
          hierarchy = compact_null(hierdat),
          names = compact_null(vernames),
-         all = list(meta=data.frame(meta, stringsAsFactors=FALSE), data=data, facets=facetsdat, 
+         all = list(meta=data.frame(meta, stringsAsFactors=FALSE), data=data, facets=facetsdat,
                     hierarchies=compact_null(hierdat), names=compact_null(vernames)))
 }

@@ -1,10 +1,9 @@
 #' A quick and simple autocomplete service that returns up to 20 name usages by 
 #' doing prefix matching against the scientific name. Results are ordered by relevance.
 #' 
-#' @template all
 #' @template occ
-#' @import httr plyr
 #' @export
+#' @references \url{http://www.gbif.org/developer/species#searching}
 #' 
 #' @param q (character, required) Simple search parameter. The value for this parameter can be a 
 #'    simple word or a phrase. Wildcards can be added to the simple word parameters only, 
@@ -31,18 +30,17 @@
 #' name_suggest(q='Puma', limit=2)
 #' name_suggest(q='Puma', fields=c('key','canonicalName'))
 #' name_suggest(q='Puma', fields=c('key','canonicalName','higherClassificationMap'))
+#' 
+#' # Pass on httr options
+#' library('httr')
+#' res <- name_suggest(q='Puma', limit=200, config=progress())
 #' }
 
-name_suggest <- function(q=NULL, datasetKey=NULL, rank=NULL, fields=NULL, start=NULL, 
-                         limit=20, callopts=list())
+name_suggest <- function(q=NULL, datasetKey=NULL, rank=NULL, fields=NULL, start=NULL, limit=100, ...)
 {
-  url = 'http://api.gbif.org/v1/species/suggest'
+  url <- paste0(gbif_base(), '/species/suggest')
   args <- rgbif_compact(list(q=q, rank=rank, offset=start, limit=limit))
-  temp <- GET(url, query=args, callopts)
-  stop_for_status(temp)
-  assert_that(temp$headers$`content-type`=='application/json')
-  res <- content(temp, as = 'text', encoding = "UTF-8")
-  tt <- RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
+  tt <- gbif_GET(url, args, FALSE, ...)
   
   if(is.null(fields)){
     toget <- c("key","canonicalName","rank")

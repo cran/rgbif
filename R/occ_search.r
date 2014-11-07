@@ -1,13 +1,12 @@
 #' Search for GBIF occurrences.
 #'
-#' @import httr plyr assertthat
-#' @importFrom RJSONIO fromJSON
 #' @export
+#' @import httr plyr assertthat
+#' @importFrom XML getNodeSet xmlAttrs xmlSApply xmlValue htmlParse xpathApply xmlToList
+#' 
 #' @template occsearch
 #' @template occ
-#' @template all
 #' @param x Output from a call to occ_search
-#' @param ... Further print args not used.
 #' @param n Number of rows of the data to print.
 #' @examples \dontrun{
 #' # Search by species name, using \code{\link{name_backbone}} first to get key
@@ -30,19 +29,19 @@
 #' occ_search(taxonKey = key)
 #'
 #' # Search by dataset key
-#' occ_search(datasetKey='7b5d6a48-f762-11e1-a439-00145eb45e9a', return='data')
+#' occ_search(datasetKey='7b5d6a48-f762-11e1-a439-00145eb45e9a', return='data', limit=20)
 #'
 #' # Search by catalog number
-#' occ_search(catalogNumber="49366")
-#' occ_search(catalogNumber=c("49366","Bird.27847588"))
+#' occ_search(catalogNumber="49366", limit=20)
+#' occ_search(catalogNumber=c("49366","Bird.27847588"), limit=20)
 #'
 #' # Get all data, not just lat/long and name
-#' occ_search(taxonKey=key, fields='all')
+#' occ_search(taxonKey=key, fields='all', limit=20)
 #'
 #' # Or get specific fields. Note that this isn't done on GBIF's side of things. This
 #' # is done in R, but before you get the return object, so other fields are garbage
 #' # collected
-#' occ_search(taxonKey=key, fields=c('name','basisOfRecord','protocol'))
+#' occ_search(taxonKey=key, fields=c('name','basisOfRecord','protocol'), limit=20)
 #'
 #' # Use paging parameters (limit and start) to page. Note the different results
 #' # for the two queries below.
@@ -53,85 +52,92 @@
 #'
 #' # Many dataset keys
 #' occ_search(datasetKey=c("50c9509d-22c7-4a22-a47d-8c48425ef4a7",
-#'    "7b5d6a48-f762-11e1-a439-00145eb45e9a"))
+#'    "7b5d6a48-f762-11e1-a439-00145eb45e9a"), limit=20)
 #'
 #' # Occurrence data: lat/long data, and associated metadata with occurrences
 #' ## If return='data' the output is a data.frame of all data together
 #' ## for easy manipulation
-#' occ_search(taxonKey=key, return='data')
+#' occ_search(taxonKey=key, return='data', limit=20)
 #'
 #' # Taxonomic hierarchy data
 #' ## If return='meta' the output is a list of the hierarch for each record
-#' occ_search(taxonKey=key, return='hier')
+#' occ_search(taxonKey=key, return='hier', limit=10)
 #'
 #' # Search by collector name
-#' occ_search(collectorName="smith")
+#' occ_search(collectorName="smith", limit=20)
 #'
 #' # Many collector names
-#' occ_search(collectorName=c("smith","BJ Stacey"))
+#' occ_search(collectorName=c("smith","BJ Stacey"), limit=20)
 #'
 #' # Pass in curl options for extra fun
-#' library(httr)
-#' occ_search(taxonKey=key, limit=20, return='hier', callopts=verbose())
+#' library('httr')
+#' occ_search(taxonKey=key, limit=20, return='hier', config=verbose())
+#' occ_search(taxonKey=key, limit=20, return='hier', config=progress())
+#' occ_search(taxonKey=key, limit=20, return='hier', config=timeout(1))
 #'
 #' # Search for many species
 #' splist <- c('Cyanocitta stelleri', 'Junco hyemalis', 'Aix sponsa')
 #' keys <- sapply(splist, function(x) name_suggest(x)$key[1], USE.NAMES=FALSE)
 #' occ_search(taxonKey=keys, limit=5, return='data')
+#' 
+#' # Search using a synonym name
+#' #  Note that you'll see a message printing out that the accepted name will be used
+#' occ_search(scientificName = 'Pulsatilla patens', fields = c('name','scientificName'), limit=5)
 #'
 #' # Search on latitidue and longitude
 #' occ_search(search="kingfisher", decimalLatitude=50, decimalLongitude=-10)
 #'
 #' # Search on a bounding box
 #' ## in well known text format
-#' occ_search(geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))')
+#' occ_search(geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))', limit=20)
 #' key <- name_suggest(q='Aesculus hippocastanum')$key[1]
-#' occ_search(taxonKey=key, geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))')
+#' occ_search(taxonKey=key, geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))', 
+#'    limit=20)
 #' ## or using bounding box, converted to WKT internally
-#' occ_search(geometry=c(-125.0,38.4,-121.8,40.9))
+#' occ_search(geometry=c(-125.0,38.4,-121.8,40.9), limit=20)
 #' ## Visualize a WKT area
 #' library('rgeos')
 #' plot(readWKT('POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))'))
 #'
 #' # Search on country
-#' occ_search(country='US', fields=c('name','country'))
+#' occ_search(country='US', fields=c('name','country'), limit=20)
 #' isocodes[grep("France", isocodes$name),"code"]
-#' occ_search(country='FR', fields=c('name','country'))
-#' occ_search(country='DE', fields=c('name','country'))
-#' occ_search(country=c('US','DE'), fields=c('name','country'))
+#' occ_search(country='FR', fields=c('name','country'), limit=20)
+#' occ_search(country='DE', fields=c('name','country'), limit=20)
+#' occ_search(country=c('US','DE'), fields=c('name','country'), limit=20)
 #'
 #' # Get only occurrences with lat/long data
-#' occ_search(taxonKey=key, hasCoordinate=TRUE)
+#' occ_search(taxonKey=key, hasCoordinate=TRUE, limit=20)
 #'
 #' # Get only occurrences that were recorded as living specimens
-#' occ_search(taxonKey=key, basisOfRecord="LIVING_SPECIMEN", hasCoordinate=TRUE)
+#' occ_search(taxonKey=key, basisOfRecord="LIVING_SPECIMEN", hasCoordinate=TRUE, limit=20)
 #'
 #' # Get occurrences for a particular eventDate
-#' occ_search(taxonKey=key, eventDate="2013")
-#' occ_search(taxonKey=key, year="2013")
-#' occ_search(taxonKey=key, month="6")
+#' occ_search(taxonKey=key, eventDate="2013", limit=20)
+#' occ_search(taxonKey=key, year="2013", limit=20)
+#' occ_search(taxonKey=key, month="6", limit=20)
 #'
 #' # Get occurrences based on depth
 #' key <- name_backbone(name='Salmo salar', kingdom='animals')$speciesKey
-#' occ_search(taxonKey=key, depth="5")
+#' occ_search(taxonKey=key, depth="5", limit=20)
 #'
 #' # Get occurrences based on elevation
 #' key <- name_backbone(name='Puma concolor', kingdom='animals')$speciesKey
-#' occ_search(taxonKey=key, elevation=50, hasCoordinate=TRUE)
+#' occ_search(taxonKey=key, elevation=50, hasCoordinate=TRUE, limit=20)
 #'
 #' # Get occurrences based on institutionCode
-#' occ_search(institutionCode="TLMF")
-#' occ_search(institutionCode=c("TLMF","ArtDatabanken"))
+#' occ_search(institutionCode="TLMF", limit=20)
+#' occ_search(institutionCode=c("TLMF","ArtDatabanken"), limit=20)
 #'
 #' # Get occurrences based on collectionCode
-#' occ_search(collectionCode="Floristic Databases MV - Higher Plants")
+#' occ_search(collectionCode="Floristic Databases MV - Higher Plants", limit=20)
 #' occ_search(collectionCode=c("Floristic Databases MV - Higher Plants","Artport"))
 #'
 #' # Get only those occurrences with spatial issues
-#' occ_search(taxonKey=key, spatialIssues=TRUE)
+#' occ_search(taxonKey=key, spatialIssues=TRUE, limit=20)
 #'
 #' # Search using a query string
-#' occ_search(search="kingfisher")
+#' occ_search(search="kingfisher", limit=20)
 #'
 #' # Range queries
 #' ## See Detail for parameters that support range queries
@@ -139,7 +145,7 @@
 #' occ_search(depth=c(50,100)) # this is not a range search, but does two searches for each depth
 #'
 #' ## Range search with year
-#' occ_search(year='1999,2000')
+#' occ_search(year='1999,2000', limit=20)
 #'
 #' ## Range search with latitude
 #' occ_search(decimalLatitude='29.59,29.6')
@@ -171,17 +177,36 @@
 #' occ_search(mediatype = 'Sound', return='media')
 #' 
 #' # Query based on issues - see Details for options
+#' ## one issue
 #' occ_search(taxonKey=1, issue='DEPTH_UNLIKELY', fields = 
 #'    c('name','key','decimalLatitude','decimalLongitude','depth'))
-#' }
-#' 
-#' \donttest{
-#' #### FIXME: ISSUES NEED TO BE PASSED IN AS MULTIPLE ISSUE PARAMETERS, FIX THIS
+#' ## two issues
+#' occ_search(taxonKey=1, issue=c('DEPTH_UNLIKELY','COORDINATE_ROUNDED'))
 #' # Show all records in the Arizona State Lichen Collection that cant be matched to the GBIF 
 #' # backbone properly:
 #' occ_search(datasetKey='84c0e1a0-f762-11e1-a439-00145eb45e9a', 
 #'    issue=c('TAXON_MATCH_NONE','TAXON_MATCH_HIGHERRANK'))
 #'    
+#' # Parsing output by issue
+#' (res <- occ_search(geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))', limit = 50))
+#' ## what do issues mean, can print whole table, or search for matches
+#' head(gbif_issues())
+#' gbif_issues()[ gbif_issues()$code %in% c('cdround','cudc','gass84','txmathi'), ]
+#' ## or parse issues in various ways
+#' ### remove data rows with certain issue classes
+#' library('magrittr')
+#' res %>% occ_issues(-gass84, -mdatunl)
+#' ### split issues into separate columns
+#' res %>% occ_issues(mutate = "split")
+#' ### expand issues to more descriptive names
+#' res %>% occ_issues(mutate = "expand")
+#' ### split and expand
+#' res %>% occ_issues(mutate = "split_expand")
+#' ### split, expand, and remove an issue class
+#' res %>% occ_issues(-gass84, mutate = "split_expand")
+#' }
+#' 
+#' \donttest{
 #' # If you try multiple values for two different parameters you are wacked on the hand
 #' occ_search(taxonKey=c(2482598,2492010), collectorName=c("smith","BJ Stacey"))
 #'
@@ -230,8 +255,8 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
   geometry=NULL, collectorName=NULL, basisOfRecord=NULL, datasetKey=NULL, eventDate=NULL,
   catalogNumber=NULL, year=NULL, month=NULL, decimalLatitude=NULL, decimalLongitude=NULL,
   elevation=NULL, depth=NULL, institutionCode=NULL, collectionCode=NULL,
-  spatialIssues=NULL, issue=NULL, search=NULL, mediatype=NULL, callopts=list(), limit=20, start=NULL,
-  fields = 'minimal', return='all')
+  spatialIssues=NULL, issue=NULL, search=NULL, mediatype=NULL, limit=500, start=0,
+  fields = 'all', return='all', ...)
 {
   calls <- names(sapply(match.call(), deparse))[-1]
   calls_vec <- c("georeferenced","altitude","latitude","longitude") %in% calls
@@ -240,7 +265,7 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
 
   geometry <- geometry_handler(geometry)
 
-  url = 'http://api.gbif.org/v1/occurrence/search'
+  url <- paste0(gbif_base(), '/occurrence/search')
   getdata <- function(x=NULL, itervar=NULL)
   {
     if(!is.null(x))
@@ -248,7 +273,17 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
 
     # check that wkt is proper format and of 1 of 4 allowed types
     geometry <- check_wkt(geometry)
-
+    
+    # Check synonym if scientificName was given
+    if (!is.null(scientificName)) {
+      sciname_old <- scientificName
+      namecheck <- name_backbone(scientificName)
+      if (namecheck$synonym){
+        scientificName <- namecheck[[tolower(namecheck$rank)]]
+        message(sprintf("%s is a synonym of %s \n the latter used & will include synonym records", sciname_old, scientificName))
+      }
+    }
+    
     # Make arg list
     args <- rgbif_compact(list(taxonKey=taxonKey, scientificName=scientificName, country=country,
       publishingCountry=publishingCountry, hasCoordinate=hasCoordinate, typeStatus=typeStatus, recordNumber=recordNumber,
@@ -256,8 +291,9 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
       basisOfRecord=basisOfRecord, datasetKey=datasetKey, eventDate=eventDate, catalogNumber=catalogNumber,
       year=year, month=month, decimalLatitude=decimalLatitude, decimalLongitude=decimalLongitude,
       elevation=elevation, depth=depth, institutionCode=institutionCode,
-      collectionCode=collectionCode, spatialIssues=spatialIssues, issue=issue, q=search, mediaType=mediatype,
-      limit=as.integer(limit), offset=start))
+      collectionCode=collectionCode, spatialIssues=spatialIssues, q=search, mediaType=mediatype,
+      limit=check_limit(as.integer(limit)), offset=check_limit(as.integer(start))))
+    args <- c(args, parse_issues(issue))
     argscoll <<- args 
 
     iter <- 0
@@ -265,14 +301,10 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
     outout <- list()
     while(sumreturned < limit){
       iter <- iter + 1
-      temp <- GET(url, query=args, callopts)
-#       stop_for_status(temp)
-      if(temp$status_code > 200){
-        stop(content(temp, as = "text"))
-      }
-      assert_that(temp$headers$`content-type`=='application/json')
-      res <- content(temp, as = 'text', encoding = "UTF-8")
-      tt <- RJSONIO::fromJSON(res)
+      tt <- gbif_GET(url, args, FALSE, ...)
+      
+      # if no results, assign count var with 0
+      if(identical(tt$results, list())) tt$count <- 0
 
       numreturned <- length(tt$results)
       sumreturned <- sumreturned + numreturned
@@ -558,12 +590,13 @@ obj_type <- function (x)
   }
 }
 
-# pastemax <- function (z, n = 10){
-#     rrows <- vapply(z, nrow, integer(1))
-#     tt <- list()
-#     for (i in seq_along(rrows)) {
-#       tt[[i]] <- sprintf("%s (%s)", gsub("_", " ", names(rrows[i])), 
-#                          rrows[[i]])
-#     }
-#     paste0(tt, collapse = ", ")
-# }
+parse_issues <- function(x){
+  sapply(x, function(y) list(issue = y), USE.NAMES = FALSE)
+}
+
+check_limit <- function(x){
+  if(x > 1000000L) 
+    stop("start parameter max is 1 million, use the GBIF web interface for more than 1 million records")
+  else
+    x
+}

@@ -1,9 +1,8 @@
 #' Get data for specific GBIF occurrences.
 #' 
-#' @template all
+#' @export
 #' @import httr assertthat
-#' @import plyr
-#' @importFrom RJSONIO fromJSON
+#' 
 #' @param key Occurrence key
 #' @param return One of data, hier, meta, or all. If 'data', a data.frame with the 
 #'    data. 'hier' returns the classifications in a list for each record. meta 
@@ -13,9 +12,13 @@
 #' @param fields (character) Default ('minimal') will return just taxon name, key, latitude, and 
 #'    longitute. 'all' returns all fields. Or specify each field you want returned by name, e.g.
 #'    fields = c('name','decimalLatitude','altitude').
-#' @param callopts Further arguments passed on to the \code{\link{GET}} request.
+#' @param ... Further named parameters, such as \code{query}, \code{path}, etc, passed on to 
+#' \code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will be 
+#' combined with \code{\link[httr]{config}}.
+#' 
 #' @return A data.frame or list of data.frame's.
-#' @export
+#' @references \url{http://www.gbif.org/developer/occurrence#occurrence}
+#' 
 #' @examples \dontrun{
 #' occ_get(key=766766824, return='data')
 #' occ_get(key=766766824, 'hier')
@@ -35,27 +38,24 @@
 #'    
 #' # Pass in curl options
 #' library("httr")
-#' occ_get(key=766766824, callopts=verbose())
-#' occ_get(key=766766824, callopts=timeout(1))
+#' occ_get(key=766766824, config=verbose())
+#' occ_get(key=766766824, config=timeout(1))
+#' occ_get(key=766766824, config=progress())
 #' }
 
-occ_get <- function(key=NULL, return='all', verbatim=FALSE, fields='minimal', callopts=list())
+occ_get <- function(key=NULL, return='all', verbatim=FALSE, fields='minimal', ...)
 {
   assert_that(is.numeric(key))
   
   # Define function to get data
   getdata <- function(x){
     if(verbatim){
-      url <- sprintf('http://api.gbif.org/v1/occurrence/%s/verbatim', x)
+      url <- sprintf('%s/occurrence/%s/verbatim', gbif_base(), x)
     } else
     {
-      url <- sprintf('http://api.gbif.org/v1/occurrence/%s', x)
+      url <- sprintf('%s/occurrence/%s', gbif_base(), x)
     }
-    temp <- GET(url, callopts)
-    stop_for_status(temp)
-    assert_that(temp$headers$`content-type`=='application/json')
-    res <- content(temp, as = 'text', encoding = "UTF-8")
-    RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
+    gbif_GET(url, list(), FALSE, ...)
   }
   
   # Get data

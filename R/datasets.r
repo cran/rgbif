@@ -1,9 +1,6 @@
 #' Search for datasets and dataset metadata.
 #' 
-#' @template all
 #' @template occ
-#' @import httr
-#' @import plyr
 #' @export
 #' 
 #' @param data The type of data to get. Default is all data.
@@ -14,9 +11,10 @@
 #' @param id A metadata document id.
 #' 
 #' @return A list.
+#' @references \url{http://www.gbif.org/developer/registry#datasets} 
 #' 
 #' @examples \dontrun{
-#' datasets()
+#' datasets(limit=5)
 #' datasets(type="OCCURRENCE")
 #' datasets(uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
 #' datasets(data='contact', uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
@@ -24,10 +22,14 @@
 #' datasets(data='metadata', uuid="a6998220-7e3a-485d-9cd6-73076bd85657", id=598)
 #' datasets(data=c('deleted','duplicate'))
 #' datasets(data=c('deleted','duplicate'), limit=1)
+#' 
+#' # httr options
+#' library('httr')
+#' res <- datasets(data=c('deleted','duplicate'), config=progress())
 #' }
 
 datasets <- function(data = 'all', type = NULL, uuid = NULL, query = NULL, id = NULL, 
-                     limit = 20, start=NULL, callopts=list())
+                     limit = 100, start=NULL, ...)
 {
   args <- rgbif_compact(list(q = query, limit=as.integer(limit), offset=start))
   
@@ -43,37 +45,27 @@ datasets <- function(data = 'all', type = NULL, uuid = NULL, query = NULL, id = 
       stop('You must specify a uuid if data does not equal all and 
        data does not equal of deleted, duplicate, subDataset, or withNoEndpoint')
     
-    if(is.null(uuid)){
-      if(x=='all'){
-        url <- 'http://api.gbif.org/v1/dataset'
-      } else
-      {
+    url <- if(is.null(uuid)){
+      if(x=='all'){ paste0(gbif_base(), '/dataset') } else {
         if(!is.null(id) && x=='metadata'){
-          url <- sprintf('http://api.gbif.org/v1/dataset/metadata/%s/document', id)
+          sprintf('%s/dataset/metadata/%s/document', gbif_base(), id)
         } else
         {
-          url <- sprintf('http://api.gbif.org/v1/dataset/%s', x)          
+          sprintf('%s/dataset/%s', gbif_base(), x)
         }
       }
-    } else
-    {
+    } else {
       if(x=='all'){
-        url <- sprintf('http://api.gbif.org/v1/dataset/%s', uuid)
+        sprintf('%s/dataset/%s', gbif_base(), uuid)
       } else
       {
-        url <- sprintf('http://api.gbif.org/v1/dataset/%s/%s', uuid, x)        
+        sprintf('%s/dataset/%s/%s', gbif_base(), uuid, x)
       }
     }
-    tt <- GET(url, query=args, callopts)
-    stop_for_status(tt)
-    assert_that(tt$headers$`content-type`=='application/json')
-    res <- content(tt, as = 'text', encoding = "UTF-8")
-    RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
+    res <- gbif_GET(url, args, TRUE, ...)
+    structure(list(meta=get_meta(res), data=parse_results(res, uuid)))
   }
   
   # Get data
-  if(length(data)==1){ out <- getdata(data) } else
-  { out <- lapply(data, getdata) }
-  
-  out
+  if(length(data)==1) getdata(data) else lapply(data, getdata)
 }

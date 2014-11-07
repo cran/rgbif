@@ -8,7 +8,7 @@ test_that("returns the correct class", {
   expect_is(tt$meta, "data.frame")
   expect_is(tt$meta$endOfRecords, "logical")
   expect_is(tt$data$canonicalName, "character")
-  expect_is(tt$data$classKey, "numeric")
+  expect_is(tt$data$classKey, "integer")
   
   expect_is(uu, "data.frame")
 })
@@ -18,7 +18,7 @@ test_that("returns the correct value", {
 })
 
 test_that("returns the correct dimensions", {
-  expect_equal(nrow(tt$data), 20)
+  expect_equal(nrow(tt$data), 100)
   
   expect_equal(dim(uu), c(20,20))
 })

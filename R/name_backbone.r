@@ -1,8 +1,6 @@
 #' Lookup names in the GBIF backbone taxonomy.
 #' 
-#' @template all
 #' @template occ
-#' @import httr plyr
 #' @export
 #' 
 #' @param name (character) Full scientific name potentially with authorship (required)
@@ -29,6 +27,8 @@
 #' @details If you don't get a match GBIF gives back a list of length 3 with slots synonym, 
 #' confidence, and matchType='NONE'.
 #' 
+#' @references \url{http://www.gbif.org/developer/species#searching}
+#' 
 #' @examples \dontrun{
 #' name_backbone(name='Helianthus annuus', kingdom='plants')
 #' name_backbone(name='Helianthus', rank='genus', kingdom='plants')
@@ -43,6 +43,11 @@
 #' 
 #' # Non-existent name - returns list of lenght 3 stating no match
 #' name_backbone(name='Aso')
+#' name_backbone(name='Oenante')
+#' 
+#' # Pass on httr options
+#' library('httr')
+#' name_backbone(name='Oenante', config=timeout(1))
 #' }
 #' 
 #' @examples \donttest{
@@ -52,24 +57,19 @@
 
 name_backbone <- function(name, rank=NULL, kingdom=NULL, phylum=NULL, class=NULL, 
   order=NULL, family=NULL, genus=NULL, strict=FALSE, verbose=FALSE, 
-  start=NULL, limit=20, callopts=list())
+  start=NULL, limit=100, ...)
 {
-  url = 'http://api.gbif.org/v1/species/match'
+  url <- paste0(gbif_base(), '/species/match')
   args <- rgbif_compact(list(name=name, rank=rank, kingdom=kingdom, phylum=phylum, 
                        class=class, order=order, family=family, genus=genus, 
                        strict=strict, verbose=verbose, offset=start, limit=limit))
-  temp <- GET(url, query=args, callopts)
-  stop_for_status(temp)
-  assert_that(temp$headers$`content-type`=='application/json')
-  res <- content(temp, as = 'text', encoding = "UTF-8")
-  tt <- RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
-  
+  tt <- gbif_GET(url, args, FALSE, ...)
   if(verbose){ 
     alt <- do.call(rbind.fill, lapply(tt$alternatives, namelkupparser))
     dat <- data.frame(tt[!names(tt) %in% c("alternatives","note")], stringsAsFactors=FALSE)
-    list(data=dat, alternatives=alt)
+    structure(list(data=dat, alternatives=alt), note=tt$note)
   } else
   {
-    tt[!names(tt) %in% c("alternatives","note")]
+    structure(tt[!names(tt) %in% c("alternatives","note")], note=tt$note)
   }
 }

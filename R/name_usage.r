@@ -1,11 +1,10 @@
 #' Lookup details for specific names in all taxonomies in GBIF.
 #'
-#' @template all
 #' @template occ
 #' @template nameusage
-#' @import httr plyr
 #' @return A list of length two. The first element is metadata. The second is 
 #' either a data.frame (verbose=FALSE, default) or a list (verbose=TRUE)
+#' @references \url{http://www.gbif.org/developer/species#nameUsages}
 #' @description
 #' This service uses fuzzy lookup so that you can put in partial names and 
 #' you should get back those things that match. See examples below.
@@ -13,11 +12,11 @@
 #' This function is different from \code{name_lookup} in that that function 
 #' searches for names, while this function requires that you already have a key.
 #' 
-#' Note that verbatim hasn't been working for me.
+#' Note that verbatim hasn't been working
 #' 
 #' Options for the data parameter are: 'all', 'verbatim', 'name', 'parents', 'children', 
-#' 'descendants', 'related', 'synonyms', 'descriptions','distributions', 'images', 
-#' 'references', 'species_profiles', 'vernacular_names', 'type_specimens'
+#' 'related', 'synonyms', 'descriptions','distributions', 'images', 
+#' 'references', 'speciesProfiles', 'vernacularNames', 'typeSpecimens', 'root'
 #' @export
 #' @examples \dontrun{
 #' # All name usages
@@ -28,6 +27,7 @@
 #' 
 #' # Name usage for a taxonomic name
 #' name_usage(name='Puma concolor')
+#' name_usage(name='Puma', rank="GENUS")
 #' 
 #' # References for a name usage
 #' name_usage(key=3119195, data='references')
@@ -49,6 +49,10 @@
 #' 
 #' # Search for a particular language
 #' name_usage(key=3119195, language="FRENCH", data='vernacularNames')
+#' 
+#' # Pass on httr options
+#' library('httr')
+#' res <- name_usage(name='Puma concolor', limit=300, config=progress())
 #' }
 #' 
 #' @examples \donttest{
@@ -58,7 +62,7 @@
 #' }
 
 name_usage <- function(key=NULL, name=NULL, data='all', language=NULL, datasetKey=NULL, uuid=NULL,
-  sourceId=NULL, rank=NULL, shortname=NULL, start=NULL, limit=20, callopts=list())
+  sourceId=NULL, rank=NULL, shortname=NULL, start=NULL, limit=100, ...)
 {
   calls <- names(sapply(match.call(), deparse))[-1]
   calls_vec <- c("sourceId") %in% calls
@@ -80,27 +84,24 @@ name_usage <- function(key=NULL, name=NULL, data='all', language=NULL, datasetKe
       stop('You must specify a key if data does not equal "all"')
     
     if(x == 'all' && is.null(key)){
-      url <- 'http://api.gbif.org/v1/species'
+      url <- paste0(gbif_base(), '/species')
     } else
     {
       if(x=='all' && !is.null(key)){
-        url <- sprintf('http://api.gbif.org/v1/species/%s', key)
+        url <- sprintf('%s/species/%s', gbif_base(), key)
       } else
       if(x %in% c('verbatim', 'name', 'parents', 'children', 
          'related', 'synonyms', 'descriptions',
          'distributions', 'images', 'references', 'speciesProfiles',
          'vernacularNames', 'typeSpecimens')){
-        url <- sprintf('http://api.gbif.org/v1/species/%s/%s', key, x)
+        url <- sprintf('%s/species/%s/%s', gbif_base(), key, x)
       } else
       if(x == 'root'){
-        url <- sprintf('http://api.gbif.org/v1/species/root/%s/%s', uuid, shortname)
+        url <- sprintf('%s/species/root/%s/%s', gbif_base(), uuid, shortname)
       }
     }
-    tt <- GET(url, query=args, callopts)
-    stop_for_status(tt)
-    assert_that(tt$headers$`content-type`=='application/json')
-    res <- content(tt, as = 'text', encoding = "UTF-8")
-    RJSONIO::fromJSON(res, simplifyWithNames = FALSE)
+    
+    gbif_GET(url, args, FALSE, ...)
   }
   
   # Get data

@@ -1,8 +1,7 @@
 #' Get number of occurrence records.
 #' 
-#' @template all
-#' @import httr plyr
 #' @export
+#' 
 #' @param nubKey Species key. PARAMETER NAME CHANGED TO taxonKey.
 #' @param taxonKey Species key
 #' @param georeferenced Return only occurence records with lat/long data (TRUE) or
@@ -20,9 +19,12 @@
 #' @param from Year to start at
 #' @param to Year to end at
 #' @param type One of count (default), schema, basis_of_record, countries, or year.
-#' @param callopts Pass on options to httr::GET for more refined control of 
-#'    http calls, and error handling
+#' @param ... Further named parameters, such as \code{query}, \code{path}, etc, passed on to 
+#' \code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will be 
+#' combined with \code{\link[httr]{config}}.
+#' 
 #' @return A single numeric value, or a list of numerics.
+#' @references \url{http://www.gbif.org/developer/occurrence#metrics}
 #' @examples \dontrun{
 #' occ_count(basisOfRecord='OBSERVATION')
 #' occ_count(georeferenced=TRUE)
@@ -49,12 +51,17 @@
 #' # Counts by publishingCountry, must supply a country (default to US)
 #' occ_count(type='publishingCountry')
 #' occ_count(type='publishingCountry', country='BZ')
+#' 
+#' # Pass on options to httr
+#' library('httr')
+#' res <- occ_count(type='year', from=2000, to=2012, config=progress())
+#' res
 #' }
 
 occ_count <- function(taxonKey=NULL, georeferenced=NULL, basisOfRecord=NULL, 
   datasetKey=NULL, date=NULL, catalogNumber=NULL, country=NULL, hostCountry=NULL, 
-  year=NULL, from=2000, to=2012, type='count', publishingCountry='US', callopts=list(), 
-  nubKey=NULL, protocol=NULL)
+  year=NULL, from=2000, to=2012, type='count', publishingCountry='US',
+  nubKey=NULL, protocol=NULL, ...)
 {
   calls <- names(sapply(match.call(), deparse))[-1]
   calls_vec <- c("nubKey","hostCountry","catalogNumber") %in% calls
@@ -67,12 +74,12 @@ occ_count <- function(taxonKey=NULL, georeferenced=NULL, basisOfRecord=NULL,
                        hostCountry=hostCountry, year=year, protocol=protocol))
   type <- match.arg(type, choices=c("count","schema","basisOfRecord","countries","year","publishingCountry"))
   url <- switch(type, 
-                count = 'http://api.gbif.org/v1/occurrence/count',
-                schema = 'http://api.gbif.org/v1/occurrence/count/schema',
-                basisOfRecord = 'http://api.gbif.org/v1/occurrence/counts/basisOfRecord',
-                countries = 'http://api.gbif.org/v1/occurrence/counts/countries',
-                year = 'http://api.gbif.org/v1/occurrence/counts/year',
-                publishingCountry = 'http://api.gbif.org/v1/occurrence/counts/publishingCountries')
+                count = paste0(gbif_base(), '/occurrence/count'),
+                schema = paste0(gbif_base(), '/occurrence/count/schema'),
+                basisOfRecord = paste0(gbif_base(), '/occurrence/counts/basisOfRecord'),
+                countries = paste0(gbif_base(), '/occurrence/counts/countries'),
+                year = paste0(gbif_base(), '/occurrence/counts/year'),
+                publishingCountry = paste0(gbif_base(), '/occurrence/counts/publishingCountries'))
   args <- switch(type,
                 count = args,
                 schema = list(),
@@ -80,9 +87,6 @@ occ_count <- function(taxonKey=NULL, georeferenced=NULL, basisOfRecord=NULL,
                 countries = rgbif_compact(list(publishingCountry=publishingCountry)),
                 year = rgbif_compact(list(from=from, to=to)),
                 publishingCountry = rgbif_compact(list(country=ifelse(is.null(country), "US", country) )))
-  tt <- GET(url, query=args, callopts)
-  warn_for_status(tt)
-  assert_that(tt$headers$`content-type`=='application/json')
-  res <- content(tt, as = 'text', encoding = "UTF-8")
-  if(type=='count'){ as.numeric(res) } else{ RJSONIO::fromJSON(res, simplifyWithNames = FALSE) }
+  res <- gbif_GET_content(url, args, ...)
+  if(type=='count'){ as.numeric(res) } else{ jsonlite::fromJSON(res, FALSE) }
 }
