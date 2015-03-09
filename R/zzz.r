@@ -252,14 +252,34 @@ taxrank <- function()
 #' @export
 #' @keywords internal
 namelkupparser <- function(x){
-  data.frame(
-    rgbif_compact(
-      x[c('key','nubKey','parentKey','parent','kingdom','phylum',"clazz","order","family",
-          "genus","kingdomKey","phylumKey","classKey","orderKey","familyKey","genusKey",
-          "canonicalName","authorship","nameType","rank","numOccurrences")]
-    ), stringsAsFactors=FALSE)
+  tmp <- x[ ! names(x) %in% c("descriptions","vernacularNames","higherClassificationMap") ]
+  tmp <- lapply(tmp, function(x) if(length(x) == 0) NA else x)
+  df <- data.frame(tmp, stringsAsFactors=FALSE)
+  movecols(df, c('key','scientificName'))
+    # rgbif_compact(
+#       x[c('key','nubKey','parentKey','parent','kingdom','phylum',"clazz","order","family",
+#           "genus","kingdomKey","phylumKey","classKey","orderKey","familyKey","genusKey",
+#           "canonicalName","authorship","nameType","rank","numOccurrences")]
+    # ), stringsAsFactors=FALSE)
 }
 
+
+nameusageparser <- function(z){
+  tomove <- c('key','scientificName')
+  tmp <- lapply(z, function(y) if(length(y) == 0) NA else y)
+  df <- data.frame(tmp, stringsAsFactors=FALSE)
+  if( all(tomove %in% names(df)) ) movecols(df, tomove) else df
+}
+
+movecols <- function(x, cols){
+  other <- names(x)[ ! names(x) %in% cols ]
+  x[ , c(cols, other) ]
+}
+
+backbone_parser <- function(x){
+  tmp <- lapply(x, function(x) if(length(x) == 0) NA else x)
+  data.frame(tmp, stringsAsFactors=FALSE)
+}
 
 #' Parse results from call to occurrencelist endpoint
 #'
@@ -374,9 +394,7 @@ gbifxmlToDataFrame <- function(doc, format) {
 #' ## Or pass in each value separately
 #' mm <- gbif_bbox2wkt(minx=38.4, miny=-125.0, maxx=40.9, maxy=-121.8)
 #' plot(readWKT(mm))
-#'
-#' ========================================
-#'
+#' 
 #' # Convert a WKT object to a bounding box
 #' wkt <- "POLYGON((38.4 -125,40.9 -125,40.9 -121.8,38.4 -121.8,38.4 -125))"
 #' gbif_wkt2bbox(wkt)
@@ -385,9 +403,9 @@ gbifxmlToDataFrame <- function(doc, format) {
 gbif_bbox2wkt <- function(minx=NA, miny=NA, maxx=NA, maxy=NA, bbox=NULL){
   if(is.null(bbox)) bbox <- c(minx, miny, maxx, maxy)
 
-  assert_that(length(bbox)==4) #check for 4 digits
-  assert_that(noNA(bbox)) #check for NAs
-  assert_that(is.numeric(as.numeric(bbox))) #check for numeric-ness
+  stopifnot(length(bbox)==4) #check for 4 digits
+  stopifnot(noNA(bbox)) #check for NAs
+  stopifnot(is.numeric(as.numeric(bbox))) #check for numeric-ness
   paste('POLYGON((',
         sprintf('%s %s',bbox[1],bbox[2]), ',', sprintf(' %s %s',bbox[3],bbox[2]), ',',
         sprintf(' %s %s',bbox[3],bbox[4]), ',', sprintf(' %s %s',bbox[1],bbox[4]), ',',
@@ -400,7 +418,7 @@ gbif_bbox2wkt <- function(minx=NA, miny=NA, maxx=NA, maxy=NA, bbox=NULL){
 #' @rdname gbif_bbox2wkt
 
 gbif_wkt2bbox <- function(wkt=NULL){
-  assert_that(!is.null(wkt))
+  stopifnot(!is.null(wkt))
   tmp <- bbox(readWKT(wkt))
   as.vector(tmp)
 }
@@ -431,41 +449,48 @@ NULL
 gbif_GET <- function(url, args, parse=FALSE, ...){
   temp <- GET(url, query=args, ...)
   if(temp$status_code == 204) stop("Status: 204 - not found", call. = FALSE)
-  if(temp$status_code > 200) stop(error_parse(content(temp, as = "text")), call. = FALSE)
-  assert_that(temp$headers$`content-type`=='application/json')
+  if(temp$status_code > 200){
+    mssg <- content(temp)
+    if(length(mssg) == 0) mssg <- http_status(temp)$message
+    stop(mssg, call. = FALSE)
+  }
+  stopifnot(temp$headers$`content-type`=='application/json')
   res <- content(temp, as = 'text', encoding = "UTF-8")
   jsonlite::fromJSON(res, parse)
 }
 
 gbif_GET_content <- function(url, args, ...){
-  temp <- GET(url, query=args, ...)
+  temp <- GET(url, query=cn(args), ...)
   if(temp$status_code > 200) warning(content(temp, as = "text"))
-  assert_that(temp$headers$`content-type`=='application/json')
+  stopifnot(temp$headers$`content-type`=='application/json')
   content(temp, as = 'text', encoding = "UTF-8")
 }
 
+cn <- function(x) if(length(x) == 0) NULL else x
+
 gbif_base <- function() 'http://api.gbif.org/v1'
 
-error_parse <- function(x){
-  if(grepl("html", x)){
-    parsed <- XML::htmlParse(x)
-    aslist <- XML::xpathApply(parsed, "//p", XML::xmlToList)
-    aslist[sapply(aslist, "[[", "b") == "message"][[1]]$u
-  } else {
-    x
-  }
-}
+# error_parse <- function(x){
+#   http_status(x)$message
+# #   if(grepl("html", x)){
+# #     parsed <- XML::htmlParse(x)
+# #     # aslist <- XML::xpathApply(parsed, "//p", XML::xmlToList)
+# #     # aslist[sapply(aslist, "[[", "b") == "message"][[1]]$u
+# #   } else {
+# #     x
+# #   }
+# }
 
 #' Table of GBIF issues, with codes used in data output, full issue name, and descriptions.
-#' 
+#'
 #' Table has the following fields:
-#' 
+#'
 #' \itemize{
 #'   \item code. Code for issue, making viewing data easier.
-#'   \item issue. Full name of the issue.  
+#'   \item issue. Full name of the issue.
 #'   \item description. Description of the issue.
 #' }
-#' 
+#'
 #' @export
 #' @usage gbif_issues()
 #' @source \url{http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/OccurrenceIssue.html}
@@ -528,3 +553,10 @@ gbifissues <- structure(list(
      "The given type status is impossible to interpret or seriously different from the recommended vocabulary.",
      "Coordinate is the exact 0/0 coordinate, often indicating a bad null coordinate."
   )), .Names = c("code", "issue", "description"), class = "data.frame", row.names = c(NA, -42L))
+
+as_log <- function(x){
+  stopifnot(is.logical(x) || is.null(x))
+  if(is.null(x)) NULL else if(x) 'true' else 'false'
+}
+
+noNA <- function (x) !(any(is.na(x)))
