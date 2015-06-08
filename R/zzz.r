@@ -26,18 +26,15 @@ gbifparser <- function(input, fields='minimal'){
     h1 <- c('kingdom','phylum','class','order','family','genus','species')
     h2 <- c('kingdomKey','phylumKey','classKey','orderKey','familyKey','genusKey','speciesKey')
     hier <- get_hier(x, h1, h2)
-    if(nrow(na.omit(hier)) == 0){
-      if(!is.null(x[['species']])){
+    if (nrow(na.omit(hier)) == 0){
+      if (!is.null(x[['species']])){
         usename <- x[['species']]
-      } else if(!is.null(x[['scientificName']]))
-      {
+      } else if(!is.null(x[['scientificName']])) {
         usename <- x[['scientificName']]
-      } else
-      {
+      } else {
         usename <- "none"
       }
-    } else
-    {
+    } else {
       usename <- hier[[nrow(hier),"name"]]
     }
 
@@ -45,7 +42,7 @@ gbifparser <- function(input, fields='minimal'){
     x[names(x) %in% "issues"] <- collapse_issues(x)
 
     # media
-    if("media" %in% names(x)){
+    if ("media" %in% names(x)) {
       media <- x[names(x) %in% "media"]
       media <- lapply(media$media, as.list)
       media2 <- list()
@@ -70,28 +67,24 @@ gbifparser <- function(input, fields='minimal'){
       if(all(c('decimalLatitude','decimalLongitude') %in% names(alldata)))
       {
         alldata <- alldata[c('name','key','decimalLatitude','decimalLongitude','issues')]
-      } else
-      {
+      } else {
         alldata <- data.frame(alldata['name'], alldata['key'],
                               decimalLatitude=NA, decimalLongitude=NA,
                               alldata['issues'], stringsAsFactors=FALSE)
       }
-    } else if(any(fields == 'all'))
-    {
+    } else if(any(fields == 'all')) {
       # rearrange columns
       firstnames <- c('name','key','decimalLatitude','decimalLongitude','issues')
       alldata <- alldata[c(firstnames[firstnames %in% names(alldata)],
                 names(alldata)[-unlist(rgbif_compact(sapply(firstnames, function(z) { tmp <- grep(z, names(alldata)); if(!length(tmp) == 0) tmp }, USE.NAMES = FALSE)))] ) ]
-    } else
-    {
+    } else {
       alldata <- alldata[names(alldata) %in% fields]
     }
     list(hierarchy=hier, media=media2, data=alldata)
   }
   if(is.numeric(input[[1]])){
     parse(input)
-  } else
-  {
+  } else {
     lapply(input, parse)
   }
 }
@@ -114,50 +107,57 @@ gbifparser_verbatim <- function(input, fields='minimal'){
     names(x) <- nn
 
     if(any(fields=='minimal')){
-      if(all(c('decimalLatitude','decimalLongitude') %in% names(x)))
-      {
+      if(all(c('decimalLatitude','decimalLongitude') %in% names(x))) {
         x[c('scientificName','key','decimalLatitude','decimalLongitude')]
-      } else
-      {
+      } else {
         list(scientificName=x[['scientificName']], key=x[['key']], decimalLatitude=NA, decimalLongitude=NA, stringsAsFactors=FALSE)
       }
-    } else if(any(fields == 'all'))
-    {
+    } else if(any(fields == 'all')) {
       x[vapply(x, length, 0) == 0] <- "none"
       x
-    } else
-    {
+    } else {
       x[vapply(x, length, 0) == 0] <- "none"
       x[names(x) %in% fields]
     }
   }
   if(is.numeric(input[[1]])){
     data.frame(parse(input), stringsAsFactors = FALSE)
-  } else
-  {
-    do.call(rbind.fill, lapply(input, function(w) data.frame(parse(w), stringsAsFactors = FALSE)))
+  } else {
+    do.call(rbind_fill, lapply(input, function(w) data.frame(parse(w), stringsAsFactors = FALSE)))
   }
 }
 
 
-#' Replacement function for ldply that should be faster.
-#'
-#' @import plyr
-#' @param x A list.
-#' @param convertvec Convert a vector to a data.frame before rbind is called.
-#' @export
-#' @keywords internal
 ldfast <- function(x, convertvec=FALSE){
-  convert2df <- function(x){
-    if(!inherits(x, "data.frame"))
-      data.frame(rbind(x), stringsAsFactors=FALSE)
-    else
-      x
-  }
-  if(convertvec)
-    do.call(rbind.fill, lapply(x, convert2df))
+  if (convertvec)
+    do.call(rbind_fill, lapply(x, convert2df))
   else
-    do.call(rbind.fill, x)
+    do.call(rbind_fill, x)
+}
+
+ldfast_names <- function(x, convertvec=FALSE){
+  for (i in seq_along(x)) {
+    x[[i]] <- data.frame(.id = names(x)[i], x[[i]], stringsAsFactors = FALSE)
+  }
+  if (convertvec) {
+    do.call(rbind_fill, lapply(x, convert2df))
+  } else {
+    do.call(rbind_fill, x)
+  }
+}
+
+convert2df <- function(x){
+  if (!inherits(x, "data.frame"))
+    data.frame(rbind(x), stringsAsFactors = FALSE)
+  else
+    x
+}
+
+rbind_rows <- function(x) {
+  tmp <- unname(do.call("rbind.data.frame", x))
+  tmp <- data.frame(.id = row.names(tmp), V1 = tmp, stringsAsFactors = FALSE)
+  row.names(tmp) <- NULL
+  tmp
 }
 
 #' Parser for gbif data
@@ -176,8 +176,7 @@ datasetparser <- function(input, minimal=TRUE){
   }
   if(is.character(input[[1]])){
     parse(input)
-  } else
-  {
+  } else {
     lapply(input, parse)
   }
 }
@@ -189,7 +188,7 @@ datasetparser <- function(input, minimal=TRUE){
 NULL
 
 #' Custom ggplot2 theme
-#' @import ggplot2 grid
+#' @import ggplot2
 #' @export
 #' @keywords internal
 blanktheme <- function(){
@@ -204,7 +203,12 @@ blanktheme <- function(){
         panel.grid.major=element_blank(),
         panel.grid.minor=element_blank(),
         plot.background=element_blank(),
-        plot.margin = rep(unit(0,"null"),4))
+        plot.margin = u_nit())
+}
+
+u_nit <- function() {
+  structure(c(0, 0, 0, 0), unit = c("null", "null", "null", "null"
+  ), valid.unit = c(5L, 5L, 5L, 5L), class = "unit")
 }
 
 
@@ -221,16 +225,15 @@ blanktheme <- function(){
 #' @keywords internal
 gbif_capwords <- function(s, strict = FALSE, onlyfirst = FALSE) {
   cap <- function(s) paste(toupper(substring(s,1,1)),
-{s <- substring(s,2); if(strict) tolower(s) else s}, sep = "", collapse = " " )
-if(!onlyfirst){
-  sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
-} else
-{
-  sapply(s, function(x)
-    paste(toupper(substring(x,1,1)),
-          tolower(substring(x,2)),
-          sep="", collapse=" "), USE.NAMES=F)
-}
+  {s <- substring(s,2); if(strict) tolower(s) else s}, sep = "", collapse = " " )
+  if(!onlyfirst){
+    sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
+  } else {
+    sapply(s, function(x)
+      paste(toupper(substring(x,1,1)),
+            tolower(substring(x,2)),
+            sep="", collapse=" "), USE.NAMES=F)
+  }
 }
 
 #' Get the possible values to be used for (taxonomic) rank arguments in GBIF
@@ -240,9 +243,8 @@ if(!onlyfirst){
 #' taxrank()
 #' }
 #' @export
-taxrank <- function()
-{
-  c("kingdom", "phylum", "class", "order", "family", "genus","species",
+taxrank <- function() {
+  c("kingdom", "phylum", "class", "order", "family", "genus", "species",
     "infraspecific")
 }
 
@@ -252,33 +254,41 @@ taxrank <- function()
 #' @export
 #' @keywords internal
 namelkupparser <- function(x){
-  tmp <- x[ ! names(x) %in% c("descriptions","vernacularNames","higherClassificationMap") ]
-  tmp <- lapply(tmp, function(x) if(length(x) == 0) NA else x)
-  df <- data.frame(tmp, stringsAsFactors=FALSE)
-  movecols(df, c('key','scientificName'))
-    # rgbif_compact(
-#       x[c('key','nubKey','parentKey','parent','kingdom','phylum',"clazz","order","family",
-#           "genus","kingdomKey","phylumKey","classKey","orderKey","familyKey","genusKey",
-#           "canonicalName","authorship","nameType","rank","numOccurrences")]
-    # ), stringsAsFactors=FALSE)
+  tmp <- x[ !names(x) %in% c("descriptions", "vernacularNames", "higherClassificationMap") ]
+  tmp <- lapply(tmp, function(x) {
+    if (length(x) == 0) {
+      NA
+    } else if (length(x) > 1 || is(x, "list")) {
+      paste0(x, collapse = ", ")
+    } else {
+      x
+    }
+  })
+  df <- data.frame(tmp, stringsAsFactors = FALSE)
+  movecols(df, c('key', 'scientificName'))
 }
 
-
 nameusageparser <- function(z){
-  tomove <- c('key','scientificName')
-  tmp <- lapply(z, function(y) if(length(y) == 0) NA else y)
-  df <- data.frame(tmp, stringsAsFactors=FALSE)
-  if( all(tomove %in% names(df)) ) movecols(df, tomove) else df
+  tomove <- c('key', 'scientificName')
+  tmp <- lapply(z, function(y) {
+    if (length(y) == 0) NA else y
+  })
+  df <- data.frame(tmp, stringsAsFactors = FALSE)
+  if (all(tomove %in% names(df))) {
+    movecols(df, tomove)
+  } else {
+    df
+  }
 }
 
 movecols <- function(x, cols){
-  other <- names(x)[ ! names(x) %in% cols ]
+  other <- names(x)[ !names(x) %in% cols ]
   x[ , c(cols, other) ]
 }
 
 backbone_parser <- function(x){
-  tmp <- lapply(x, function(x) if(length(x) == 0) NA else x)
-  data.frame(tmp, stringsAsFactors=FALSE)
+  tmp <- lapply(x, function(x) if (length(x) == 0) NA else x)
+  data.frame(tmp, stringsAsFactors = FALSE)
 }
 
 #' Parse results from call to occurrencelist endpoint
@@ -306,8 +316,7 @@ parseresults <- function(x, ..., removeZeros=removeZeros)
     i <- df_num$decimalLongitude == 0 & df_num$decimalLatitude == 0
     if (removeZeros) {
       df_num <- df_num[!i, ]
-    } else
-    {
+    } else {
       df_num[i, "decimalLatitude"] <- NA
       df_num[i, "decimalLongitude"] <- NA
     }
@@ -322,8 +331,7 @@ parseresults <- function(x, ..., removeZeros=removeZeros)
 #' @param dataframe A data.frame
 #' @export
 #' @keywords internal
-commas_to_periods <- function(dataframe)
-{
+commas_to_periods <- function(dataframe) {
   dataframe$decimalLatitude <- gsub("\\,", ".", dataframe$decimalLatitude)
   dataframe$decimalLongitude <- gsub("\\,", ".", dataframe$decimalLongitude)
   return( dataframe )
@@ -337,7 +345,7 @@ gbifxmlToDataFrame <- function(doc, format) {
   nodes <- getNodeSet(doc, "//to:TaxonOccurrence")
   if (length(nodes) == 0)
     return(data.frame())
-  if(!is.null(format) & format=="darwin"){
+  if (!is.null(format) & format == "darwin") {
     varNames <- c("occurrenceID", "country", "stateProvince",
                   "county", "locality", "decimalLatitude", "decimalLongitude",
                   "coordinateUncertaintyInMeters", "maximumElevationInMeters",
@@ -345,7 +353,7 @@ gbifxmlToDataFrame <- function(doc, format) {
                   "minimumDepthInMeters", "institutionCode", "collectionCode",
                   "catalogNumber", "basisOfRecordString", "collector",
                   "earliestDateCollected", "latestDateCollected", "gbifNotes")
-  } else{
+  } else {
     varNames <- c("occurrenceID", "country", "decimalLatitude", "decimalLongitude",
                   "catalogNumber", "earliestDateCollected", "latestDateCollected" )
   }
@@ -371,8 +379,6 @@ gbifxmlToDataFrame <- function(doc, format) {
 
 #' Convert a bounding box to a Well Known Text polygon, and a WKT to a bounding box
 #'
-#' @import rgeos
-#' @importFrom sp bbox
 #' @param minx Minimum x value, or the most western longitude
 #' @param miny Minimum y value, or the most southern latitude
 #' @param maxx Maximum x value, or the most eastern longitude
@@ -385,16 +391,14 @@ gbifxmlToDataFrame <- function(doc, format) {
 #' @export
 #' @examples \dontrun{
 #' # Convert a bounding box to a WKT
-#' library("rgeos")
-#'
 #' ## Pass in a vector of length 4 with all values
 #' mm <- gbif_bbox2wkt(bbox=c(38.4,-125.0,40.9,-121.8))
-#' plot(readWKT(mm))
+#' read_wkt(mm)
 #'
 #' ## Or pass in each value separately
 #' mm <- gbif_bbox2wkt(minx=38.4, miny=-125.0, maxx=40.9, maxy=-121.8)
-#' plot(readWKT(mm))
-#' 
+#' read_wkt(mm)
+#'
 #' # Convert a WKT object to a bounding box
 #' wkt <- "POLYGON((38.4 -125,40.9 -125,40.9 -121.8,38.4 -121.8,38.4 -125))"
 #' gbif_wkt2bbox(wkt)
@@ -419,7 +423,7 @@ gbif_bbox2wkt <- function(minx=NA, miny=NA, maxx=NA, maxy=NA, bbox=NULL){
 
 gbif_wkt2bbox <- function(wkt=NULL){
   stopifnot(!is.null(wkt))
-  tmp <- bbox(readWKT(wkt))
+  tmp <- read_wkt(wkt)$bbox
   as.vector(tmp)
 }
 
@@ -448,6 +452,7 @@ NULL
 
 gbif_GET <- function(url, args, parse=FALSE, ...){
   temp <- GET(url, query=args, ...)
+
   if(temp$status_code == 204) stop("Status: 204 - not found", call. = FALSE)
   if(temp$status_code > 200){
     mssg <- content(temp)
@@ -469,17 +474,6 @@ gbif_GET_content <- function(url, args, ...){
 cn <- function(x) if(length(x) == 0) NULL else x
 
 gbif_base <- function() 'http://api.gbif.org/v1'
-
-# error_parse <- function(x){
-#   http_status(x)$message
-# #   if(grepl("html", x)){
-# #     parsed <- XML::htmlParse(x)
-# #     # aslist <- XML::xpathApply(parsed, "//p", XML::xmlToList)
-# #     # aslist[sapply(aslist, "[[", "b") == "message"][[1]]$u
-# #   } else {
-# #     x
-# #   }
-# }
 
 #' Table of GBIF issues, with codes used in data output, full issue name, and descriptions.
 #'
@@ -556,7 +550,12 @@ gbifissues <- structure(list(
 
 as_log <- function(x){
   stopifnot(is.logical(x) || is.null(x))
-  if(is.null(x)) NULL else if(x) 'true' else 'false'
+  if (is.null(x)) NULL else if(x) 'true' else 'false'
 }
 
-noNA <- function (x) !(any(is.na(x)))
+noNA <- function(x) {
+  !(any(is.na(x)))
+}
+
+strextract <- function(str, pattern) regmatches(str, regexpr(pattern, str))
+strtrim <- function(str) gsub("^\\s+|\\s+$", "", str)

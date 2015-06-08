@@ -25,6 +25,13 @@
 #' 
 #' @return A single numeric value, or a list of numerics.
 #' @references \url{http://www.gbif.org/developer/occurrence#metrics}
+#' 
+#' @details There is a slight difference in the way records are counted here vs. 
+#' results from \code{\link{occ_search}}. For equivalent outcomes, in the 
+#' \code{\link{occ_search}} function use \code{hasCoordinate=TRUE}, and 
+#' \code{hasGeospatialIssue=FALSE} to have the same outcome for this function
+#' using \code{isGeoreferenced=TRUE}.
+#' 
 #' @examples \dontrun{
 #' occ_count(basisOfRecord='OBSERVATION')
 #' occ_count(georeferenced=TRUE)
@@ -61,8 +68,8 @@
 occ_count <- function(taxonKey=NULL, georeferenced=NULL, basisOfRecord=NULL, 
   datasetKey=NULL, date=NULL, catalogNumber=NULL, country=NULL, hostCountry=NULL, 
   year=NULL, from=2000, to=2012, type='count', publishingCountry='US',
-  nubKey=NULL, protocol=NULL, ...)
-{
+  nubKey=NULL, protocol=NULL, ...) {
+  
   calls <- names(sapply(match.call(), deparse))[-1]
   calls_vec <- c("nubKey","hostCountry","catalogNumber") %in% calls
   if(any(calls_vec))

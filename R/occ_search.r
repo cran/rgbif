@@ -1,7 +1,7 @@
 #' Search for GBIF occurrences.
 #'
 #' @export
-#' @import httr plyr
+#' @importFrom httr GET POST content stop_for_status http_status add_headers
 #' @importFrom XML getNodeSet xmlAttrs xmlSApply xmlValue htmlParse xpathApply xmlToList
 #'
 #' @template occsearch
@@ -96,9 +96,6 @@
 #'    limit=20)
 #' ## or using bounding box, converted to WKT internally
 #' occ_search(geometry=c(-125.0,38.4,-121.8,40.9), limit=20)
-#' ## Visualize a WKT area
-#' library('rgeos')
-#' plot(readWKT('POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))'))
 #'
 #' # Search on country
 #' occ_search(country='US', fields=c('name','country'), limit=20)
@@ -135,7 +132,7 @@
 #' occ_search(collectionCode=c("Floristic Databases MV - Higher Plants","Artport"))
 #'
 #' # Get only those occurrences with spatial issues
-#' occ_search(taxonKey=key, spatialIssues=TRUE, limit=20)
+#' occ_search(taxonKey=key, hasGeospatialIssue=TRUE, limit=20)
 #'
 #' # Search using a query string
 #' occ_search(search="kingfisher", limit=20)
@@ -196,7 +193,7 @@
 #' ## or parse issues in various ways
 #' ### remove data rows with certain issue classes
 #' library('magrittr')
-#' res %>% occ_issues(-gass84, -mdatunl)
+#' res %>% occ_issues(gass84)
 #' ### split issues into separate columns
 #' res %>% occ_issues(mutate = "split")
 #' ### expand issues to more descriptive names
@@ -204,7 +201,7 @@
 #' ### split and expand
 #' res %>% occ_issues(mutate = "split_expand")
 #' ### split, expand, and remove an issue class
-#' res %>% occ_issues(-gass84, mutate = "split_expand")
+#' res %>% occ_issues(-cudc, mutate = "split_expand")
 #'
 #' # If you try multiple values for two different parameters you are wacked on the hand
 #' # occ_search(taxonKey=c(2482598,2492010), collectorName=c("smith","BJ Stacey"))
@@ -254,9 +251,9 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
   geometry=NULL, collectorName=NULL, basisOfRecord=NULL, datasetKey=NULL, eventDate=NULL,
   catalogNumber=NULL, year=NULL, month=NULL, decimalLatitude=NULL, decimalLongitude=NULL,
   elevation=NULL, depth=NULL, institutionCode=NULL, collectionCode=NULL,
-  spatialIssues=NULL, issue=NULL, search=NULL, mediatype=NULL, limit=500, start=0,
-  fields = 'all', return='all', ...)
-{
+  hasGeospatialIssue=NULL, issue=NULL, search=NULL, mediatype=NULL, limit=500, start=0,
+  fields = 'all', return='all', ...) {
+
   calls <- names(sapply(match.call(), deparse))[-1]
   calls_vec <- c("georeferenced","altitude","latitude","longitude") %in% calls
   if(any(calls_vec))
@@ -265,8 +262,7 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
   geometry <- geometry_handler(geometry)
 
   url <- paste0(gbif_base(), '/occurrence/search')
-  getdata <- function(x=NULL, itervar=NULL)
-  {
+  getdata <- function(x=NULL, itervar=NULL) {
     if(!is.null(x))
       assign(itervar, x)
 
@@ -289,12 +285,14 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
 
     # Make arg list
     args <- rgbif_compact(list(taxonKey=taxonKey, scientificName=scientificName, country=country,
-      publishingCountry=publishingCountry, hasCoordinate=hasCoordinate, typeStatus=typeStatus, recordNumber=recordNumber,
-      lastInterpreted=lastInterpreted, continent=continent,geometry=geometry, collectorName=collectorName,
-      basisOfRecord=basisOfRecord, datasetKey=datasetKey, eventDate=eventDate, catalogNumber=catalogNumber,
-      year=year, month=month, decimalLatitude=decimalLatitude, decimalLongitude=decimalLongitude,
-      elevation=elevation, depth=depth, institutionCode=institutionCode,
-      collectionCode=collectionCode, spatialIssues=spatialIssues, q=search, mediaType=mediatype,
+      publishingCountry=publishingCountry, hasCoordinate=hasCoordinate, typeStatus=typeStatus,
+      recordNumber=recordNumber, lastInterpreted=lastInterpreted, continent=continent,
+      geometry=geometry, collectorName=collectorName, basisOfRecord=basisOfRecord,
+      datasetKey=datasetKey, eventDate=eventDate, catalogNumber=catalogNumber,
+      year=year, month=month, decimalLatitude=decimalLatitude,
+      decimalLongitude=decimalLongitude, elevation=elevation, depth=depth,
+      institutionCode=institutionCode, collectionCode=collectionCode,
+      hasGeospatialIssue=hasGeospatialIssue, q=search, mediaType=mediatype,
       limit=check_limit(as.integer(limit)), offset=check_limit(as.integer(start))))
     args <- c(args, parse_issues(issue))
     argscoll <<- args
@@ -302,60 +300,53 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
     iter <- 0
     sumreturned <- 0
     outout <- list()
-    while(sumreturned < limit){
+    while (sumreturned < limit) {
       iter <- iter + 1
       tt <- gbif_GET(url, args, FALSE, ...)
 
       # if no results, assign count var with 0
-      if(identical(tt$results, list())) tt$count <- 0
+      if (identical(tt$results, list())) tt$count <- 0
 
       numreturned <- length(tt$results)
       sumreturned <- sumreturned + numreturned
 
-      if(tt$count < limit)
+      if (tt$count < limit)
         limit <- tt$count
 
-      if(sumreturned < limit){
-        args$limit <- limit-sumreturned
-        args$offset <- sumreturned
+      if (sumreturned < limit) {
+        args$limit <- limit - sumreturned
+        args$offset <- sumreturned + start
       }
       outout[[iter]] <- tt
     }
 
-    meta <- outout[[length(outout)]][c('offset','limit','endOfRecords','count')]
+    meta <- outout[[length(outout)]][c('offset', 'limit', 'endOfRecords', 'count')]
     data <- do.call(c, lapply(outout, "[[", "results"))
 
-    if(return=='data'){
-      if(identical(data, list())){
+    if (return == 'data') {
+      if (identical(data, list())) {
         paste("no data found, try a different search")
-      } else
-      {
-        data <- gbifparser(input=data, fields=fields)
+      } else {
+        data <- gbifparser(input = data, fields = fields)
         ldfast(lapply(data, "[[", "data"))
       }
-    } else
-    if(return=='hier'){
-      if(identical(data, list())){
+    } else if (return == 'hier') {
+      if (identical(data, list())) {
         paste("no data found, try a different search")
-      } else
-      {
-        data <- gbifparser(input=data, fields=fields)
+      } else {
+        data <- gbifparser(input = data, fields = fields)
         unique(lapply(data, "[[", "hierarchy"))
       }
-    } else
-      if(return=='media'){
-        if(identical(data, list())){
-          paste("no data found, try a different search")
-        } else
-        {
-          data <- gbifparser(input=data, fields=fields)
-          sapply(data, "[[", "media")
-        }
-      } else
-    if(return=='meta'){
+    } else if (return == 'media') {
+      if (identical(data, list())) {
+        paste("no data found, try a different search")
+      } else {
+        data <- gbifparser(input=data, fields=fields)
+        sapply(data, "[[", "media")
+      }
+    } else if (return == 'meta'){
       data.frame(meta, stringsAsFactors=FALSE)
-    } else
-    {
+    } else {
       if(identical(data, list())){
         dat2 <- paste("no data found, try a different search")
         hier2 <- paste("no data found, try a different search")
@@ -378,16 +369,15 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
                  decimalLatitude=decimalLatitude,decimalLongitude=decimalLongitude,depth=depth,year=year,
                  typeStatus=typeStatus,lastInterpreted=lastInterpreted,mediatype=mediatype,
                  limit=limit)
-  if(!any(sapply(params, length)>0))
+  if (!any(sapply(params, length) > 0))
     stop(sprintf("At least one of the parmaters must have a value:\n%s", possparams()), call. = FALSE)
-  iter <- params[which(sapply(params, length)>1)]
-  if(length(names(iter))>1)
+  iter <- params[which(sapply(params, length) > 1)]
+  if (length(names(iter)) > 1)
     stop(sprintf("You can have multiple values for only one of:\n%s", possparams()), call. = FALSE)
 
-  if(length(iter)==0){
+  if (length(iter) == 0) {
     out <- getdata()
-  } else
-  {
+  } else {
     out <- lapply(iter[[1]], getdata, itervar = names(iter))
     names(out) <- iter[[1]]
   }
@@ -397,13 +387,13 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
   }
   argscoll$fields <- fields
 
-  if(is(out, "data.frame")){
-    class(out) <- c('data.frame','gbif')
+  if (is(out, "data.frame")) {
+    class(out) <- c('data.frame', 'gbif')
   } else {
     class(out) <- "gbif"
-    attr(out, 'type') <- if(length(iter)==0) "single" else "many"
+    attr(out, 'type') <- if (length(iter) == 0) "single" else "many"
   }
-  structure(out, return=return, args=argscoll)
+  structure(out, return = return, args = argscoll)
 }
 
 geometry_handler <- function(x){
@@ -417,18 +407,17 @@ geometry_handler <- function(x){
 #' @method print gbif
 #' @export
 #' @rdname occ_search
-print.gbif <- function (x, ..., n = 10)
-{
-  if(attr(x, "type") == "single" & all(c('meta','data','hierarchy','media') %in% names(x))){
+print.gbif <- function(x, ..., n = 10) {
+  if (attr(x, "type") == "single" & all(c('meta','data','hierarchy','media') %in% names(x))){
     cat(rgbif_wrap(sprintf("Records found [%s]", x$meta$count)), "\n")
     cat(rgbif_wrap(sprintf("Records returned [%s]", NROW(x$data))), "\n")
     cat(rgbif_wrap(sprintf("No. unique hierarchies [%s]", length(x$hierarchy))), "\n")
     cat(rgbif_wrap(sprintf("No. media records [%s]", length(x$media))), "\n")
     cat(rgbif_wrap(sprintf("Args [%s]", pasteargs(x))), "\n")
     cat(sprintf("First 10 rows of data\n\n"))
-    if(is(x$data, "data.frame")) trunc_mat(x$data, n = n) else cat(x$data)
-  } else if(attr(x, "type") == "many") {
-    if(!attr(x, "return") == "all"){
+    if (is(x$data, "data.frame")) trunc_mat(x$data, n = n) else cat(x$data)
+  } else if (attr(x, "type") == "many") {
+    if (!attr(x, "return") == "all") {
       if(is(x, "gbif")) x <- unclass(x)
       attr(x, "type") <- NULL
       attr(x, "return") <- NULL

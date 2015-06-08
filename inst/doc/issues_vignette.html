@@ -244,24 +244,24 @@ hr {
 <p>Then pass to <code>occ_search()</code></p>
 
 <pre><code class="r">(res &lt;- occ_search(taxonKey=key, limit=100))
-#&gt; Records found [20369] 
+#&gt; Records found [20435] 
 #&gt; Records returned [100] 
 #&gt; No. unique hierarchies [1] 
-#&gt; No. media records [20] 
+#&gt; No. media records [24] 
 #&gt; Args [taxonKey=3119195, limit=100, offset=0, fields=all] 
 #&gt; First 10 rows of data
 #&gt; 
 #&gt;                 name        key decimalLatitude decimalLongitude
-#&gt; 1  Helianthus annuus  922042404        -3.28140         37.52415
-#&gt; 2  Helianthus annuus  899948224         1.27890        103.79930
-#&gt; 3  Helianthus annuus  891052261        24.82589        -99.58411
-#&gt; 4  Helianthus annuus 1038317691       -43.52777        172.62544
-#&gt; 5  Helianthus annuus  922044332        21.27114         40.41424
-#&gt; 6  Helianthus annuus  922039507        50.31402          8.52341
-#&gt; 7  Helianthus annuus  998785009        44.10879          4.66839
-#&gt; 8  Helianthus annuus  899970378        32.54041       -117.08731
-#&gt; 9  Helianthus annuus  899969160        24.82901        -99.58257
-#&gt; 10 Helianthus annuus 1054796860        33.74417       -117.38556
+#&gt; 1  Helianthus annuus 1088900309        33.95239       -117.32011
+#&gt; 2  Helianthus annuus 1088933055        25.66564       -100.30348
+#&gt; 3  Helianthus annuus 1088909392        24.72449        -99.54020
+#&gt; 4  Helianthus annuus 1088944416        26.20518        -98.26725
+#&gt; 5  Helianthus annuus 1088937716        25.81691       -100.05940
+#&gt; 6  Helianthus annuus 1090389390        59.96150         17.71060
+#&gt; 7  Helianthus annuus  922042404        -3.28140         37.52415
+#&gt; 8  Helianthus annuus  899948224         1.27890        103.79930
+#&gt; 9  Helianthus annuus  891052261        24.82589        -99.58411
+#&gt; 10 Helianthus annuus 1038317691       -43.52777        172.62544
 #&gt; ..               ...        ...             ...              ...
 #&gt; Variables not shown: issues (chr), datasetKey (chr), publishingOrgKey
 #&gt;      (chr), publishingCountry (chr), protocol (chr), lastCrawled (chr),
@@ -271,21 +271,20 @@ hr {
 #&gt;      scientificName (chr), kingdom (chr), phylum (chr), order (chr),
 #&gt;      family (chr), genus (chr), species (chr), genericName (chr),
 #&gt;      specificEpithet (chr), taxonRank (chr), year (int), month (int), day
-#&gt;      (int), eventDate (chr), lastInterpreted (chr), identifiers (chr),
-#&gt;      facts (chr), relations (chr), geodeticDatum (chr), class (chr),
-#&gt;      countryCode (chr), country (chr), gbifID (chr), institutionCode
-#&gt;      (chr), catalogNumber (chr), recordedBy (chr), locality (chr),
-#&gt;      collectionCode (chr), dateIdentified (chr), modified (chr),
-#&gt;      references (chr), verbatimEventDate (chr), verbatimLocality (chr),
+#&gt;      (int), eventDate (chr), modified (chr), lastInterpreted (chr),
+#&gt;      references (chr), identifiers (chr), facts (chr), relations (chr),
+#&gt;      geodeticDatum (chr), class (chr), countryCode (chr), country (chr),
+#&gt;      verbatimEventDate (chr), verbatimLocality (chr),
 #&gt;      http...unknown.org.occurrenceDetails (chr), rights (chr),
-#&gt;      rightsHolder (chr), occurrenceID (chr), taxonID (chr),
-#&gt;      occurrenceRemarks (chr), datasetName (chr), eventTime (chr),
-#&gt;      identifier (chr), identificationID (chr), county (chr), identifiedBy
-#&gt;      (chr), stateProvince (chr), recordNumber (chr), verbatimElevation
-#&gt;      (chr), georeferenceSources (chr), coordinateAccuracy (dbl), elevation
-#&gt;      (dbl), elevationAccuracy (dbl), depth (dbl), depthAccuracy (dbl),
-#&gt;      habitat (chr), fieldNotes (chr), municipality (chr),
-#&gt;      informationWithheld (chr)
+#&gt;      rightsHolder (chr), occurrenceID (chr), collectionCode (chr), taxonID
+#&gt;      (chr), occurrenceRemarks (chr), gbifID (chr), institutionCode (chr),
+#&gt;      catalogNumber (chr), datasetName (chr), recordedBy (chr), eventTime
+#&gt;      (chr), identifier (chr), dateIdentified (chr), identificationID
+#&gt;      (chr), coordinateAccuracy (dbl), elevation (dbl), elevationAccuracy
+#&gt;      (dbl), depth (dbl), depthAccuracy (dbl), stateProvince (chr), county
+#&gt;      (chr), locality (chr), identifiedBy (chr), recordNumber (chr),
+#&gt;      verbatimElevation (chr), georeferenceSources (chr), habitat (chr),
+#&gt;      fieldNotes (chr), municipality (chr)
 </code></pre>
 
 <h2>Examine issues</h2>
@@ -338,24 +337,24 @@ hr {
 
 <pre><code class="r">res %&gt;%
   occ_issues(gass84)
-#&gt; Records found [20369] 
+#&gt; Records found [20435] 
 #&gt; Records returned [100] 
 #&gt; No. unique hierarchies [1] 
-#&gt; No. media records [20] 
+#&gt; No. media records [24] 
 #&gt; Args [taxonKey=3119195, limit=100, offset=0, fields=all] 
 #&gt; First 10 rows of data
 #&gt; 
 #&gt;                 name        key decimalLatitude decimalLongitude
-#&gt; 1  Helianthus annuus  922042404        -3.28140         37.52415
-#&gt; 2  Helianthus annuus  899948224         1.27890        103.79930
-#&gt; 3  Helianthus annuus  891052261        24.82589        -99.58411
-#&gt; 4  Helianthus annuus 1038317691       -43.52777        172.62544
-#&gt; 5  Helianthus annuus  922044332        21.27114         40.41424
-#&gt; 6  Helianthus annuus  922039507        50.31402          8.52341
-#&gt; 7  Helianthus annuus  998785009        44.10879          4.66839
-#&gt; 8  Helianthus annuus  899970378        32.54041       -117.08731
-#&gt; 9  Helianthus annuus  899969160        24.82901        -99.58257
-#&gt; 10 Helianthus annuus 1054796860        33.74417       -117.38556
+#&gt; 1  Helianthus annuus 1088900309        33.95239       -117.32011
+#&gt; 2  Helianthus annuus 1088933055        25.66564       -100.30348
+#&gt; 3  Helianthus annuus 1088909392        24.72449        -99.54020
+#&gt; 4  Helianthus annuus 1088944416        26.20518        -98.26725
+#&gt; 5  Helianthus annuus 1088937716        25.81691       -100.05940
+#&gt; 6  Helianthus annuus 1090389390        59.96150         17.71060
+#&gt; 7  Helianthus annuus  922042404        -3.28140         37.52415
+#&gt; 8  Helianthus annuus  899948224         1.27890        103.79930
+#&gt; 9  Helianthus annuus  891052261        24.82589        -99.58411
+#&gt; 10 Helianthus annuus 1038317691       -43.52777        172.62544
 #&gt; ..               ...        ...             ...              ...
 #&gt; Variables not shown: issues (chr), datasetKey (chr), publishingOrgKey
 #&gt;      (chr), publishingCountry (chr), protocol (chr), lastCrawled (chr),
@@ -365,21 +364,20 @@ hr {
 #&gt;      scientificName (chr), kingdom (chr), phylum (chr), order (chr),
 #&gt;      family (chr), genus (chr), species (chr), genericName (chr),
 #&gt;      specificEpithet (chr), taxonRank (chr), year (int), month (int), day
-#&gt;      (int), eventDate (chr), lastInterpreted (chr), identifiers (chr),
-#&gt;      facts (chr), relations (chr), geodeticDatum (chr), class (chr),
-#&gt;      countryCode (chr), country (chr), gbifID (chr), institutionCode
-#&gt;      (chr), catalogNumber (chr), recordedBy (chr), locality (chr),
-#&gt;      collectionCode (chr), dateIdentified (chr), modified (chr),
-#&gt;      references (chr), verbatimEventDate (chr), verbatimLocality (chr),
+#&gt;      (int), eventDate (chr), modified (chr), lastInterpreted (chr),
+#&gt;      references (chr), identifiers (chr), facts (chr), relations (chr),
+#&gt;      geodeticDatum (chr), class (chr), countryCode (chr), country (chr),
+#&gt;      verbatimEventDate (chr), verbatimLocality (chr),
 #&gt;      http...unknown.org.occurrenceDetails (chr), rights (chr),
-#&gt;      rightsHolder (chr), occurrenceID (chr), taxonID (chr),
-#&gt;      occurrenceRemarks (chr), datasetName (chr), eventTime (chr),
-#&gt;      identifier (chr), identificationID (chr), county (chr), identifiedBy
-#&gt;      (chr), stateProvince (chr), recordNumber (chr), verbatimElevation
-#&gt;      (chr), georeferenceSources (chr), coordinateAccuracy (dbl), elevation
-#&gt;      (dbl), elevationAccuracy (dbl), depth (dbl), depthAccuracy (dbl),
-#&gt;      habitat (chr), fieldNotes (chr), municipality (chr),
-#&gt;      informationWithheld (chr)
+#&gt;      rightsHolder (chr), occurrenceID (chr), collectionCode (chr), taxonID
+#&gt;      (chr), occurrenceRemarks (chr), gbifID (chr), institutionCode (chr),
+#&gt;      catalogNumber (chr), datasetName (chr), recordedBy (chr), eventTime
+#&gt;      (chr), identifier (chr), dateIdentified (chr), identificationID
+#&gt;      (chr), coordinateAccuracy (dbl), elevation (dbl), elevationAccuracy
+#&gt;      (dbl), depth (dbl), depthAccuracy (dbl), stateProvince (chr), county
+#&gt;      (chr), locality (chr), identifiedBy (chr), recordNumber (chr),
+#&gt;      verbatimElevation (chr), georeferenceSources (chr), habitat (chr),
+#&gt;      fieldNotes (chr), municipality (chr)
 </code></pre>
 
 <p>Note also that we&#39;ve set up <code>occ_issues()</code> so that you can pass in issue names without having to quote them, thereby speeding up data cleaning. </p>
@@ -388,10 +386,10 @@ hr {
 
 <pre><code class="r">res %&gt;% 
   occ_issues(-gass84, -mdatunl)
-#&gt; Records found [20369] 
+#&gt; Records found [20435] 
 #&gt; Records returned [0] 
 #&gt; No. unique hierarchies [1] 
-#&gt; No. media records [20] 
+#&gt; No. media records [24] 
 #&gt; Args [taxonKey=3119195, limit=100, offset=0, fields=all] 
 #&gt; First 10 rows of data
 </code></pre>
@@ -410,12 +408,12 @@ head(out$data[,c(1,5)])
 #&gt; 5 Helianthus annuus
 #&gt; 6 Helianthus annuus
 #&gt;                                                                             issues
-#&gt; 1                                  COORDINATE_ROUNDED,GEODETIC_DATUM_ASSUMED_WGS84
+#&gt; 1                    COUNTRY_DERIVED_FROM_COORDINATES,GEODETIC_DATUM_ASSUMED_WGS84
 #&gt; 2 COORDINATE_ROUNDED,COUNTRY_DERIVED_FROM_COORDINATES,GEODETIC_DATUM_ASSUMED_WGS84
 #&gt; 3 COORDINATE_ROUNDED,COUNTRY_DERIVED_FROM_COORDINATES,GEODETIC_DATUM_ASSUMED_WGS84
 #&gt; 4 COORDINATE_ROUNDED,COUNTRY_DERIVED_FROM_COORDINATES,GEODETIC_DATUM_ASSUMED_WGS84
-#&gt; 5                                  COORDINATE_ROUNDED,GEODETIC_DATUM_ASSUMED_WGS84
-#&gt; 6                                  COORDINATE_ROUNDED,GEODETIC_DATUM_ASSUMED_WGS84
+#&gt; 5 COORDINATE_ROUNDED,COUNTRY_DERIVED_FROM_COORDINATES,GEODETIC_DATUM_ASSUMED_WGS84
+#&gt; 6     COUNTRY_DERIVED_FROM_COORDINATES,DEPTH_UNLIKELY,GEODETIC_DATUM_ASSUMED_WGS84
 </code></pre>
 
 <h2>Add columns</h2>
@@ -426,20 +424,20 @@ head(out$data[,c(1,5)])
 
 <pre><code class="r">out &lt;- res %&gt;% occ_issues(mutate = &quot;split&quot;)
 head(out$data[,c(1,5:10)])
-#&gt;                name cdround gass84 cudc depunl cucdmis
-#&gt; 1 Helianthus annuus       y      y    n      n       n
-#&gt; 2 Helianthus annuus       y      y    y      n       n
-#&gt; 3 Helianthus annuus       y      y    y      n       n
-#&gt; 4 Helianthus annuus       y      y    y      n       n
-#&gt; 5 Helianthus annuus       y      y    n      n       n
-#&gt; 6 Helianthus annuus       y      y    n      n       n
+#&gt;                name cudc gass84 cdround depunl cucdmis
+#&gt; 1 Helianthus annuus    y      y       n      n       n
+#&gt; 2 Helianthus annuus    y      y       y      n       n
+#&gt; 3 Helianthus annuus    y      y       y      n       n
+#&gt; 4 Helianthus annuus    y      y       y      n       n
+#&gt; 5 Helianthus annuus    y      y       y      n       n
+#&gt; 6 Helianthus annuus    y      y       n      y       n
 #&gt;                             datasetKey
-#&gt; 1 6ac3f774-d9fb-4796-b3e9-92bf6c81c084
+#&gt; 1 50c9509d-22c7-4a22-a47d-8c48425ef4a7
 #&gt; 2 50c9509d-22c7-4a22-a47d-8c48425ef4a7
 #&gt; 3 50c9509d-22c7-4a22-a47d-8c48425ef4a7
 #&gt; 4 50c9509d-22c7-4a22-a47d-8c48425ef4a7
-#&gt; 5 6ac3f774-d9fb-4796-b3e9-92bf6c81c084
-#&gt; 6 6ac3f774-d9fb-4796-b3e9-92bf6c81c084
+#&gt; 5 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; 6 38b4c89f-584c-41bb-bd8f-cd1def33e92f
 </code></pre>
 
 <h2>Expand and add columns</h2>
@@ -448,27 +446,27 @@ head(out$data[,c(1,5:10)])
 
 <pre><code class="r">out &lt;- res %&gt;% occ_issues(mutate = &quot;split_expand&quot;)
 head(out$data[,c(1,5:10)])
-#&gt;                name COORDINATE_ROUNDED GEODETIC_DATUM_ASSUMED_WGS84
-#&gt; 1 Helianthus annuus                  y                            y
-#&gt; 2 Helianthus annuus                  y                            y
-#&gt; 3 Helianthus annuus                  y                            y
-#&gt; 4 Helianthus annuus                  y                            y
-#&gt; 5 Helianthus annuus                  y                            y
-#&gt; 6 Helianthus annuus                  y                            y
-#&gt;   COUNTRY_DERIVED_FROM_COORDINATES DEPTH_UNLIKELY
-#&gt; 1                                n              n
-#&gt; 2                                y              n
-#&gt; 3                                y              n
-#&gt; 4                                y              n
-#&gt; 5                                n              n
-#&gt; 6                                n              n
+#&gt;                name COUNTRY_DERIVED_FROM_COORDINATES
+#&gt; 1 Helianthus annuus                                y
+#&gt; 2 Helianthus annuus                                y
+#&gt; 3 Helianthus annuus                                y
+#&gt; 4 Helianthus annuus                                y
+#&gt; 5 Helianthus annuus                                y
+#&gt; 6 Helianthus annuus                                y
+#&gt;   GEODETIC_DATUM_ASSUMED_WGS84 COORDINATE_ROUNDED DEPTH_UNLIKELY
+#&gt; 1                            y                  n              n
+#&gt; 2                            y                  y              n
+#&gt; 3                            y                  y              n
+#&gt; 4                            y                  y              n
+#&gt; 5                            y                  y              n
+#&gt; 6                            y                  n              y
 #&gt;   COUNTRY_COORDINATE_MISMATCH                           datasetKey
-#&gt; 1                           n 6ac3f774-d9fb-4796-b3e9-92bf6c81c084
+#&gt; 1                           n 50c9509d-22c7-4a22-a47d-8c48425ef4a7
 #&gt; 2                           n 50c9509d-22c7-4a22-a47d-8c48425ef4a7
 #&gt; 3                           n 50c9509d-22c7-4a22-a47d-8c48425ef4a7
 #&gt; 4                           n 50c9509d-22c7-4a22-a47d-8c48425ef4a7
-#&gt; 5                           n 6ac3f774-d9fb-4796-b3e9-92bf6c81c084
-#&gt; 6                           n 6ac3f774-d9fb-4796-b3e9-92bf6c81c084
+#&gt; 5                           n 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; 6                           n 38b4c89f-584c-41bb-bd8f-cd1def33e92f
 </code></pre>
 
 <h2>Wrap up</h2>
