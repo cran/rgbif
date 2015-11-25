@@ -121,7 +121,8 @@ rg_POST <- function(url, req, user, pwd, callopts) {
     content_type_json(),
     accept_json(),
     authenticate(user = user, password = pwd),
-    callopts), body = jsonlite::toJSON(req))
+    callopts), body = jsonlite::toJSON(req),
+    make_rgbif_ua())
   if (tmp$status_code > 203) stop(content(tmp, as = "text"), call. = FALSE)
   stopifnot(tmp$header$`content-type` == 'application/json')
   content(tmp, as = "text")

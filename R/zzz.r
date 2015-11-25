@@ -188,7 +188,6 @@ datasetparser <- function(input, minimal=TRUE){
 NULL
 
 #' Custom ggplot2 theme
-#' @import ggplot2
 #' @export
 #' @keywords internal
 blanktheme <- function(){
@@ -454,12 +453,30 @@ collapse_issues <- function(x){
 #' @usage lhs \%>\% rhs
 NULL
 
+# REST helpers ---------------------------------------
+rgbif_ua <- function() {
+  versions <- c(paste0("r-curl/", utils::packageVersion("curl")),
+                paste0("httr/", utils::packageVersion("httr")),
+                sprintf("rOpenSci(rgbif/%s)", utils::packageVersion("rgbif")))
+  paste0(versions, collapse = " ")
+}
+
+make_rgbif_ua <- function() {
+  c(
+    user_agent(rgbif_ua()),
+    add_headers(`X-USER-AGENT` = rgbif_ua())
+  )
+}
+
 gbif_GET <- function(url, args, parse=FALSE, ...){
-  temp <- GET(url, query = args, ...)
+  temp <- GET(url, query = args, make_rgbif_ua(), ...)
 
   if (temp$status_code == 204) stop("Status: 204 - not found", call. = FALSE)
   if (temp$status_code > 200) {
     mssg <- content(temp)
+    if (is(mssg, "HTMLInternalDocument")) {
+      stop("500 - Server error", call. = FALSE)
+    }
     if (length(mssg) == 0) mssg <- http_status(temp)$message
     if (temp$status_code == 503) mssg <- http_status(temp)$message
     stop(mssg, call. = FALSE)
@@ -470,7 +487,7 @@ gbif_GET <- function(url, args, parse=FALSE, ...){
 }
 
 gbif_GET_content <- function(url, args, ...) {
-  temp <- GET(url, query = cn(args), ...)
+  temp <- GET(url, query = cn(args), make_rgbif_ua(), ...)
   if (temp$status_code > 200) warning(content(temp, as = "text"))
   stopifnot(temp$headers$`content-type` == 'application/json')
   content(temp, as = 'text', encoding = "UTF-8")

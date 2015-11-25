@@ -13,7 +13,7 @@
 occ_download_meta <- function(key, ...) {
   stopifnot(!is.null(key))
   url <- sprintf('http://api.gbif.org/v1/occurrence/download/%s', key)
-  tmp <- GET(url, ...)
+  tmp <- GET(url, make_rgbif_ua(), ...)
   if (tmp$status_code > 203) stop(content(tmp, as = "text"), call. = FALSE)
   stopifnot(tmp$header$`content-type` == 'application/json')
   tt <- content(tmp, as = "text")
@@ -35,7 +35,10 @@ print.occ_download_meta <- function(x, ...){
 
 gbif_make_list <- function(y){
   if (length(y) > 0) {
-    y <- y[[1]]
+    y <- y$predicate
+    if (!"predicates" %in% names(y)) {
+      y <- list(predicates = list(y))
+    }
     out <- list()
     for (i in seq_along(y$predicates)) {
       tmp <- y$predicates[[i]]
@@ -43,7 +46,7 @@ gbif_make_list <- function(y){
     }
     paste0(paste("\n    type: ", y$type), pc("\n    predicates: ", pc(out)), collapse = ", ")
   } else {
-    "none" 
+    "none"
   }
 }
 

@@ -1,9 +1,6 @@
 #' Search for GBIF occurrences.
 #'
 #' @export
-#' @importFrom httr GET POST DELETE content stop_for_status http_status add_headers authenticate write_disk content_type_json accept_json
-#' @importFrom XML getNodeSet xmlAttrs xmlSApply xmlValue htmlParse xpathApply xmlToList
-#'
 #' @template occsearch
 #' @template oslimstart
 #' @template occ
@@ -26,7 +23,7 @@
 #' ## you are getting synonyms too. The results for using \code{scientifcName} and
 #' ## \code{taxonKey} parameters are the same in this case, but I wouldn't be surprised if for some
 #' ## names they return different results
-#' occ_search(scientificName = 'Ursus americanus')
+#' occ_search(scientificName = 'Ursus americanus', config=verbose())
 #' key <- name_backbone(name = 'Ursus americanus', rank='species')$usageKey
 #' occ_search(taxonKey = key)
 #'
@@ -65,11 +62,11 @@
 #' ## If return='meta' the output is a list of the hierarch for each record
 #' occ_search(taxonKey=key, return='hier', limit=10)
 #'
-#' # Search by collector name
-#' occ_search(collectorName="smith", limit=20)
+#' # Search by recorder
+#' occ_search(recordedBy="smith", limit=20)
 #'
 #' # Many collector names
-#' occ_search(collectorName=c("smith","BJ Stacey"), limit=20)
+#' occ_search(recordedBy=c("smith","BJ Stacey"), limit=20)
 #'
 #' # Pass in curl options for extra fun
 #' library('httr')
@@ -205,7 +202,7 @@
 #' res %>% occ_issues(-cudc, mutate = "split_expand")
 #'
 #' # If you try multiple values for two different parameters you are wacked on the hand
-#' # occ_search(taxonKey=c(2482598,2492010), collectorName=c("smith","BJ Stacey"))
+#' # occ_search(taxonKey=c(2482598,2492010), recordedBy=c("smith","BJ Stacey"))
 #'
 #' # Get a lot of data, here 1500 records for Helianthus annuus
 #' # out <- occ_search(taxonKey=key, limit=1500, return="data")
@@ -249,7 +246,7 @@
 
 occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publishingCountry=NULL,
   hasCoordinate=NULL, typeStatus=NULL, recordNumber=NULL, lastInterpreted=NULL, continent=NULL,
-  geometry=NULL, collectorName=NULL, basisOfRecord=NULL, datasetKey=NULL, eventDate=NULL,
+  geometry=NULL, recordedBy=NULL, basisOfRecord=NULL, datasetKey=NULL, eventDate=NULL,
   catalogNumber=NULL, year=NULL, month=NULL, decimalLatitude=NULL, decimalLongitude=NULL,
   elevation=NULL, depth=NULL, institutionCode=NULL, collectionCode=NULL,
   hasGeospatialIssue=NULL, issue=NULL, search=NULL, mediatype=NULL, limit=500, start=0,
@@ -257,15 +254,18 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
 
   calls <- names(sapply(match.call(), deparse))[-1]
   calls_vec <- c("georeferenced","altitude","latitude","longitude") %in% calls
-  if(any(calls_vec))
+  if (any(calls_vec)) {
     stop("Parameter name changes: \n georeferenced -> hasCoordinate\n altitude -> elevation\n latitude -> decimalLatitude\n longitude - > decimalLongitude")
+  }
 
   geometry <- geometry_handler(geometry)
 
   url <- paste0(gbif_base(), '/occurrence/search')
-  getdata <- function(x=NULL, itervar=NULL) {
-    if(!is.null(x))
+
+  .get_occ_search <- function(x=NULL, itervar=NULL) {
+    if (!is.null(x)) {
       assign(itervar, x)
+    }
 
     # check that wkt is proper format and of 1 of 4 allowed types
     geometry <- check_wkt(geometry)
@@ -278,7 +278,7 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
     args <- rgbif_compact(list(taxonKey=taxonKey, scientificName=scientificName, country=country,
       publishingCountry=publishingCountry, hasCoordinate=hasCoordinate, typeStatus=typeStatus,
       recordNumber=recordNumber, lastInterpreted=lastInterpreted, continent=continent,
-      geometry=geometry, collectorName=collectorName, basisOfRecord=basisOfRecord,
+      geometry=geometry, recordedBy=recordedBy, basisOfRecord=basisOfRecord,
       datasetKey=datasetKey, eventDate=eventDate, catalogNumber=catalogNumber,
       year=year, month=month, decimalLatitude=decimalLatitude,
       decimalLongitude=decimalLongitude, elevation=elevation, depth=depth,
@@ -301,8 +301,9 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
       numreturned <- length(tt$results)
       sumreturned <- sumreturned + numreturned
 
-      if (tt$count < limit)
+      if (tt$count < limit) {
         limit <- tt$count
+      }
 
       if (sumreturned < limit) {
         args$limit <- limit - sumreturned
@@ -353,36 +354,43 @@ occ_search <- function(taxonKey=NULL, scientificName=NULL, country=NULL, publish
     }
   }
 
-  params <- list(taxonKey=taxonKey,scientificName=scientificName,datasetKey=datasetKey,catalogNumber=catalogNumber,
-                 collectorName=collectorName,geometry=geometry,country=country,
-                 publishingCountry=publishingCountry,recordNumber=recordNumber,
-                 q=search,institutionCode=institutionCode,collectionCode=collectionCode,continent=continent,
-                 decimalLatitude=decimalLatitude,decimalLongitude=decimalLongitude,depth=depth,year=year,
-                 typeStatus=typeStatus,lastInterpreted=lastInterpreted,mediatype=mediatype,
-                 limit=limit)
-  if (!any(sapply(params, length) > 0))
-    stop(sprintf("At least one of the parmaters must have a value:\n%s", possparams()), call. = FALSE)
+  params <- list(taxonKey=taxonKey,scientificName=scientificName,datasetKey=datasetKey,
+    catalogNumber=catalogNumber,
+    recordedBy=recordedBy,geometry=geometry,country=country,
+    publishingCountry=publishingCountry,recordNumber=recordNumber,
+    q=search,institutionCode=institutionCode,collectionCode=collectionCode,continent=continent,
+    decimalLatitude=decimalLatitude,decimalLongitude=decimalLongitude,depth=depth,year=year,
+    typeStatus=typeStatus,lastInterpreted=lastInterpreted,mediatype=mediatype,
+    limit=limit)
+  if (!any(sapply(params, length) > 0)) {
+    stop(sprintf("At least one of the parmaters must have a value:\n%s", possparams()),
+         call. = FALSE)
+  }
   iter <- params[which(sapply(params, length) > 1)]
-  if (length(names(iter)) > 1)
-    stop(sprintf("You can have multiple values for only one of:\n%s", possparams()), call. = FALSE)
+  if (length(names(iter)) > 1) {
+    stop(sprintf("You can have multiple values for only one of:\n%s", possparams()),
+         call. = FALSE)
+  }
 
   if (length(iter) == 0) {
-    out <- getdata()
+    out <- .get_occ_search()
   } else {
-    out <- lapply(iter[[1]], getdata, itervar = names(iter))
+    out <- lapply(iter[[1]], .get_occ_search, itervar = names(iter))
     names(out) <- iter[[1]]
   }
 
-  if(any(names(argscoll) %in% names(iter))){
+  if (any(names(argscoll) %in% names(iter))) {
     argscoll[[names(iter)]] <- iter[[names(iter)]]
   }
   argscoll$fields <- fields
 
-  if (is(out, "data.frame")) {
-    class(out) <- c('data.frame', 'gbif')
-  } else {
-    class(out) <- "gbif"
-    attr(out, 'type') <- if (length(iter) == 0) "single" else "many"
+  if (!return %in% c('meta', 'hier')) {
+    if (is(out, "data.frame")) {
+      class(out) <- c('data.frame', 'gbif')
+    } else {
+      class(out) <- "gbif"
+      attr(out, 'type') <- if (length(iter) == 0) "single" else "many"
+    }
   }
   structure(out, return = return, args = argscoll)
 }
@@ -440,14 +448,23 @@ pasteargs <- function(b){
 
 pastemax <- function(z, type='counts', n=10){
   xnames <- names(z)
-  xnames <- sapply(xnames, function(x) if(nchar(x)>8) paste0(substr(x, 1, 6), "..", collapse = "") else x, USE.NAMES = FALSE)
+  xnames <- sapply(xnames, function(x) {
+    if (nchar(x) > 8) {
+      paste0(substr(x, 1, 6), "..", collapse = "")
+    } else {
+      x
+    }
+  }, USE.NAMES = FALSE)
   yep <- switch(type,
          counts = vapply(z, function(y) y$meta$count, numeric(1), USE.NAMES = FALSE),
          returned = vapply(z, function(y) NROW(y$data), numeric(1), USE.NAMES = FALSE),
          hier = vapply(z, function(y) length(y$hierarchy), numeric(1), USE.NAMES = FALSE),
          media = vapply(z, function(y) length(y$media), numeric(1), USE.NAMES = FALSE)
   )
-  tt <- list(); for(i in seq_along(xnames)){ tt[[i]] <- sprintf("%s (%s)", xnames[i], yep[[i]]) }
+  tt <- list()
+  for (i in seq_along(xnames)) {
+    tt[[i]] <- sprintf("%s (%s)", xnames[i], yep[[i]])
+  }
   paste0(tt, collapse = ", ")
 }
 
@@ -456,7 +473,7 @@ parse_issues <- function(x){
 }
 
 check_limit <- function(x){
-  if(x > 1000000L)
+  if (x > 1000000L) {
     stop("
       Maximum request size is 1 million. As a solution, either use the
       GBIF web interface, or in R, split up your request in a way that
@@ -465,18 +482,19 @@ check_limit <- function(x){
       you could split up your request taxonomically, e.g., if you want
       data for all species in a large family of birds, split up by
       some higher taxonomic level, like tribe or genus.")
-  else
+  } else {
     x
+  }
 }
 
 possparams <- function(){
-  "   taxonKey, scientificName, datasetKey, catalogNumber, collectorName, geometry,
+  "   taxonKey, scientificName, datasetKey, catalogNumber, recordedBy, geometry,
    country, publishingCountry, recordNumber, search, institutionCode, collectionCode,
    decimalLatitude, decimalLongitude, depth, year, typeStatus, lastInterpreted,
    continent, or mediatype"
 }
 
 check_vals <- function(x, y){
-  if(is.na(x) || is.null(x)) stop(sprintf("%s can not be NA or NULL", y), call. = FALSE)
-  if(length(x) > 1) stop(sprintf("%s has to be length 1", y), call. = FALSE)
+  if (is.na(x) || is.null(x)) stop(sprintf("%s can not be NA or NULL", y), call. = FALSE)
+  if (length(x) > 1) stop(sprintf("%s has to be length 1", y), call. = FALSE)
 }
