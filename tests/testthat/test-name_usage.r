@@ -24,7 +24,7 @@ test_that("name_usage works", {
 
   expect_equal(length(uu), 2)
   expect_equal(NCOL(uu$meta), 3)
-  expect_equal(NCOL(uu$data), 3)
+  expect_equal(NCOL(uu$data), 4)
 })
 
 test_that("name_usage name route works", {
@@ -33,8 +33,8 @@ test_that("name_usage name route works", {
   rte1a <- name_usage(key = 5127291, data = 'name')
   expect_is(rte1, "list")
   expect_is(rte1a, "list")
-  expect_null(rte1$meta)
-  expect_null(rte1a$meta)
+  expect_true(is.na(rte1$meta))
+  expect_true(is.na(rte1a$meta))
   expect_is(rte1$data, "data.frame")
   expect_is(rte1a$data, "data.frame")
 })
@@ -45,8 +45,8 @@ test_that("name_usage parents route works", {
   rte2a <- name_usage(key = 5135783, data = 'parents')
   expect_is(rte2, "list")
   expect_is(rte2a, "list")
-  expect_null(rte2$meta)
-  expect_null(rte2a$meta)
+  expect_true(is.na(rte2$meta))
+  expect_true(is.na(rte2a$meta))
   expect_is(rte2$data, "data.frame")
   expect_is(rte2a$data, "data.frame")
 })
@@ -83,7 +83,7 @@ test_that("name_usage synonyms route works", {
   expect_is(rte5a, "list")
   expect_is(rte5$meta, "data.frame")
   expect_is(rte5a$meta, "data.frame")
-  expect_null(rte5$data)
+  expect_equal(NROW(rte5$data), 0)
   expect_is(rte5a$data, "data.frame")
 })
 
@@ -167,8 +167,9 @@ test_that("name_usage typeSpecimens route works", {
   expect_is(rte12a, "list")
   expect_is(rte12$meta, "data.frame")
   expect_is(rte12a$meta, "data.frame")
-  expect_null(rte12$data)
-  expect_is(rte12a$data, "data.frame")
+  expect_equal(NROW(rte12$data), 0)
+  # this used to be up, seems to be down now, comment on 2015-12-04
+  expect_equal(NROW(rte12a$data), 0)
 })
 
 test_that("name_usage fails correctly", {

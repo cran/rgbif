@@ -28,15 +28,14 @@
 #' @importFrom methods is
 #' @importFrom utils browseURL head unzip packageVersion
 #' @importFrom stats na.omit complete.cases
-#' @importFrom data.table rbindlist fread
+#' @importFrom data.table rbindlist fread setDF
 #' @importFrom ggplot2 geom_point position_jitter map_data ggplot
 #' geom_polygon aes scale_color_brewer labs theme_bw theme guides
 #' guide_legend coord_fixed element_blank
 #' @importFrom httr GET POST DELETE HEAD content stop_for_status http_status
 #' add_headers authenticate write_disk content_type_json accept_json
 #' user_agent
-#' @importFrom XML getNodeSet xmlAttrs xmlSApply xmlValue xmlParse htmlParse
-#' xpathApply xpathSApply xmlToList
+#' @importFrom xml2 read_xml xml_text xml_find_all
 #' @importFrom jsonlite toJSON fromJSON
 #' @importFrom oai id list_identifiers list_records list_metadataformats
 #' list_sets get_records
