@@ -8,11 +8,11 @@
 occ_search(taxonKey = NULL, scientificName = NULL, country = NULL,
   publishingCountry = NULL, hasCoordinate = NULL, typeStatus = NULL,
   recordNumber = NULL, lastInterpreted = NULL, continent = NULL,
-  geometry = NULL, recordedBy = NULL, basisOfRecord = NULL,
-  datasetKey = NULL, eventDate = NULL, catalogNumber = NULL,
-  year = NULL, month = NULL, decimalLatitude = NULL,
-  decimalLongitude = NULL, elevation = NULL, depth = NULL,
-  institutionCode = NULL, collectionCode = NULL,
+  geometry = NULL, geom_big = "asis", geom_size = 40, geom_n = 10,
+  recordedBy = NULL, basisOfRecord = NULL, datasetKey = NULL,
+  eventDate = NULL, catalogNumber = NULL, year = NULL, month = NULL,
+  decimalLatitude = NULL, decimalLongitude = NULL, elevation = NULL,
+  depth = NULL, institutionCode = NULL, collectionCode = NULL,
   hasGeospatialIssue = NULL, issue = NULL, search = NULL,
   mediaType = NULL, limit = 500, start = 0, fields = "all",
   return = "all", ...)
@@ -55,7 +55,14 @@ or south_america}
 \item{geometry}{Searches for occurrences inside a polygon described in Well Known
 Text (WKT) format. A WKT shape written as either POINT, LINESTRING, LINEARRING
 or POLYGON. Example of a polygon: ((30.1 10.1, 20, 20 40, 40 40, 30.1 10.1))
- would be queried as \url{http://bit.ly/1BzNwDq}.}
+ would be queried as \url{http://bit.ly/1BzNwDq}. See also the section \strong{WKT} below.}
+
+\item{geom_big}{(character) One of "axe", "bbox", or "asis" (default). See Details.}
+
+\item{geom_size}{(integer) An integer indicating size of the cell. Default: 40. See Details.}
+
+\item{geom_n}{(integer) An integer indicating number of cells in each dimension. Default: 10.
+See Details.}
 
 \item{recordedBy}{The person who recorded the occurrence.}
 
@@ -156,9 +163,11 @@ A data.frame or list
 Search for GBIF occurrences
 }
 \details{
-Note that you can pass in a vector to one of taxonkey, datasetKey, and
-catalogNumber parameters in a function call, but not a vector >1 of the three
-parameters at the same time
+\bold{Multiple parmeters}: Note that you can pass in a vector to one of taxonKey,
+scientificName, datasetKey, catalogNumber, recordedBy, geometry, country, publishingCountry,
+recordNumber, search, institutionCode, collectionCode, decimalLatitude, decimalLongitude,
+depth, year, typeStatus, lastInterpreted, continent, or mediatype parameters in a
+function call, but not a vector >1 of these parameters at the same time
 
 \bold{Hierarchies:} hierarchies are returned wih each occurrence object. There is no
 option no to return them from the API. However, within the \code{occ_search}
@@ -186,9 +195,45 @@ first with any \code{name_*} functions, then pass that ID to the \code{taxonKey}
 \bold{WKT:} Examples of valid WKT objects:
 \itemize{
  \item 'POLYGON((30.1 10.1, 10 20, 20 60, 60 60, 30.1 10.1))'
- \item 'POINT(30.1 10.1)'
+ \item 'POINT(-120 40)'
  \item 'LINESTRING(3 4,10 50,20 25)'
  \item 'LINEARRING' ???' - Not sure how to specify this. Anyone?
+}
+
+\bold{Long WKT:} Options for handling long WKT strings:
+Note that long WKT strings are specially handled when using \code{occ_search} or
+\code{occ_data}. Here are the three options for long WKT strings (> 1500 characters),
+set one of these three via the parameter \code{geom_big}:
+\itemize{
+ \item asis - the default setting. This means we don't do anything internally. That is,
+ we just pass on your WKT string just as we've done before in this package.
+ \item axe - this option uses the \pkg{geoaxe} package to chop up your WKT string in
+ to many polygons, which then leads to a separate data request for each polygon piece,
+ then we combine all dat back together to give to you. Note that if your WKT string
+ is not of type polygon, we drop back to \code{asis} as there's no way to chop up
+ linestrings, etc. This option will in most cases be slower than the other two options.
+ However, this polygon splitting approach won't have the problem of
+ the disconnect between how many records you want and what you actually get back as
+ with the bbox option.
+
+ This method uses \code{\link[geoaxe]{chop}}, which uses \code{GridTopology} from
+ the \code{sp} package, which has two parameters \code{cellsize} and \code{cells.dim}
+ that we use to chop up polygons. You can tweak those parameters here by tweaking
+ \code{geom_size} and \code{geom_n}. \code{geom_size} seems to be more useful in
+ toggling the number of WKT strings you get back.
+
+ See \code{\link{wkt_parse}} to manually break make WKT bounding box from a larger WKT
+ string, or break a larger WKT string into many smaller ones.
+
+ \item bbox - this option checks whether your WKT string is longer than 1500 characters,
+ and if it is we create a bounding box from the WKT, do the GBIF search with that
+ bounding box, then prune the resulting data to only those occurrences in your original
+ WKT string. There is a big caveat however. Because we create a bounding box from the WKT,
+ and the \code{limit} parameter determines some subset of records to get, then when we
+ prune the resulting data to the WKT, the number of records you get could be less than
+ what you set with your \code{limit} parameter. However, you could set the limit to be
+ high enough so that you get all records back found in that bounding box, then you'll
+ get all the records available within the WKT.
 }
 
 \bold{Range queries:} A range query is as it sounds - you query on a range of values defined by
@@ -372,6 +417,65 @@ occ_search(taxonKey=key, geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1
    limit=20)
 ## or using bounding box, converted to WKT internally
 occ_search(geometry=c(-125.0,38.4,-121.8,40.9), limit=20)
+
+# Search on a long WKT string - too long for a GBIF search API request
+## We internally convert your WKT string to a bounding box
+##  then do the query
+##  then clip the results down to just those in the original polygon
+##  - Alternatively, you can set the parameter `geom_big="bbox"`
+##  - An additional alternative is to use the GBIF download API, see ?downloads
+wkt <- "POLYGON((13.26349675655365 52.53991761181831,18.36115300655365 54.11445544219924,
+21.87677800655365 53.80418956368524,24.68927800655365 54.217364774722455,28.20490300655365
+54.320018299365124,30.49005925655365 52.85948216284084,34.70880925655365 52.753220564427814,
+35.93927800655365 50.46131871049754,39.63068425655365 49.55761261299145,40.86115300655365
+46.381388009130845,34.00568425655365 45.279102926537,33.30255925655365 48.636868465271846,
+30.13849675655365 49.78513301801265,28.38068425655365 47.2236377039631,29.78693425655365
+44.6572866068524,27.67755925655365 42.62220075124676,23.10724675655365 43.77542058000212,
+24.51349675655365 47.10412345120368,26.79865300655365 49.55761261299145,23.98615300655365
+52.00209943876426,23.63459050655365 49.44345313705238,19.41584050655365 47.580567827212114,
+19.59162175655365 44.90682206053508,20.11896550655365 42.36297154876359,22.93146550655365
+40.651849782081555,25.56818425655365 39.98171166226459,29.61115300655365 40.78507856230178,
+32.95099675655365 40.38459278067577,32.95099675655365 37.37491910393631,26.27130925655365
+33.65619609886799,22.05255925655365 36.814081996401605,18.71271550655365 36.1072176729021,
+18.53693425655365 39.16878677351903,15.37287175655365 38.346355762190846,15.19709050655365
+41.578843777436326,12.56037175655365 41.050735748143424,12.56037175655365 44.02872991212046,
+15.19709050655365 45.52594200494078,16.42755925655365 48.05271546733352,17.48224675655365
+48.86865641518059,10.62677800655365 47.817178329053135,9.57209050655365 44.154980365192,
+8.16584050655365 40.51835445724746,6.05646550655365 36.53210972067291,0.9588092565536499
+31.583640057148145,-5.54509699344635 35.68001485298146,-6.77556574344635 40.51835445724746,
+-9.41228449344635 38.346355762190846,-12.40056574344635 35.10683619158607,-15.74040949344635
+38.07010978950028,-14.68572199344635 41.31532459432774,-11.69744074344635 43.64836179231387,
+-8.88494074344635 42.88035509418534,-4.31462824344635 43.52103366008421,-8.35759699344635
+47.2236377039631,-8.18181574344635 50.12441989397795,-5.01775324344635 49.55761261299145,
+-2.73259699344635 46.25998980446569,-1.67790949344635 44.154980365192,-1.32634699344635
+39.30493590580802,2.18927800655365 41.44721797271696,4.47443425655365 43.26556960420879,
+2.18927800655365 46.7439668697322,1.83771550655365 50.3492841273576,6.93537175655365
+49.671505849335254,5.00177800655365 52.32557322466785,7.81427800655365 51.67627099802223,
+7.81427800655365 54.5245591562317,10.97834050655365 51.89375191441792,10.97834050655365
+55.43241335888528,13.26349675655365 52.53991761181831))"
+wkt <- gsub("\\n", " ", wkt)
+
+#### Default option with large WKT string fails
+# res <- occ_search(geometry = wkt)
+
+#### if WKT too long, with 'geom_big=bbox': makes into bounding box
+res <- occ_search(geometry = wkt, geom_big = "bbox")$data
+library("rgeos")
+library("sp")
+wktsp <- readWKT(wkt)
+plot(wktsp)
+coordinates(res) <- ~decimalLongitude+decimalLatitude
+points(res)
+
+#### Or, use 'geom_big=axe'
+(res <- occ_search(geometry = wkt, geom_big = "axe"))
+##### manipulate essentially number of polygons that result, so number of requests
+###### default geom_size is 40
+###### fewer calls
+(res <- occ_search(geometry = wkt, geom_big = "axe", geom_size=50))
+###### more calls
+(res <- occ_search(geometry = wkt, geom_big = "axe", geom_size=30))
+
 
 # Search on country
 occ_search(country='US', fields=c('name','country'), limit=20)
