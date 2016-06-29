@@ -24,7 +24,7 @@ occ_download_get <- function(key, path=".", overwrite=FALSE, ...) {
   meta <- occ_download_meta(key)
   size <- getsize(meta$size)
   message(sprintf('Download file size: %s MB', size))
-  url <- sprintf('http://api.gbif.org/v1/occurrence/download/request/%s', key)
+  url <- sprintf('%s/occurrence/download/request/%s', gbif_base(), key)
   path <- sprintf("%s/%s.zip", path, key)
   res <- GET(url, write_disk(path = path, overwrite = overwrite), make_rgbif_ua(), ...)
   if (res$status_code > 203) stop(c_utf8(res))
@@ -36,7 +36,7 @@ occ_download_get <- function(key, path=".", overwrite=FALSE, ...) {
 
 #' @export
 print.occ_download_get <- function(x, ...) {
-  stopifnot(is(x, 'occ_download_get'))
+  stopifnot(inherits(x, 'occ_download_get'))
   cat("<<gbif downloaded get>>", "\n", sep = "")
   cat("  Path: ", x, "\n", sep = "")
   cat("  File size: ", sprintf("%s MB", attr(x, "size")), "\n", sep = "")

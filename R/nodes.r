@@ -5,10 +5,12 @@
 #' @template identifierargs
 #' @export
 #'
-#' @param data The type of data to get. Default is all data.
+#' @param data The type of data to get. One or more of: 'organization', 'endpoint',
+#' 'identifier', 'tag', 'machineTag', 'comment', 'pendingEndorsement', 'country',
+#' 'dataset', 'installation', or the special 'all'. Default: \code{'all'}
 #' @param uuid UUID of the data node provider. This must be specified if data
 #'    is anything other than 'all'.
-#' @param query Query nodes. Only used when data='all'
+#' @param query Query nodes. Only used when \code{data='all'}
 #' @param isocode A 2 letter country code. Only used if data='country'.
 #'
 #' @references \url{http://www.gbif.org/developer/registry#nodes}
@@ -31,12 +33,12 @@
 #'   "1e789bc9-79fc-4e60-a49e-89dfc45a7188","1f94b3ca-9345-4d65-afe2-4bace93aa0fe")
 #'
 #' res <- lapply(uuids, function(x) nodes(x, data='identifier')$data)
-#' res <- res[!sapply(res, length)==0]
+#' res <- res[!sapply(res, NROW)==0]
 #' res[1]
 #'
 #' # Pass on options to httr
 #' library('httr')
-#' # res <- nodes(limit=20, config=progress())
+#' res <- nodes(limit=20, config=progress())
 #' }
 
 nodes <- function(data = 'all', uuid = NULL, query = NULL, identifier=NULL,
@@ -44,7 +46,7 @@ nodes <- function(data = 'all', uuid = NULL, query = NULL, identifier=NULL,
 
   args <- rgbif_compact(list(q = query, limit=as.integer(limit), offset=start))
 
-  data <- match.arg(data, choices=c('all', 'organization', 'endpoint',
+  data <- match.arg(data, choices = c('all', 'organization', 'endpoint',
                                     'identifier', 'tag', 'machineTag', 'comment',
                                     'pendingEndorsement', 'country', 'dataset',
                                     'installation'), several.ok = TRUE)

@@ -40,7 +40,6 @@ test_that("works with habitat parameter", {
   expect_true(grepl("MARINE", facet_fresh$data$habitats[1]))
 
   # another test
-  out <- name_lookup(query="Vulpes lagopus", rank="species",
-                     higherTaxonKey=5219234, habitat="terrestrial", return="data")
-  expect_equal(out$habitats, "MARINE, TERRESTRIAL")
+  out <- name_lookup(habitats = "terrestrial", return="data")
+  expect_equal(sort(na.omit(out$habitats))[1], "FRESHWATER, MARINE, TERRESTRIAL")
 })

@@ -12,7 +12,7 @@
 
 occ_download_meta <- function(key, ...) {
   stopifnot(!is.null(key))
-  url <- sprintf('http://api.gbif.org/v1/occurrence/download/%s', key)
+  url <- sprintf('%s/occurrence/download/%s', gbif_base(), key)
   tmp <- GET(url, make_rgbif_ua(), ...)
   if (tmp$status_code > 203) stop(c_utf8(tmp), call. = FALSE)
   stopifnot(tmp$header$`content-type` == 'application/json')
@@ -22,7 +22,7 @@ occ_download_meta <- function(key, ...) {
 
 #' @export
 print.occ_download_meta <- function(x, ...){
-  stopifnot(is(x, 'occ_download_meta'))
+  stopifnot(inherits(x, 'occ_download_meta'))
   cat("<<gbif download metadata>>", "\n", sep = "")
   cat("  Status: ", x$status, "\n", sep = "")
   cat("  Download key: ", x$key, "\n", sep = "")

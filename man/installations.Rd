@@ -9,13 +9,13 @@ installations(data = "all", uuid = NULL, query = NULL,
   ...)
 }
 \arguments{
-\item{data}{The type of data to get. Default is all data. If not 'all', then one
-or more of 'contact', 'endpoint', 'dataset', 'comment', 'deleted', 'nonPublishing'.}
+\item{data}{The type of data to get. One or more of: 'contact', 'endpoint', 'dataset',
+'comment', 'deleted', 'nonPublishing', or the special 'all'. Default: \code{'all'}}
 
 \item{uuid}{UUID of the data node provider. This must be specified if data
 is anything other than 'all'.}
 
-\item{query}{Query nodes. Only used when data='all'. Ignored otherwise.}
+\item{query}{Query nodes. Only used when \code{data='all'}. Ignored otherwise.}
 
 \item{identifier}{The value for this parameter can be a simple string or integer,
 e.g. identifier=120. This parameter doesn't seem to work right now.}
@@ -58,20 +58,19 @@ identifierType options:
 \examples{
 \dontrun{
 installations(limit=5)
-installations(query="france")
+installations(query="france", limit = 25)
 installations(uuid="b77901f9-d9b0-47fa-94e0-dd96450aa2b4")
-installations(data='contact', uuid="b77901f9-d9b0-47fa-94e0-dd96450aa2b4")
 installations(data='contact', uuid="2e029a0c-87af-42e6-87d7-f38a50b78201")
 installations(data='endpoint', uuid="b77901f9-d9b0-47fa-94e0-dd96450aa2b4")
 installations(data='dataset', uuid="b77901f9-d9b0-47fa-94e0-dd96450aa2b4")
-installations(data='deleted')
+installations(data='deleted', limit = 25)
 installations(data='deleted', limit=2)
 installations(data=c('deleted','nonPublishing'), limit=2)
 installations(identifierType='DOI', limit=2)
 
 # Pass on options to httr
 library('httr')
-# res <- installations(data='deleted', config=progress())
+res <- installations(data='deleted', config=progress())
 }
 }
 \references{

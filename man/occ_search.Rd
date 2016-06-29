@@ -17,7 +17,7 @@ occ_search(taxonKey = NULL, scientificName = NULL, country = NULL,
   mediaType = NULL, limit = 500, start = 0, fields = "all",
   return = "all", ...)
 
-\method{print}{gbif}(x, ..., n = 10)
+\method{print}{gbif}(x, ...)
 }
 \arguments{
 \item{taxonKey}{A taxon key from the GBIF backbone. All included and synonym taxa
@@ -153,8 +153,6 @@ returns the metadata for the entire call. all gives all data back in a list.}
 be combined with \code{\link[httr]{config}}.}
 
 \item{x}{Output from a call to occ_search}
-
-\item{n}{Number of rows of the data to print.}
 }
 \value{
 A data.frame or list

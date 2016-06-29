@@ -8,12 +8,14 @@ nodes(data = "all", uuid = NULL, query = NULL, identifier = NULL,
   identifierType = NULL, limit = 100, start = NULL, isocode = NULL, ...)
 }
 \arguments{
-\item{data}{The type of data to get. Default is all data.}
+\item{data}{The type of data to get. One or more of: 'organization', 'endpoint',
+'identifier', 'tag', 'machineTag', 'comment', 'pendingEndorsement', 'country',
+'dataset', 'installation', or the special 'all'. Default: \code{'all'}}
 
 \item{uuid}{UUID of the data node provider. This must be specified if data
 is anything other than 'all'.}
 
-\item{query}{Query nodes. Only used when data='all'}
+\item{query}{Query nodes. Only used when \code{data='all'}}
 
 \item{identifier}{The value for this parameter can be a simple string or integer,
 e.g. identifier=120. This parameter doesn't seem to work right now.}
@@ -74,12 +76,12 @@ uuids = c("8cb55387-7802-40e8-86d6-d357a583c596","02c40d2a-1cba-4633-90b7-e36e5e
   "1e789bc9-79fc-4e60-a49e-89dfc45a7188","1f94b3ca-9345-4d65-afe2-4bace93aa0fe")
 
 res <- lapply(uuids, function(x) nodes(x, data='identifier')$data)
-res <- res[!sapply(res, length)==0]
+res <- res[!sapply(res, NROW)==0]
 res[1]
 
 # Pass on options to httr
 library('httr')
-# res <- nodes(limit=20, config=progress())
+res <- nodes(limit=20, config=progress())
 }
 }
 \references{

@@ -16,9 +16,9 @@ columns, columns named exactly "decimalLatitude" and "decimalLongitude".}
 determines what you can choose in the region parameter. One of: county,
 state, usa, world, world2, france, italy, or nz.}
 
-\item{region}{The region of the world to map. From the maps package, run
-\code{sort(unique(map_data("world")$region))} to see region names for the
-world database layer, or e.g., \code{sort(unique(map_data("state")$region))}
+\item{region}{The region of the world to map. Run
+\code{sort(unique(ggplot2::map_data("world")$region))} to see region names for the
+world database layer, or \code{sort(unique(ggplot2::map_data("state")$region))}
 for the state layer.}
 
 \item{geom}{The geom to use, one of geom_point or geom_jitter. Don't
@@ -61,6 +61,14 @@ gbifmap(dat)
 library("ggplot2")
 gbifmap(dat)
 gbifmap(dat, geom = geom_jitter, jitter = position_jitter(1, 6))
+
+# many species
+splist <- c('Cyanocitta stelleri', 'Junco hyemalis', 'Aix sponsa')
+keys <- vapply(splist, function(x) name_suggest(x)$key[1], numeric(1), USE.NAMES=FALSE)
+dat <- occ_data(keys, limit = 50)
+library("data.table")
+dd <- rbindlist(lapply(dat, function(z) z$data), fill = TRUE, use.names = TRUE)
+gbifmap(dd)
 }
 }
 

@@ -147,10 +147,11 @@ gbifparser_verbatim <- function(input, fields='minimal'){
 
 
 ldfast <- function(x, convertvec=FALSE){
-  if (convertvec)
+  if (convertvec) {
     do.call(rbind_fill, lapply(x, convert2df))
-  else
+  } else {
     do.call(rbind_fill, x)
+  }
 }
 
 ldfast_names <- function(x, convertvec=FALSE){
@@ -165,10 +166,12 @@ ldfast_names <- function(x, convertvec=FALSE){
 }
 
 convert2df <- function(x){
-  if (!inherits(x, "data.frame"))
-    data.frame(rbind(x), stringsAsFactors = FALSE)
-  else
-    x
+  if (!inherits(x, "data.frame")) {
+    # data.frame(rbind(x), stringsAsFactors = FALSE)
+    tibble::data_frame(rbind(x))
+  } else {
+    tibble::as_data_frame(x)
+  }
 }
 
 rbind_rows <- function(x) {
@@ -238,7 +241,7 @@ namelkupparser <- function(x){
   tmp <- lapply(tmp, function(x) {
     if (length(x) == 0) {
       NA
-    } else if (length(x) > 1 || is(x, "list")) {
+    } else if (length(x) > 1 || inherits(x, "list")) {
       paste0(x, collapse = ", ")
     } else {
       x
@@ -253,7 +256,7 @@ namelkupcleaner <- function(x){
   lapply(tmp, function(x) {
     if (length(x) == 0) {
       NA
-    } else if (length(x) > 1 || is(x, "list")) {
+    } else if (length(x) > 1 || inherits(x, "list")) {
       paste0(x, collapse = ", ")
     } else {
       x
@@ -363,5 +366,40 @@ transform_names <- function(x) {
     paste0("geom", seq_along(x))
   } else {
     x
+  }
+}
+
+get_meta <- function(x){
+  if ('endOfRecords' %in% names(x)) {
+    data.frame(x[!names(x) == 'results'], stringsAsFactors = FALSE)
+  } else {
+    NULL
+  }
+}
+
+list0tochar <- function(x){
+  if (class(x) == 'list') {
+    tmp <- vapply(x, length, numeric(1))
+    if (sum(tmp) == 0) NA else x
+  } else {
+    x
+  }
+}
+
+parse_results <- function(x, y){
+  if (!is.null(y)) {
+    if ('endOfRecords' %in% names(x)) {
+      tmp <- x[ !names(x) %in% c('offset','limit','endOfRecords','count') ]
+    } else {
+      tmp <- x
+    }
+  } else {
+    tmp <- x$results
+  }
+  if (inherits(tmp, "data.frame")) {
+    out <- tryCatch(tibble::as_data_frame(tmp), error = function(e) e)
+    if (inherits(out, "error")) tmp else out
+  } else {
+    tmp
   }
 }

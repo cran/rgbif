@@ -8,7 +8,7 @@ Description: A programmatic interface to the Web Service methods
     taxonomic names, retrieving information on data providers,
     getting species occurrence records, and getting counts of
     occurrence records.
-Version: 0.9.3
+Version: 0.9.4
 License: MIT + file LICENSE
 Authors@R: c(
     person("Scott", "Chamberlain", role = c("aut", "cre"), email = "myrmecocystus@gmail.com"),
@@ -20,17 +20,17 @@ URL: https://github.com/ropensci/rgbif
 BugReports: https://github.com/ropensci/rgbif/issues
 LazyData: true
 VignetteBuilder: knitr
-Imports: methods, utils, stats, xml2, ggplot2, httr (>= 1.0.0),
-        data.table, whisker, magrittr, jsonlite (>= 0.9.16), V8, oai,
-        geoaxe
+Imports: utils, stats, xml2, ggplot2, httr (>= 1.0.0), data.table,
+        whisker, magrittr, jsonlite (>= 0.9.16), V8, oai, geoaxe,
+        tibble
 Suggests: testthat, knitr, reshape2, maps, sp, rgeos
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2016-03-29 14:26:12 UTC; sacmac
+Packaged: 2016-06-29 16:31:29 UTC; sacmac
 Author: Scott Chamberlain [aut, cre],
   Karthik Ram [aut],
   Vijay Barve [aut],
   Dan Mcglinn [aut]
 Maintainer: Scott Chamberlain <myrmecocystus@gmail.com>
 Repository: CRAN
-Date/Publication: 2016-03-29 16:41:50
+Date/Publication: 2016-06-29 22:36:26
