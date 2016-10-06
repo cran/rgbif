@@ -317,13 +317,40 @@ gbif_GET <- function(url, args, parse=FALSE, ...){
     if (temp$status_code == 503) mssg <- http_status(temp)$message
     stop(mssg, call. = FALSE)
   }
+
+  # check content type
   stopifnot(temp$headers$`content-type` == 'application/json')
-  jsonlite::fromJSON(c_utf8(temp), parse)
+
+  # parse JSON
+  json <- jsonlite::fromJSON(c_utf8(temp), parse)
+
+  # check if spellCheck = TRUE, and if should stop
+  if ('spellCheck' %in% names(args)) {
+    if (args$spellCheck) {
+      if (!"suggestions" %in% names(json$spellCheckResponse)) {
+        if (json$spellCheckResponse$correctlySpelled) {
+          return(json)
+        } else {
+          stop("spelling bad, but no suggestions given", call. = FALSE)
+        }
+      } else {
+        mssg <- paste0(
+          "spelling bad - suggestions: \n",
+          paste0(lapply(json$spellCheckResponse$suggestions, function(z) {
+            sprintf("   %s: %s", z$alternatives, z$numFound)
+          }), collapse = "\n")
+        )
+        stop(mssg, call. = FALSE)
+      }
+    }
+  }
+
+  return(json)
 }
 
 gbif_GET_content <- function(url, args, ...) {
   temp <- GET(url, query = cn(args), make_rgbif_ua(), ...)
-  if (temp$status_code > 200) warning(c_utf8(temp), call. = FALSE)
+  if (temp$status_code > 200) stop(c_utf8(temp), call. = FALSE)
   stopifnot(temp$headers$`content-type` == 'application/json')
   c_utf8(temp)
 }
@@ -402,4 +429,24 @@ parse_results <- function(x, y){
   } else {
     tmp
   }
+}
+
+check_gbif_arg_set <- function(x) {
+  facnms <- c('facet', 'facetMincount', 'facetMultiselect',
+              'facetOffset', 'facetLimit')
+  if (!all(grepl(paste0(facnms, collapse = "|"), names(x)))) {
+    stop("some param names not allowed: ", names(x), call. = FALSE)
+  }
+}
+
+# pull out args passed in ... that should be combined with
+# GET request to GBIF
+yank_args <- function(...) {
+  dots <- list(...)
+  #for (i in seq_along(dots)) cat(names(dots)[i], "  ", dots[[i]])
+  # filter out request objects for httr
+  dots <- Filter(function(z) !inherits(z, "request"), dots)
+  # check that args are in a acceptable set
+  check_gbif_arg_set(dots)
+  dots
 }

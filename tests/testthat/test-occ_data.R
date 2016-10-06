@@ -148,7 +148,7 @@ test_that("scientificName basic use works - no synonyms", {
   # specific epithet is the synonym - subspecies rank input
   ee <- suppressMessages(occ_data(scientificName = "Myotis septentrionalis septentrionalis", limit = 2))
   expect_is(ee, "gbif_data")
-  expect_is(ee$data, "character")
+  expect_null(suppressWarnings(ee$data))
   expect_equal(attr(ee, "args")$scientificName, "Myotis septentrionalis septentrionalis")
 
   # above with subspecific name removed, gives result
@@ -249,4 +249,27 @@ test_that("geometry inputs work as expected", {
   gg <- occ_data(geometry = wkt, geom_big = "axe", geom_size = 30, limit = 5)
 
   expect_gt(length(names(gg)), length(names(ee)))
+})
+
+######### spell check works
+test_that("spell check param works", {
+  skip_on_cran()
+
+  # as normal
+  expect_is(
+    occ_data(search = "kingfisher", limit=1, spellCheck = TRUE),
+    "gbif_data"
+  )
+
+  # spelled incorrectly - stops with suggested spelling
+  expect_error(
+    occ_data(search = "kajsdkla", limit=20, spellCheck = TRUE),
+    "spelling bad - suggestions"
+  )
+
+  # spelled incorrectly - stops with many suggested spellings and number of results for each
+  expect_error(
+    occ_data(search = "helir", limit=20, spellCheck = TRUE),
+    "spelling bad - suggestions"
+  )
 })

@@ -13,10 +13,15 @@ occ_data(taxonKey = NULL, scientificName = NULL, country = NULL,
   decimalLatitude = NULL, decimalLongitude = NULL, elevation = NULL,
   depth = NULL, institutionCode = NULL, collectionCode = NULL,
   hasGeospatialIssue = NULL, issue = NULL, search = NULL,
-  mediaType = NULL, limit = 500, start = 0, ...)
+  mediaType = NULL, subgenusKey = NULL, repatriated = NULL,
+  phylumKey = NULL, kingdomKey = NULL, classKey = NULL, orderKey = NULL,
+  familyKey = NULL, genusKey = NULL, establishmentMeans = NULL,
+  protocol = NULL, license = NULL, organismId = NULL,
+  publishingOrg = NULL, stateProvince = NULL, waterBody = NULL,
+  locality = NULL, limit = 500, start = 0, spellCheck = NULL, ...)
 }
 \arguments{
-\item{taxonKey}{A taxon key from the GBIF backbone. All included and synonym taxa
+\item{taxonKey}{(numeric) A taxon key from the GBIF backbone. All included and synonym taxa
 are included in the search, so a search for aves with taxononKey=212
 (i.e. /occurrence/search?taxonKey=212) will match all birds, no matter which
 species. You can pass many keys by passing occ_search in a call to an
@@ -50,8 +55,8 @@ or south_america}
 
 \item{geometry}{Searches for occurrences inside a polygon described in Well Known
 Text (WKT) format. A WKT shape written as either POINT, LINESTRING, LINEARRING
-or POLYGON. Example of a polygon: ((30.1 10.1, 20, 20 40, 40 40, 30.1 10.1))
- would be queried as \url{http://bit.ly/1BzNwDq}. See also the section \strong{WKT} below.}
+POLYGON, or MULTIPOLYGON. Example of a polygon: POLYGON((30.1 10.1, 20, 20 40, 40 40, 30.1 10.1))
+would be queried as \url{http://bit.ly/1BzNwDq}. See also the section \strong{WKT} below.}
 
 \item{geom_big}{(character) One of "axe", "bbox", or "asis" (default). See Details.}
 
@@ -127,6 +132,48 @@ Details. Issues passed to this parameter filter results by the issue.}
 \item{mediaType}{Media type. Default is NULL, so no filtering on mediatype. Options:
 NULL, 'MovingImage', 'Sound', and 'StillImage'.}
 
+\item{subgenusKey}{(numeric) Subgenus classification key.}
+
+\item{repatriated}{(character) Searches for records whose publishing country
+is different to the country where the record was recorded in.}
+
+\item{phylumKey}{(numeric) Phylum classification key.}
+
+\item{kingdomKey}{(numeric) Kingdom classification key.}
+
+\item{classKey}{(numeric) Class classification key.}
+
+\item{orderKey}{(numeric) Order classification key.}
+
+\item{familyKey}{(numeric) Family classification key.}
+
+\item{genusKey}{(numeric) Genus classification key.}
+
+\item{establishmentMeans}{(character) EstablishmentMeans, possible values
+include: INTRODUCED, INVASIVE, MANAGED, NATIVE, NATURALISED, UNCERTAIN}
+
+\item{protocol}{(character) Protocol or mechanism used to provide the
+occurrence record. See Details for possible values}
+
+\item{license}{(character) The type license applied to the dataset or record.
+Possible values: CC0_1_0, CC_BY_4_0, CC_BY_NC_4_0, UNSPECIFIED, and
+UNSUPPORTED}
+
+\item{organismId}{(numeric) An identifier for the Organism instance (as
+opposed to a particular digital record of the Organism). May be a globally
+unique identifier or an identifier specific to the data set.}
+
+\item{publishingOrg}{(character) The publishing organization key (a UUID).}
+
+\item{stateProvince}{(character) The name of the next smaller administrative
+region than country (state, province, canton, department, region, etc.) in
+which the Location occurs.}
+
+\item{waterBody}{(character) The name of the water body in which the
+locations occur}
+
+\item{locality}{(character) The specific description of the place.}
+
 \item{limit}{Number of records to return. Default: 500. Note that the per request maximum is
 300, but since we set it at 500 for the function, we do two requests to get you the 500
 records (if there are that many). Note that there is a hard maximum of 200,000, which is
@@ -136,17 +183,46 @@ calculated as the \code{limit+start}, so \code{start=199,000} and \code{limit=20
 Note that we do the paging internally for you, but you can manually set the \code{start}
 parameter}
 
+\item{spellCheck}{(logical) If \code{TRUE} ask GBIF to check your spelling of
+the value passed to the \code{search} parameter. IMPORTANT: This only checks
+the input to the \code{search} parameter, and no others. Default: \code{FALSE}}
+
 \item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
 \code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will
 be combined with \code{\link[httr]{config}}.}
 }
 \value{
-A data.frame or list
+An object of class \code{gbif_data}, which is a S3 class list, with
+slots for metadata (\code{meta}) and the occurrence data itself (\code{data}),
+and with attributes listing the user supplied arguments and whether it was a
+"single" or "many" search; that is, if you supply two values of the
+\code{datasetKey} parameter to searches are done, and it's a "many".
+\code{meta} is a list of length four with offset, limit, endOfRecords and
+count fields. \code{data} is a tibble (aka data.frame)
 }
 \description{
 Search for GBIF occurrences - simplified for speed
 }
 \details{
+\bold{protocol parameter options}:
+\itemize{
+ \item BIOCASE - A BioCASe protocl compliant service.
+ \item DIGIR - A DiGIR service endpoint.
+ \item DIGIR_MANIS - A DiGIR service slightly modified for the MANIS network.
+ \item DWC_ARCHIVE - A Darwin Core Archive as defined by the Darwin Core Text
+ Guidelines.
+ \item EML - A single EML metadata document in any EML version.
+ \item FEED - Syndication feeds like RSS or ATOM of various flavors.
+ \item OAI_PMH - The Open Archives Initiative Protocol for Metadata
+ Harvesting.
+ \item OTHER - Any other service not covered by this enum so far.
+ \item TAPIR - A TAPIR service.
+ \item TCS_RDF - Taxon Concept data given as RDF based on the TDWG ontology.
+ \item TCS_XML - A Taxon Concept Schema document.
+ \item WFS - An OGC Web Feature Service.
+ \item WMS - An OGC Web Map Service.
+}
+
 \bold{Multiple parmeters}: Note that you can pass in a vector to one of taxonKey,
 scientificName, datasetKey, catalogNumber, recordedBy, geometry, country, publishingCountry,
 recordNumber, search, institutionCode, collectionCode, decimalLatitude, decimalLongitude,
@@ -179,6 +255,7 @@ first with any \code{name_*} functions, then pass that ID to the \code{taxonKey}
 \bold{WKT:} Examples of valid WKT objects:
 \itemize{
  \item 'POLYGON((30.1 10.1, 10 20, 20 60, 60 60, 30.1 10.1))'
+ \item 'MULTIPOLYGON(((-123 38, -123 43, -116 43, -116 38, -123 38)),((-97 41, -97 45, -93 45, -93 41, -97 41)))'
  \item 'POINT(-120 40)'
  \item 'LINESTRING(3 4,10 50,20 25)'
  \item 'LINEARRING' ???' - Not sure how to specify this. Anyone?
@@ -313,11 +390,12 @@ results from \code{\link{occ_count}}. For equivalent outcomes, in this function
 use \code{hasCoordinate=TRUE}, and \code{hasGeospatialIssue=FALSE} to have the
 same outcome using \code{\link{occ_count}} with \code{isGeoreferenced=TRUE}.
 
-This does nearly the same thing as \code{\link{occ_search}}, but is a bit simplified
-for speed, and is for the most common use case where user just wants the data, and not
-other information like taxon hierarchies and media (e.g., images) information. Alot of time
-in \code{\link{occ_search}} is used parsing data to be more useable downstream. We do
-less of that in this function.
+This does nearly the same thing as \code{\link{occ_search}}, but
+is a bit simplified for speed, and is for the most common use case where
+user just wants the data, and not other information like taxon hierarchies
+and media (e.g., images) information. Alot of time in \code{\link{occ_search}}
+is used parsing data to be more useable downstream. We do less of that
+in this function.
 }
 \examples{
 \dontrun{
@@ -331,9 +409,9 @@ occ_data(taxonKey=key, limit=20)
 
 # Instead of getting a taxon key first, you can search for a name directly
 ## However, note that using this approach (with \\code{scientificName="..."})
-## you are getting synonyms too. The results for using \\code{scientifcName} and
-## \\code{taxonKey} parameters are the same in this case, but I wouldn't be surprised if for some
-## names they return different results
+## you are getting synonyms too. The results for using \\code{scientifcName}
+## and \\code{taxonKey} parameters are the same in this case, but I wouldn't
+## be surprised if for some names they return different results
 library("httr")
 occ_data(scientificName = 'Ursus americanus', config=verbose())
 key <- name_backbone(name = 'Ursus americanus', rank='species')$usageKey
@@ -373,7 +451,8 @@ keys <- sapply(splist, function(x) name_suggest(x)$key[1], USE.NAMES=FALSE)
 occ_data(taxonKey=keys, limit=5)
 
 # Search using a synonym name
-#  Note that you'll see a message printing out that the accepted name will be used
+#  Note that you'll see a message printing out that the accepted name will
+# be used
 occ_data(scientificName = 'Pulsatilla patens', limit=5)
 
 # Search on latitidue and longitude
@@ -381,10 +460,18 @@ occ_data(decimalLatitude=40, decimalLongitude=-120, limit = 10)
 
 # Search on a bounding box
 ## in well known text format
-occ_data(geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))', limit=20)
+### polygon
+occ_data(geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))',
+  limit=20)
+### multipolygon
+## wkt <- 'MULTIPOLYGON(((-123 38, -123 43, -116 43, -116 38, -123 38)),
+##   ((-97 41, -97 45, -93 45, -93 41, -97 41)))'
+## occ_data(geometry = gsub("\\n", "", wkt), limit = 20)
+### polygon and taxonkey
 key <- name_suggest(q='Aesculus hippocastanum')$key[1]
-occ_data(taxonKey=key, geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))',
-   limit=20)
+occ_data(taxonKey=key,
+ geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))',
+ limit=20)
 ## or using bounding box, converted to WKT internally
 occ_data(geometry=c(-125.0,38.4,-121.8,40.9), limit=20)
 
@@ -490,6 +577,65 @@ occ_data(taxonKey=key, hasGeospatialIssue=TRUE, limit=20)
 
 # Search using a query string
 occ_data(search="kingfisher", limit=20)
+## spell check - only works with the `search` parameter
+### spelled correctly - same result as above call
+occ_data(search = "kingfisher", limit=20, spellCheck = TRUE)
+### spelled incorrectly - stops with suggested spelling
+occ_data(search = "kajsdkla", limit=20, spellCheck = TRUE)
+### spelled incorrectly - stops with many suggested spellings
+###   and number of results for each
+occ_data(search = "helir", limit=20, spellCheck = TRUE)
+
+# search on repatriated - doesn't work right now
+# occ_data(repatriated = "")
+
+# search on phylumKey
+occ_data(phylumKey = 7707728, limit = 5)
+
+# search on kingdomKey
+occ_data(kingdomKey = 1, limit = 5)
+
+# search on classKey
+occ_data(classKey = 216, limit = 5)
+
+# search on orderKey
+occ_data(orderKey = 7192402, limit = 5)
+
+# search on familyKey
+occ_data(familyKey = 3925, limit = 5)
+
+# search on genusKey
+occ_data(genusKey = 1935496, limit = 5)
+
+# search on establishmentMeans
+occ_data(establishmentMeans = "INVASIVE", limit = 5)
+occ_data(establishmentMeans = "NATIVE", limit = 5)
+occ_data(establishmentMeans = "UNCERTAIN", limit = 5)
+
+# search on protocol
+occ_data(protocol = "DIGIR", limit = 5)
+
+# search on license
+occ_data(license = "CC_BY_4_0", limit = 5)
+
+# search on organismId
+occ_data(organismId = "100", limit = 5)
+
+# search on publishingOrg
+occ_data(publishingOrg = "28eb1a3f-1c15-4a95-931a-4af90ecb574d", limit = 5)
+
+# search on stateProvince
+occ_data(stateProvince = "California", limit = 5)
+
+# search on waterBody
+occ_data(waterBody = "AMAZONAS BASIN, RIO JURUA", limit = 5)
+
+# search on locality
+occ_data(locality = "Trondheim", limit = 5)
+res <- occ_data(locality = c("Trondheim", "Hovekilen"), limit = 5)
+res$Trondheim$data
+res$Hovekilen$data
+
 
 # Range queries
 ## See Detail for parameters that support range queries

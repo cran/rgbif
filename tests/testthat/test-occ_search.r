@@ -27,7 +27,7 @@ test_that("returns the correct class", {
   expect_equal(uu$meta$limit, 20)
   expect_equal(vv$limit, 200)
 
-  expect_equal(length(tt), 4)
+  expect_equal(length(tt), 5)
   expect_equal(length(tt$meta), 4)
 })
 
@@ -37,10 +37,10 @@ test_that("returns the correct dimensions", {
 
   out <- occ_search(datasetKey='7b5d6a48-f762-11e1-a439-00145eb45e9a', return='data')
 
-  # returns the correct class
   expect_is(out, "data.frame")
-  # dimensions
-  expect_equal(dim(out), c(177,44))
+  expect_is(out$name, "character")
+  expect_is(out$issues, "character")
+  expect_match(out$issues, ",")
 })
 
 ## Search by catalog number
@@ -51,13 +51,13 @@ test_that("returns the correct class", {
 
   expect_is(out, "gbif")
   expect_is(out$meta, "list")
-  expect_is(out$data, "character")
+  expect_null(out$data)
 
   # returns the correct value
   expect_true(out$meta$endOfRecords)
 
   # returns the correct dimensions
-  expect_equal(length(out), 4)
+  expect_equal(length(out), 5)
 })
 
 # Occurrence data: lat/long data, and associated metadata with occurrences
@@ -176,7 +176,7 @@ test_that("scientificName basic use works - no synonyms", {
   # specific epithet is the synonym - subspecies rank input
   ee <- suppressMessages(occ_search(scientificName = "Myotis septentrionalis septentrionalis", limit = 2))
   expect_is(ee, "gbif")
-  expect_is(ee$data, "character")
+  expect_null(ee$data)
   expect_equal(attr(ee, "args")$scientificName, "Myotis septentrionalis septentrionalis")
 
   # above with subspecific name removed, gives result
@@ -278,4 +278,28 @@ test_that("geometry inputs work as expected", {
   gg <- occ_search(geometry = wkt, geom_big = "axe", geom_size = 30, limit = 5)
 
   expect_gt(length(names(gg)), length(names(ee)))
+})
+
+
+######### spell check works
+test_that("spell check param works", {
+  skip_on_cran()
+
+  # as normal
+  expect_is(
+    occ_search(search = "kingfisher", limit=1, spellCheck = TRUE),
+    "gbif"
+  )
+
+  # spelled incorrectly - stops with suggested spelling
+  expect_error(
+    occ_search(search = "kajsdkla", limit=20, spellCheck = TRUE),
+    "spelling bad - suggestions"
+  )
+
+  # spelled incorrectly - stops with many suggested spellings and number of results for each
+  expect_error(
+    occ_search(search = "helir", limit=20, spellCheck = TRUE),
+    "spelling bad - suggestions"
+  )
 })
