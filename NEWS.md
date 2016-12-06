@@ -1,3 +1,16 @@
+rgbif 0.9.6
+===========
+
+### BUG FIXES
+
+* Fixed a bug in `parsenames()` caused by some slots in the list
+being `NULL` (#237)
+* Fixed some failing tests: `occ_facet()` tests were failing due to 
+changes in GBIF API (#239)
+* Fixes to `gbif_oai_get_records()` for slight changes in `oai` 
+dependency pkg (#236)
+
+
 rgbif 0.9.5
 ===========
 
@@ -31,9 +44,7 @@ can do faceted searches (See above) and not have to wait for occurrence
 records to be returned. (#222)
 * `MULTIPOLYGON` well known text features now supported in the GBIF
 API. Previously, you could not query `geometry` with more than
-one polygon (`POLYGON`), but now you can. NOTE: as of this writing
-`MULTIPOLYGON` calls are erroring, but I think it's temporary, and 
-will be back on line soon (#222)
+one polygon (`POLYGON`), but now you can. (#222)
 
 ### MINOR IMPROVEMENTS
 

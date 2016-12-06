@@ -1,7 +1,7 @@
-60749e9831c88ac373519446ceddd753 *DESCRIPTION
+58ce24211ade725c3c8339c2159fb365 *DESCRIPTION
 769bdbb0572f2eefda48945aefb690fc *LICENSE
 cd5edf52e163430c2ed0ca1da9ab12e9 *NAMESPACE
-e528b0a6d792f1e62fef45893a1c8666 *NEWS.md
+69002fe324d746a6f8e9ea266fd27ce5 *NEWS.md
 958a93b4d7d85b6c79f83a7742a272bb *R/bbox.R
 974ed60264f89474679a19308079372a *R/check_wkt.r
 1540abe613b90c9211f9feab68543a62 *R/count_facet.r
@@ -27,7 +27,7 @@ a0fa94cc7612ab12236ae4f44ad0d18b *R/installations.r
 8d306aca46a631103ca07eed115b5834 *R/name_usage.r
 9b84f6cd4579f71544bd3a1e012496c5 *R/networks.r
 eb03f9890be36e81dd8ef1f8a538310e *R/nodes.r
-101e242aafd2e11c17d8b81109625664 *R/oai-pmh.R
+a86503c74a4cecf53a852a303662cb48 *R/oai-pmh.R
 af3987f61ed5c7dc90879d90b1d15c22 *R/occ_count.r
 943f097e8dd2b51e233f6cc3037d5122 *R/occ_data.R
 828e21061010c24d9beb40dd442800c8 *R/occ_download.R
@@ -46,7 +46,7 @@ a6f9d71374470ca8b38c35bb473ef6e7 *R/occ_spellcheck.R
 92a1440244cc3c8d8ebddf1de525f1c3 *R/on_load.R
 d14c5f86f5c9a1e27cb96d399f2ddfd0 *R/organizations.r
 1871e5ad212f7c810eac50ce6857c33c *R/overload_classes.R
-d16e3b84f66fcd346e216f1fc0f1d09c *R/parsenames.R
+a193fa40724e6c8d9fda58200e75fbd1 *R/parsenames.R
 f583f5b5856f7cb5f2c5fbb04f39f8a8 *R/pipe.R
 c815dbb200964eedfac55094eef279a5 *R/plyr_fxns.R
 9ade641541b16c25c32e290d0ec445b6 *R/print_gbif.R
@@ -58,7 +58,7 @@ a3fda25d4f1d7346992d4b9066280861 *R/taxrank.R
 53a416e463a87a5411f86b95096e4b46 *R/wkt_parse.R
 45e06f22cb2f95dbc45ee467c0ffb991 *R/zzz.r
 856077623f44009bbaddb3789981ab88 *README.md
-af0fb781a21ee3f48e776b8dad91e84d *build/vignette.rds
+3daf8495aebfbd7b6d17181e72367499 *build/vignette.rds
 3ed78c9d3941be8fdcc22521d007c77f *data/isocodes.rda
 cac80f89dc8515d77c740d43f210ffcf *data/occ_fields.rda
 d81166d10b52e9265679eb40d3176daa *data/typestatus.rda
@@ -102,7 +102,7 @@ b4ac8e4691f467c75cdccda246745766 *man/elevation.Rd
 7ec8d0b86e90d3fed0f2a5c91255eb85 *man/gbif_citation.Rd
 c6fdbbbe34921930553f1ad1b2bde1a5 *man/gbif_issues.Rd
 fd1c4895aee7ba92387c7a78c2151c17 *man/gbif_names.Rd
-0e9cdfdecf0786ce1a162f75d87d1d86 *man/gbif_oai.Rd
+2daf342c689f9ec3335e162455d0396a *man/gbif_oai.Rd
 baf8f729d018154eadf685df693623be *man/gbif_photos.Rd
 31fbb2bf85b19600e458b969a179d329 *man/gbifdata.Rd
 c005e77806fc6fa37c5bd48e07ad8e9e *man/gbifmap.Rd
@@ -119,7 +119,7 @@ bfa983f843b52dd1e88a638eef68b6b3 *man/name_usage.Rd
 7b8f600a876f833b5e31e290a31be5d4 *man/networks.Rd
 0911192a6a2afebc3279f12bcde30a94 *man/nodes.Rd
 a05c0d915c915d14903809dac1edcbc8 *man/occ_count.Rd
-9046dfa83aee9c7bfc538c89daaf69b0 *man/occ_data.Rd
+b2a347ffb6ed44ea50b44bfe5320bcc2 *man/occ_data.Rd
 822f1ebd749c8153bbb9c5bbb23b6565 *man/occ_download.Rd
 ca4b2162c714ec9280b6340e7e6bfb6e *man/occ_download_cancel.Rd
 8fb12ef812c6d55751b48840744445fe *man/occ_download_get.Rd
@@ -132,7 +132,7 @@ bedf98b7a02428965dc8de7f5769c6d4 *man/occ_get.Rd
 f5fc9e3b5d94c4ff6cda66c7415addaf *man/occ_issues.Rd
 7f7bd9d7a4f016fe1124b6253e96bdb4 *man/occ_issues_lookup.Rd
 4a2dcfd298f999b3f0ac45a5257a5fd6 *man/occ_metadata.Rd
-7c369bc32500ca57ca5494957d08d960 *man/occ_search.Rd
+f0a88e884171bc91bbb777b9dc1f5e6b *man/occ_search.Rd
 4dea90119890d2c67d8f83db4195dd5c *man/occ_spellcheck.Rd
 a1dbe2bd8b5d2d30e1d6242619479a8e *man/occurrencecount.Rd
 ec413bce11fc6d49fa54c3df667bc095 *man/occurrencedensity.Rd
@@ -141,7 +141,7 @@ c058c79ac9a17e566e1ca262e94c1d87 *man/occurrencelist.Rd
 bc05ae5c8870f40056a3796fc448f2cd *man/occurrencelist_all.Rd
 645e5fb5665cadc1c240c46191fe95e0 *man/occurrencelist_many.Rd
 118496992fb8ae3492f02fc87c9de28c *man/organizations.Rd
-714cc723d52ee944758e0b9b7b79f6bb *man/parsenames.Rd
+cbe95a0cc612d9464befae3767f1b342 *man/parsenames.Rd
 2dc72cfab336bea0f269abba47d84e54 *man/pipe.Rd
 4f9f785550909e0ff41e2a14ad061f5a *man/providers.Rd
 e12ce106138de007b519c0cbcadce91b *man/read_wkt.Rd
@@ -174,15 +174,15 @@ d8481e991075cfca6e6848aec7b2fe6f *tests/testthat/test-enumeration.r
 2e7814adbed9bda4ab4f4bf0399d16cd *tests/testthat/test-gbifmap.r
 bbd1f1810215c4d591e76a2bfa0183c8 *tests/testthat/test-installations.r
 1c625888ead5b7d844ea55466d27909d *tests/testthat/test-name_backbone.r
-638861a3db77904e67cef2870d75ce68 *tests/testthat/test-name_lookup.r
-287c2bf2d21b31ffea4b52d922d918cf *tests/testthat/test-name_suggest.r
+bdd88d94bda54311ec7fb0c00ce75e85 *tests/testthat/test-name_lookup.r
+9da94056ee416ab7028cf71cd824c770 *tests/testthat/test-name_suggest.r
 f778807e618f5e17710607cbca3f42a7 *tests/testthat/test-name_usage.r
 5f01e83d4d7a84bee4991296ba617b89 *tests/testthat/test-networks.r
 7cf66b41d0320fc61dd28ba71a28c118 *tests/testthat/test-nodes.r
-db34414d0ef0eccec375ccab6ba933d5 *tests/testthat/test-oai.R
+a2a38b9c2bae2d2d17ceca7123bed080 *tests/testthat/test-oai.R
 a891c5caacd34e1bda29b00e38562c07 *tests/testthat/test-occ_count.r
 3992b9f5802c01084a1b700ac978c8e0 *tests/testthat/test-occ_data.R
-43076b4dfa3d68de77e3157231b0aa87 *tests/testthat/test-occ_facet.R
+238d15804e918167eb87c1f7f66d729e *tests/testthat/test-occ_facet.R
 e57866e5fe2554d947de28bf4906a36a *tests/testthat/test-occ_get.r
 b3865ad6bb7a0a316d2575f6f3771f98 *tests/testthat/test-occ_issues.R
 e3ffbfac5544d8d2381456a842824f1c *tests/testthat/test-occ_issues_lookup.R
@@ -190,7 +190,7 @@ e3ffbfac5544d8d2381456a842824f1c *tests/testthat/test-occ_issues_lookup.R
 9931f5a8451e99c8d99cbe3a24bfd658 *tests/testthat/test-occ_search.r
 3d9c2afc19f41ed21705f3f669316744 *tests/testthat/test-occ_spellcheck.R
 be2517ce26a3d3f2aad4b26f8aafdd25 *tests/testthat/test-organizations.r
-1d9a9d54dfa289111f82f97474765b43 *tests/testthat/test-parsenames.r
+f9e12e2a59f1fd0cce2405c029c35274 *tests/testthat/test-parsenames.r
 dc81c76a2a8e243a1cda335bc59386dd *tests/testthat/test-read_wkt.R
 ec75566d8e5e67d885c6f274914cb598 *tests/testthat/test-wkt_large.R
 ec73da57b197ed25dae602d238fc00db *vignettes/issues_vignette.Rmd
