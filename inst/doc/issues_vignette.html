@@ -245,26 +245,26 @@ hr {
 <p>Then pass to <code>occ_search()</code></p>
 
 <pre><code class="r">(res &lt;- occ_search(taxonKey=key, limit=100))
-#&gt; Records found [20539] 
+#&gt; Records found [21970] 
 #&gt; Records returned [100] 
 #&gt; No. unique hierarchies [1] 
 #&gt; No. media records [63] 
 #&gt; No. facets [0] 
 #&gt; Args [taxonKey=3119195, limit=100, offset=0, fields=all] 
-#&gt; # A tibble: 100 × 87
+#&gt; # A tibble: 100 × 77
 #&gt;                 name        key decimalLatitude decimalLongitude
 #&gt;                &lt;chr&gt;      &lt;int&gt;           &lt;dbl&gt;            &lt;dbl&gt;
 #&gt; 1  Helianthus annuus 1249279611        34.04810       -117.79884
 #&gt; 2  Helianthus annuus 1315048347        34.04377       -116.94136
-#&gt; 3  Helianthus annuus 1253308332        29.67463        -95.44804
+#&gt; 3  Helianthus annuus 1305118889        18.40386        -66.04487
 #&gt; 4  Helianthus annuus 1249286909        32.58747        -97.10081
-#&gt; 5  Helianthus annuus 1305118889        18.40386        -66.04487
+#&gt; 5  Helianthus annuus 1253308332        29.67463        -95.44804
 #&gt; 6  Helianthus annuus 1262375813        29.82586        -95.45604
-#&gt; 7  Helianthus annuus 1262379231        34.04911       -117.80066
-#&gt; 8  Helianthus annuus 1262385911        32.78328        -96.70352
-#&gt; 9  Helianthus annuus 1265544678        32.58747        -97.10081
-#&gt; 10 Helianthus annuus 1270045172        33.92958       -117.37322
-#&gt; # ... with 90 more rows, and 83 more variables: issues &lt;chr&gt;,
+#&gt; 7  Helianthus annuus 1262385911        32.78328        -96.70352
+#&gt; 8  Helianthus annuus 1265544678        32.58747        -97.10081
+#&gt; 9  Helianthus annuus 1262379231        34.04911       -117.80066
+#&gt; 10 Helianthus annuus 1265560496        34.12861       -118.20700
+#&gt; # ... with 90 more rows, and 73 more variables: issues &lt;chr&gt;,
 #&gt; #   datasetKey &lt;chr&gt;, publishingOrgKey &lt;chr&gt;, publishingCountry &lt;chr&gt;,
 #&gt; #   protocol &lt;chr&gt;, lastCrawled &lt;chr&gt;, lastParsed &lt;chr&gt;, crawlId &lt;int&gt;,
 #&gt; #   extensions &lt;chr&gt;, basisOfRecord &lt;chr&gt;, taxonKey &lt;int&gt;,
@@ -278,19 +278,15 @@ hr {
 #&gt; #   identifiers &lt;chr&gt;, facts &lt;chr&gt;, relations &lt;chr&gt;, geodeticDatum &lt;chr&gt;,
 #&gt; #   class &lt;chr&gt;, countryCode &lt;chr&gt;, country &lt;chr&gt;, rightsHolder &lt;chr&gt;,
 #&gt; #   identifier &lt;chr&gt;, verbatimEventDate &lt;chr&gt;, datasetName &lt;chr&gt;,
-#&gt; #   collectionCode &lt;chr&gt;, verbatimLocality &lt;chr&gt;, gbifID &lt;chr&gt;,
-#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, catalogNumber &lt;chr&gt;,
-#&gt; #   recordedBy &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
+#&gt; #   verbatimLocality &lt;chr&gt;, gbifID &lt;chr&gt;, collectionCode &lt;chr&gt;,
+#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, recordedBy &lt;chr&gt;,
+#&gt; #   catalogNumber &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
 #&gt; #   institutionCode &lt;chr&gt;, rights &lt;chr&gt;, eventTime &lt;chr&gt;,
 #&gt; #   identificationID &lt;chr&gt;, coordinateUncertaintyInMeters &lt;dbl&gt;,
 #&gt; #   occurrenceRemarks &lt;chr&gt;, informationWithheld &lt;chr&gt;,
 #&gt; #   individualCount &lt;int&gt;, elevation &lt;dbl&gt;, elevationAccuracy &lt;dbl&gt;,
-#&gt; #   stateProvince &lt;chr&gt;, municipality &lt;chr&gt;, locality &lt;chr&gt;, county &lt;chr&gt;,
-#&gt; #   coordinatePrecision &lt;dbl&gt;, habitat &lt;chr&gt;, identifiedBy &lt;chr&gt;,
-#&gt; #   continent &lt;chr&gt;, nomenclaturalCode &lt;chr&gt;, dataGeneralizations &lt;chr&gt;,
-#&gt; #   verbatimCoordinateSystem &lt;chr&gt;, language &lt;chr&gt;, type &lt;chr&gt;,
-#&gt; #   ownerInstitutionCode &lt;chr&gt;, datasetID &lt;chr&gt;,
-#&gt; #   bibliographicCitation &lt;chr&gt;, accessRights &lt;chr&gt;
+#&gt; #   stateProvince &lt;chr&gt;, county &lt;chr&gt;, municipality &lt;chr&gt;, locality &lt;chr&gt;,
+#&gt; #   coordinatePrecision &lt;dbl&gt;, habitat &lt;chr&gt;, identifiedBy &lt;chr&gt;
 </code></pre>
 
 <h2>Examine issues</h2>
@@ -343,26 +339,26 @@ hr {
 
 <pre><code class="r">res %&gt;%
   occ_issues(gass84)
-#&gt; Records found [20539] 
-#&gt; Records returned [98] 
+#&gt; Records found [21970] 
+#&gt; Records returned [99] 
 #&gt; No. unique hierarchies [1] 
 #&gt; No. media records [63] 
 #&gt; No. facets [0] 
 #&gt; Args [taxonKey=3119195, limit=100, offset=0, fields=all] 
-#&gt; # A tibble: 98 × 87
+#&gt; # A tibble: 99 × 77
 #&gt;                 name        key decimalLatitude decimalLongitude
 #&gt;                &lt;chr&gt;      &lt;int&gt;           &lt;dbl&gt;            &lt;dbl&gt;
 #&gt; 1  Helianthus annuus 1249279611        34.04810       -117.79884
 #&gt; 2  Helianthus annuus 1315048347        34.04377       -116.94136
-#&gt; 3  Helianthus annuus 1253308332        29.67463        -95.44804
+#&gt; 3  Helianthus annuus 1305118889        18.40386        -66.04487
 #&gt; 4  Helianthus annuus 1249286909        32.58747        -97.10081
-#&gt; 5  Helianthus annuus 1305118889        18.40386        -66.04487
+#&gt; 5  Helianthus annuus 1253308332        29.67463        -95.44804
 #&gt; 6  Helianthus annuus 1262375813        29.82586        -95.45604
-#&gt; 7  Helianthus annuus 1262379231        34.04911       -117.80066
-#&gt; 8  Helianthus annuus 1262385911        32.78328        -96.70352
-#&gt; 9  Helianthus annuus 1265544678        32.58747        -97.10081
-#&gt; 10 Helianthus annuus 1270045172        33.92958       -117.37322
-#&gt; # ... with 88 more rows, and 83 more variables: issues &lt;chr&gt;,
+#&gt; 7  Helianthus annuus 1262385911        32.78328        -96.70352
+#&gt; 8  Helianthus annuus 1265544678        32.58747        -97.10081
+#&gt; 9  Helianthus annuus 1262379231        34.04911       -117.80066
+#&gt; 10 Helianthus annuus 1265560496        34.12861       -118.20700
+#&gt; # ... with 89 more rows, and 73 more variables: issues &lt;chr&gt;,
 #&gt; #   datasetKey &lt;chr&gt;, publishingOrgKey &lt;chr&gt;, publishingCountry &lt;chr&gt;,
 #&gt; #   protocol &lt;chr&gt;, lastCrawled &lt;chr&gt;, lastParsed &lt;chr&gt;, crawlId &lt;int&gt;,
 #&gt; #   extensions &lt;chr&gt;, basisOfRecord &lt;chr&gt;, taxonKey &lt;int&gt;,
@@ -376,19 +372,15 @@ hr {
 #&gt; #   identifiers &lt;chr&gt;, facts &lt;chr&gt;, relations &lt;chr&gt;, geodeticDatum &lt;chr&gt;,
 #&gt; #   class &lt;chr&gt;, countryCode &lt;chr&gt;, country &lt;chr&gt;, rightsHolder &lt;chr&gt;,
 #&gt; #   identifier &lt;chr&gt;, verbatimEventDate &lt;chr&gt;, datasetName &lt;chr&gt;,
-#&gt; #   collectionCode &lt;chr&gt;, verbatimLocality &lt;chr&gt;, gbifID &lt;chr&gt;,
-#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, catalogNumber &lt;chr&gt;,
-#&gt; #   recordedBy &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
+#&gt; #   verbatimLocality &lt;chr&gt;, gbifID &lt;chr&gt;, collectionCode &lt;chr&gt;,
+#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, recordedBy &lt;chr&gt;,
+#&gt; #   catalogNumber &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
 #&gt; #   institutionCode &lt;chr&gt;, rights &lt;chr&gt;, eventTime &lt;chr&gt;,
 #&gt; #   identificationID &lt;chr&gt;, coordinateUncertaintyInMeters &lt;dbl&gt;,
 #&gt; #   occurrenceRemarks &lt;chr&gt;, informationWithheld &lt;chr&gt;,
 #&gt; #   individualCount &lt;int&gt;, elevation &lt;dbl&gt;, elevationAccuracy &lt;dbl&gt;,
-#&gt; #   stateProvince &lt;chr&gt;, municipality &lt;chr&gt;, locality &lt;chr&gt;, county &lt;chr&gt;,
-#&gt; #   coordinatePrecision &lt;dbl&gt;, habitat &lt;chr&gt;, identifiedBy &lt;chr&gt;,
-#&gt; #   continent &lt;chr&gt;, nomenclaturalCode &lt;chr&gt;, dataGeneralizations &lt;chr&gt;,
-#&gt; #   verbatimCoordinateSystem &lt;chr&gt;, language &lt;chr&gt;, type &lt;chr&gt;,
-#&gt; #   ownerInstitutionCode &lt;chr&gt;, datasetID &lt;chr&gt;,
-#&gt; #   bibliographicCitation &lt;chr&gt;, accessRights &lt;chr&gt;
+#&gt; #   stateProvince &lt;chr&gt;, county &lt;chr&gt;, municipality &lt;chr&gt;, locality &lt;chr&gt;,
+#&gt; #   coordinatePrecision &lt;dbl&gt;, habitat &lt;chr&gt;, identifiedBy &lt;chr&gt;
 </code></pre>
 
 <p>Note also that we&#39;ve set up <code>occ_issues()</code> so that you can pass in issue names without having to quote them, thereby speeding up data cleaning.</p>
@@ -397,26 +389,26 @@ hr {
 
 <pre><code class="r">res %&gt;%
   occ_issues(-depunl, -mdatunl)
-#&gt; Records found [20539] 
+#&gt; Records found [21970] 
 #&gt; Records returned [100] 
 #&gt; No. unique hierarchies [1] 
 #&gt; No. media records [63] 
 #&gt; No. facets [0] 
 #&gt; Args [taxonKey=3119195, limit=100, offset=0, fields=all] 
-#&gt; # A tibble: 100 × 87
+#&gt; # A tibble: 100 × 77
 #&gt;                 name        key decimalLatitude decimalLongitude
 #&gt;                &lt;chr&gt;      &lt;int&gt;           &lt;dbl&gt;            &lt;dbl&gt;
 #&gt; 1  Helianthus annuus 1249279611        34.04810       -117.79884
 #&gt; 2  Helianthus annuus 1315048347        34.04377       -116.94136
-#&gt; 3  Helianthus annuus 1253308332        29.67463        -95.44804
+#&gt; 3  Helianthus annuus 1305118889        18.40386        -66.04487
 #&gt; 4  Helianthus annuus 1249286909        32.58747        -97.10081
-#&gt; 5  Helianthus annuus 1305118889        18.40386        -66.04487
+#&gt; 5  Helianthus annuus 1253308332        29.67463        -95.44804
 #&gt; 6  Helianthus annuus 1262375813        29.82586        -95.45604
-#&gt; 7  Helianthus annuus 1262379231        34.04911       -117.80066
-#&gt; 8  Helianthus annuus 1262385911        32.78328        -96.70352
-#&gt; 9  Helianthus annuus 1265544678        32.58747        -97.10081
-#&gt; 10 Helianthus annuus 1270045172        33.92958       -117.37322
-#&gt; # ... with 90 more rows, and 83 more variables: issues &lt;chr&gt;,
+#&gt; 7  Helianthus annuus 1262385911        32.78328        -96.70352
+#&gt; 8  Helianthus annuus 1265544678        32.58747        -97.10081
+#&gt; 9  Helianthus annuus 1262379231        34.04911       -117.80066
+#&gt; 10 Helianthus annuus 1265560496        34.12861       -118.20700
+#&gt; # ... with 90 more rows, and 73 more variables: issues &lt;chr&gt;,
 #&gt; #   datasetKey &lt;chr&gt;, publishingOrgKey &lt;chr&gt;, publishingCountry &lt;chr&gt;,
 #&gt; #   protocol &lt;chr&gt;, lastCrawled &lt;chr&gt;, lastParsed &lt;chr&gt;, crawlId &lt;int&gt;,
 #&gt; #   extensions &lt;chr&gt;, basisOfRecord &lt;chr&gt;, taxonKey &lt;int&gt;,
@@ -430,19 +422,15 @@ hr {
 #&gt; #   identifiers &lt;chr&gt;, facts &lt;chr&gt;, relations &lt;chr&gt;, geodeticDatum &lt;chr&gt;,
 #&gt; #   class &lt;chr&gt;, countryCode &lt;chr&gt;, country &lt;chr&gt;, rightsHolder &lt;chr&gt;,
 #&gt; #   identifier &lt;chr&gt;, verbatimEventDate &lt;chr&gt;, datasetName &lt;chr&gt;,
-#&gt; #   collectionCode &lt;chr&gt;, verbatimLocality &lt;chr&gt;, gbifID &lt;chr&gt;,
-#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, catalogNumber &lt;chr&gt;,
-#&gt; #   recordedBy &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
+#&gt; #   verbatimLocality &lt;chr&gt;, gbifID &lt;chr&gt;, collectionCode &lt;chr&gt;,
+#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, recordedBy &lt;chr&gt;,
+#&gt; #   catalogNumber &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
 #&gt; #   institutionCode &lt;chr&gt;, rights &lt;chr&gt;, eventTime &lt;chr&gt;,
 #&gt; #   identificationID &lt;chr&gt;, coordinateUncertaintyInMeters &lt;dbl&gt;,
 #&gt; #   occurrenceRemarks &lt;chr&gt;, informationWithheld &lt;chr&gt;,
 #&gt; #   individualCount &lt;int&gt;, elevation &lt;dbl&gt;, elevationAccuracy &lt;dbl&gt;,
-#&gt; #   stateProvince &lt;chr&gt;, municipality &lt;chr&gt;, locality &lt;chr&gt;, county &lt;chr&gt;,
-#&gt; #   coordinatePrecision &lt;dbl&gt;, habitat &lt;chr&gt;, identifiedBy &lt;chr&gt;,
-#&gt; #   continent &lt;chr&gt;, nomenclaturalCode &lt;chr&gt;, dataGeneralizations &lt;chr&gt;,
-#&gt; #   verbatimCoordinateSystem &lt;chr&gt;, language &lt;chr&gt;, type &lt;chr&gt;,
-#&gt; #   ownerInstitutionCode &lt;chr&gt;, datasetID &lt;chr&gt;,
-#&gt; #   bibliographicCitation &lt;chr&gt;, accessRights &lt;chr&gt;
+#&gt; #   stateProvince &lt;chr&gt;, county &lt;chr&gt;, municipality &lt;chr&gt;, locality &lt;chr&gt;,
+#&gt; #   coordinatePrecision &lt;dbl&gt;, habitat &lt;chr&gt;, identifiedBy &lt;chr&gt;
 </code></pre>
 
 <h2>Expand issue codes to full names</h2>
@@ -471,16 +459,16 @@ head(out$data[,c(1,5)])
 <pre><code class="r">out &lt;- res %&gt;% occ_issues(mutate = &quot;split&quot;)
 head(out$data[,c(1,5:10)])
 #&gt; # A tibble: 6 × 7
-#&gt;                name cdround gass84 refuriiv
-#&gt;               &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;
-#&gt; 1 Helianthus annuus       y      y        n
-#&gt; 2 Helianthus annuus       y      y        n
-#&gt; 3 Helianthus annuus       y      y        n
-#&gt; 4 Helianthus annuus       y      y        n
-#&gt; 5 Helianthus annuus       y      y        n
-#&gt; 6 Helianthus annuus       y      y        n
-#&gt; # ... with 3 more variables: datasetKey &lt;chr&gt;, publishingOrgKey &lt;chr&gt;,
-#&gt; #   publishingCountry &lt;chr&gt;
+#&gt;                name cdround gass84                           datasetKey
+#&gt;               &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;                                &lt;chr&gt;
+#&gt; 1 Helianthus annuus       y      y 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; 2 Helianthus annuus       y      y 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; 3 Helianthus annuus       y      y 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; 4 Helianthus annuus       y      y 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; 5 Helianthus annuus       y      y 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; 6 Helianthus annuus       y      y 50c9509d-22c7-4a22-a47d-8c48425ef4a7
+#&gt; # ... with 3 more variables: publishingOrgKey &lt;chr&gt;,
+#&gt; #   publishingCountry &lt;chr&gt;, protocol &lt;chr&gt;
 </code></pre>
 
 <h2>Expand and add columns</h2>
@@ -498,8 +486,8 @@ head(out$data[,c(1,5:10)])
 #&gt; 4 Helianthus annuus                  y                            y
 #&gt; 5 Helianthus annuus                  y                            y
 #&gt; 6 Helianthus annuus                  y                            y
-#&gt; # ... with 4 more variables: REFERENCES_URI_INVALID &lt;chr&gt;,
-#&gt; #   datasetKey &lt;chr&gt;, publishingOrgKey &lt;chr&gt;, publishingCountry &lt;chr&gt;
+#&gt; # ... with 4 more variables: datasetKey &lt;chr&gt;, publishingOrgKey &lt;chr&gt;,
+#&gt; #   publishingCountry &lt;chr&gt;, protocol &lt;chr&gt;
 </code></pre>
 
 <h2>Wrap up</h2>

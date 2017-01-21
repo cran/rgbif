@@ -4,24 +4,34 @@
 \alias{occ_download}
 \title{Spin up a download request for GBIF occurrence data.}
 \usage{
-occ_download(..., type = "and", user = getOption("gbif_user"),
-  pwd = getOption("gbif_pwd"), email = getOption("gbif_email"),
-  callopts = list())
+occ_download(..., body = NULL, type = "and",
+  user = getOption("gbif_user"), pwd = getOption("gbif_pwd"),
+  email = getOption("gbif_email"), callopts = list())
 }
 \arguments{
-\item{...}{One or more of query arguments to kick of a download job. See Details.}
+\item{...}{One or more of query arguments to kick of a download job.
+If you use this, don't use \code{body} parameter. See Details.}
 
-\item{type}{(charcter) One of equals (=), and (&), or (|), lessThan (<), lessThanOrEquals (<=),
-greaterThan (>), greaterThanOrEquals (>=), in, within, not (!), like}
+\item{body}{if you prefer to pass in the payload yourself, use this
+parameter. if use this, don't ass anythig to the dots. accepts
+either an R list, or JSON. JSON is likely easier, since the JSON
+library \pkg{jsonlite} requires that you unbox strings that shouldn't
+be auto-converted to arrays, which is a bit tedious for large queries.
+optional}
 
-\item{user}{(character) User name within GBIF's website. Required. Set in your
-\code{.Rprofile} file with the option \code{gbif_user}}
+\item{type}{(charcter) One of equals (=), and (&), or (|), lessThan (<),
+lessThanOrEquals (<=), greaterThan (>), greaterThanOrEquals (>=), in,
+within, not (!), like}
 
-\item{pwd}{(character) User password within GBIF's website. Required. Set in your
-\code{.Rprofile} file with the option \code{gbif_pwd}}
+\item{user}{(character) User name within GBIF's website. Required. Set in
+your \code{.Rprofile} file with the option \code{gbif_user}}
 
-\item{email}{(character) Email address to recieve download notice done email. Required.
-Set in your \code{.Rprofile} file with the option \code{gbif_email}}
+\item{pwd}{(character) User password within GBIF's website. Required. Set
+in your \code{.Rprofile} file with the option \code{gbif_pwd}}
+
+\item{email}{(character) Email address to recieve download notice done
+email. Required. Set in your \code{.Rprofile} file with the option
+\code{gbif_email}}
 
 \item{callopts}{Further named arguments passed on to \code{\link[httr]{POST}}}
 }
@@ -29,9 +39,31 @@ Set in your \code{.Rprofile} file with the option \code{gbif_email}}
 Spin up a download request for GBIF occurrence data.
 }
 \details{
-Argument passed have to be passed as character (e.g., 'country = US'), with a space
-between key ('country'), operator ('='), and value ('US'). See the \code{type} parameter for
-possible options for the operator.  This character string is parsed internally.
+Argument passed have to be passed as character (e.g.,
+'country = US'), with a space between key ('country'), operator ('='),
+and value ('US'). See the \code{type} parameter for possible options for
+the operator.  This character string is parsed internally.
+
+The value can be comma separated, in which case we'll turn that into a
+predicate combined with the OR operator, for example,
+\code{"taxonKey = 2480946,5229208"} will turn into
+\code{
+'{
+    "type": "or",
+    "predicates": [
+        {
+            "type": "equals",
+            "key": "TAXON_KEY",
+            "value": "2480946"
+        },
+        {
+            "type": "equals",
+            "key": "TAXON_KEY",
+            "value": "5229208"
+        }
+    ]
+}'
+}
 
 Acceptable arguments to \code{...} are:
 \itemize{
@@ -82,10 +114,51 @@ Acceptable arguments to \code{...} are:
 # Multiple queries
 # occ_download('decimalLatitude >= 65', 'decimalLatitude <= -65', type="or")
 # gg <- occ_download('depth = 80', 'taxonKey = 2343454', type="or")
+
+# complex example with many predicates
+# shows example of how to do date ranges for both year and month
+# res <- occ_download(
+#  "taxonKey = 2480946,5229208",
+#  "basisOfRecord = HUMAN_OBSERVATION,OBSERVATION,MACHINE_OBSERVATION",
+#  "country = US",
+#  "hasCoordinate = true",
+#  "hasGeospatialIssue = false",
+#  "year >= 1999",
+#  "year <= 2011",
+#  "month >= 3",
+#  "month <= 8"
+# )
+
+# Using body parameter - pass in your own complete query
+## as JSON
+query1 <- '{"creator":"sckott",
+  "notification_address":["myrmecocystus@gmail.com"],
+  "predicate":{"type":"and","predicates":[
+    {"type":"equals","key":"TAXON_KEY","value":"7264332"},
+    {"type":"equals","key":"HAS_COORDINATE","value":"TRUE"}]}
+ }'
+# res <- occ_download(body = query, callopts=verbose())
+
+## as a list
+library(jsonlite)
+query <- list(
+  creator = unbox("sckott"),
+  notification_address = "myrmecocystus@gmail.com",
+  predicate = list(
+    type = unbox("and"),
+    predicates = list(
+      list(type = unbox("equals"), key = unbox("TAXON_KEY"), value = unbox("7264332")),
+      list(type = unbox("equals"), key = unbox("HAS_COORDINATE"), value = unbox("TRUE"))
+    )
+  )
+)
+# res <- occ_download(body = query, callopts=verbose())
 }
 }
 \references{
-See the API docs \url{http://www.gbif.org/developer/occurrence#download} for
-more info, and the predicates docs \url{http://www.gbif.org/developer/occurrence#predicates}.
+See the API docs
+\url{http://www.gbif.org/developer/occurrence#download} for more info,
+and the predicates docs
+\url{http://www.gbif.org/developer/occurrence#predicates}
 }
 

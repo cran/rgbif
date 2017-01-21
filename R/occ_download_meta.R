@@ -2,7 +2,8 @@
 #'
 #' @export
 #'
-#' @param key A key generated from a request, like that from \code{occ_download}
+#' @param key A key generated from a request, like that from
+#' \code{occ_download}
 #' @param ... Further args passed to \code{\link[httr]{GET}}
 #'
 #' @examples \dontrun{
@@ -13,7 +14,7 @@
 occ_download_meta <- function(key, ...) {
   stopifnot(!is.null(key))
   url <- sprintf('%s/occurrence/download/%s', gbif_base(), key)
-  tmp <- GET(url, make_rgbif_ua(), ...)
+  tmp <- httr::GET(url, make_rgbif_ua(), ...)
   if (tmp$status_code > 203) stop(c_utf8(tmp), call. = FALSE)
   stopifnot(tmp$header$`content-type` == 'application/json')
   tt <- c_utf8(tmp)
@@ -36,15 +37,34 @@ print.occ_download_meta <- function(x, ...){
 gbif_make_list <- function(y){
   if (length(y) > 0) {
     y <- y$predicate
+    otype <- y$type
     if (!"predicates" %in% names(y)) {
       y <- list(predicates = list(y))
     }
     out <- list()
     for (i in seq_along(y$predicates)) {
       tmp <- y$predicates[[i]]
-      out[[i]] <- sprintf("\n      - type: %s, key: %s, value: %s", tmp$type, tmp$key, tmp$value)
+
+      if ("predicates" %in% names(tmp)) {
+        stt <- lapply(tmp$predicates, function(x) {
+          sprintf("\n          - type: %s, key: %s, value: %s",
+                  x$type, x$key, x$value)
+        })
+        out[[i]] <- paste0(paste("\n      > type: ", tmp$type),
+                           pc("\n        predicates: ", pc(stt)),
+                           collapse = ", ")
+      } else {
+        out[[i]] <- sprintf(
+          "\n      > type: %s, key: %s, value: %s",
+          tmp$type,
+          if ("geometry" %in% names(tmp)) "geometry" else tmp$key,
+          if ("geometry" %in% names(tmp)) tmp$geometry else tmp$value
+        )
+      }
     }
-    paste0(paste("\n    type: ", y$type), pc("\n    predicates: ", pc(out)), collapse = ", ")
+
+    paste0(paste("\n    type: ", otype), pc("\n    predicates: ", pc(out)),
+           collapse = ", ")
   } else {
     "none"
   }
