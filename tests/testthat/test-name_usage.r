@@ -83,7 +83,7 @@ test_that("name_usage synonyms route works", {
   expect_is(rte5a, "list")
   expect_is(rte5$meta, "data.frame")
   expect_is(rte5a$meta, "data.frame")
-  expect_equal(NROW(rte5$data), 0)
+  expect_equal(NROW(rte5$data), 1)
   expect_is(rte5a$data, "data.frame")
 })
 
@@ -179,3 +179,21 @@ test_that("name_usage fails correctly", {
   # Select many options, doesn't work
   expect_error(name_usage(key = 3119195, data = c('media', 'synonyms')))
 })
+
+
+# many args
+test_that("works with parameters that allow many inputs", {
+  skip_on_cran()
+
+  aa <- name_usage(datasetKey = c("73605f3a-af85-4ade-bbc5-522bfb90d847",
+                                  "d7c60346-44b6-400d-ba27-8d3fbeffc8a5"))
+  expect_is(aa, "list")
+  expect_is(aa$meta, "data.frame")
+  expect_is(aa$meta$endOfRecords, "logical")
+  expect_is(aa$data$canonicalName, "character")
+  expect_is(aa$data$classKey, "integer")
+  expect_true(all(
+    unique(tolower(aa$data$datasetKey)) %in%
+      c("73605f3a-af85-4ade-bbc5-522bfb90d847")))
+})
+

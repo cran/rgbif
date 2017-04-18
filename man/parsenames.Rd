@@ -4,15 +4,14 @@
 \alias{parsenames}
 \title{Parse taxon names using the GBIF name parser.}
 \usage{
-parsenames(scientificname, ...)
+parsenames(scientificname, curlopts = list())
 }
 \arguments{
 \item{scientificname}{A character vector of scientific names.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path},
-etc, passed on to \code{\link[httr]{modify_url}} within
-\code{\link[httr]{GET}} call. Unnamed parameters will be combined
-with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
 A \code{data.frame} containing fields extracted from parsed
@@ -24,24 +23,22 @@ Parse taxon names using the GBIF name parser.
 }
 \examples{
 \dontrun{
-parsenames('x Agropogon littoralis')
+parsenames(scientificname='x Agropogon littoralis')
 parsenames(c('Arrhenatherum elatius var. elatius',
              'Secale cereale subsp. cereale', 'Secale cereale ssp. cereale',
              'Vanessa atalanta (Linnaeus, 1758)'))
 parsenames("Ajuga pyramidata")
 parsenames("Ajuga pyramidata x reptans")
 
-# Pass on options to httr
-# library('httr')
+# Pass on curl options
 # res <- parsenames(c('Arrhenatherum elatius var. elatius',
-#             'Secale cereale subsp. cereale', 'Secale cereale ssp. cereale',
-#             'Vanessa atalanta (Linnaeus, 1758)'), config=progress())
+#          'Secale cereale subsp. cereale', 'Secale cereale ssp. cereale',
+#          'Vanessa atalanta (Linnaeus, 1758)'), curlopts=list(verbose=TRUE))
 }
-}
-\author{
-John Baumgartner (johnbb@student.unimelb.edu.au)
 }
 \references{
 \url{http://www.gbif.org/developer/species#parser}
 }
-
+\author{
+John Baumgartner (johnbb@student.unimelb.edu.au)
+}

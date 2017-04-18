@@ -6,7 +6,7 @@
 \title{Cancel a download cretion process.}
 \usage{
 occ_download_cancel(key, user = getOption("gbif_user"),
-  pwd = getOption("gbif_pwd"), ...)
+  pwd = getOption("gbif_pwd"), curlopts = list())
 
 occ_download_cancel_staged()
 }
@@ -18,7 +18,9 @@ occ_download_cancel_staged()
 
 \item{pwd}{(character) User password within GBIF's website. Required.}
 
-\item{...}{Further args passed to \code{\link[httr]{DELETE}}}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \description{
 Cancel a download cretion process.
@@ -32,4 +34,3 @@ already prepared for you, this won't do anything to change that.
 # occ_download_cancel(key="0003984-140910143529206")
 }
 }
-

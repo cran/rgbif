@@ -5,40 +5,44 @@
 #' @template oslimstart
 #' @template occ
 #' @template occ_data_egs
-#' @seealso \code{\link{downloads}}, \code{\link{occ_search}}
-#' @details This does nearly the same thing as \code{\link{occ_search}}, but
+#' @seealso [downloads()], [occ_search()]
+#' @details This does nearly the same thing as [occ_search()], but
 #' is a bit simplified for speed, and is for the most common use case where
 #' user just wants the data, and not other information like taxon hierarchies
-#' and media (e.g., images) information. Alot of time in \code{\link{occ_search}}
-#' is used parsing data to be more useable downstream. We do less of that
-#' in this function.
-#' @return An object of class \code{gbif_data}, which is a S3 class list, with
-#' slots for metadata (\code{meta}) and the occurrence data itself (\code{data}),
+#' and media (e.g., images) information. Alot of time in
+#' [occ_search()] is used parsing data to be more useable
+#' downstream. We do less of that in this function.
+#' @return An object of class `gbif_data`, which is a S3 class list, with
+#' slots for metadata (`meta`) and the occurrence data itself
+#' (`data`),
 #' and with attributes listing the user supplied arguments and whether it was a
 #' "single" or "many" search; that is, if you supply two values of the
-#' \code{datasetKey} parameter to searches are done, and it's a "many".
-#' \code{meta} is a list of length four with offset, limit, endOfRecords and
-#' count fields. \code{data} is a tibble (aka data.frame)
+#' `datasetKey` parameter to searches are done, and it's a "many".
+#' `meta` is a list of length four with offset, limit, endOfRecords and
+#' count fields. `data` is a tibble (aka data.frame)
 
 occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
-  publishingCountry=NULL, hasCoordinate=NULL, typeStatus=NULL, recordNumber=NULL,
+  publishingCountry=NULL, hasCoordinate=NULL, typeStatus=NULL,
+  recordNumber=NULL,
   lastInterpreted=NULL, continent=NULL, geometry=NULL, geom_big="asis",
-  geom_size=40, geom_n=10, recordedBy=NULL, basisOfRecord=NULL, datasetKey=NULL,
-  eventDate=NULL, catalogNumber=NULL, year=NULL, month=NULL, decimalLatitude=NULL,
+  geom_size=40, geom_n=10, recordedBy=NULL, basisOfRecord=NULL,
+  datasetKey=NULL, eventDate=NULL, catalogNumber=NULL, year=NULL, month=NULL,
+  decimalLatitude=NULL,
   decimalLongitude=NULL, elevation=NULL, depth=NULL, institutionCode=NULL,
   collectionCode=NULL, hasGeospatialIssue=NULL, issue=NULL, search=NULL,
   mediaType=NULL, subgenusKey = NULL, repatriated = NULL, phylumKey = NULL,
   kingdomKey = NULL, classKey = NULL, orderKey = NULL, familyKey = NULL,
   genusKey = NULL, establishmentMeans = NULL, protocol = NULL, license = NULL,
-  organismId = NULL, publishingOrg = NULL, stateProvince = NULL, waterBody = NULL,
-  locality = NULL, limit=500, start=0, spellCheck = NULL, ...) {
+  organismId = NULL, publishingOrg = NULL, stateProvince = NULL,
+  waterBody = NULL, locality = NULL, limit=500, start=0,
+  spellCheck = NULL, curlopts = list()) {
 
   geometry <- geometry_handler(geometry, geom_big, geom_size, geom_n)
 
   url <- paste0(gbif_base(), '/occurrence/search')
   argscoll <- NULL
 
-  .get_occ_data <- function(x=NULL, itervar=NULL) {
+  .get_occ_data <- function(x=NULL, itervar=NULL, curlopts = list()) {
     if (!is.null(x)) {
       assign(itervar, x)
     }
@@ -52,28 +56,32 @@ occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
 
     # Make arg list
     args <- rgbif_compact(
-      list(
-        taxonKey=taxonKey, scientificName=scientificName, country=country,
-        publishingCountry=publishingCountry, hasCoordinate=hasCoordinate,
-        typeStatus=typeStatus,recordNumber=recordNumber,
-        lastInterpreted=lastInterpreted, continent=continent, geometry=geometry,
-        recordedBy=recordedBy, basisOfRecord=basisOfRecord,datasetKey=datasetKey,
-        eventDate=eventDate, catalogNumber=catalogNumber, year=year, month=month,
-        decimalLatitude=decimalLatitude,decimalLongitude=decimalLongitude,
-        elevation=elevation, depth=depth, institutionCode=institutionCode,
-        collectionCode=collectionCode, hasGeospatialIssue=hasGeospatialIssue,
-        q=search, mediaType=mediaType, subgenusKey=subgenusKey,
-        repatriated=repatriated, phylumKey=phylumKey, kingdomKey=kingdomKey,
-        classKey=classKey, orderKey=orderKey, familyKey=familyKey,
-        genusKey=genusKey, establishmentMeans=establishmentMeans,
-        protocol=protocol, license=license, organismId=organismId,
-        publishingOrg=publishingOrg, stateProvince=stateProvince,
-        waterBody=waterBody, locality=locality,
-        limit=check_limit(as.integer(limit)),
-        offset=check_limit(as.integer(start)), spellCheck = spellCheck
+      list(hasCoordinate = hasCoordinate,
+        lastInterpreted = lastInterpreted,
+        basisOfRecord = basisOfRecord, decimalLatitude = decimalLatitude,
+        decimalLongitude = decimalLongitude,
+        hasGeospatialIssue = hasGeospatialIssue,
+        q = search, repatriated = repatriated, elevation = elevation,
+        depth = depth,
+        limit = check_limit(as.integer(limit)), eventDate = eventDate,
+        month = month, year = year,
+        offset = check_limit(as.integer(start)), spellCheck = spellCheck
       )
     )
-    args <- c(args, parse_issues(issue))
+    args <- c(
+      args,
+      parse_issues(issue),
+      convmany(taxonKey), convmany(scientificName), convmany(country),
+      convmany(publishingCountry), convmany(datasetKey),
+      convmany(typeStatus), convmany(recordNumber), convmany(continent),
+      convmany(recordedBy), convmany(catalogNumber), convmany(institutionCode),
+      convmany(collectionCode), convmany(geometry), convmany(mediaType),
+      convmany(subgenusKey), convmany(phylumKey), convmany(kingdomKey),
+      convmany(classKey), convmany(orderKey), convmany(familyKey),
+      convmany(genusKey), convmany(establishmentMeans), convmany(protocol),
+      convmany(license), convmany(organismId), convmany(publishingOrg),
+      convmany(stateProvince), convmany(waterBody), convmany(locality)
+    )
     argscoll <<- args
 
     if (limit >= 300) {
@@ -83,7 +91,7 @@ occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
       outout <- list()
       while (sumreturned < limit) {
         iter <- iter + 1
-        tt <- gbif_GET(url, args, TRUE, ...)
+        tt <- gbif_GET(url, args, TRUE, curlopts)
 
         # if no results, assign count var with 0
         if (identical(tt$results, list())) tt$count <- 0
@@ -103,17 +111,19 @@ occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
       }
     } else {
       ### loop route for limit<300
-      outout <- list(gbif_GET(url, args, TRUE, ...))
+      outout <- list(gbif_GET(url, args, TRUE, curlopts))
     }
 
-    meta <- outout[[length(outout)]][c('offset', 'limit', 'endOfRecords', 'count')]
+    meta <- outout[[length(outout)]][c('offset', 'limit', 'endOfRecords',
+                                       'count')]
     data <- lapply(outout, "[[", "results")
 
     if (identical(data[[1]], list())) {
       data <- NULL
     } else {
       data <- lapply(data, clean_data)
-      data <- data.table::setDF(data.table::rbindlist(data, use.names = TRUE, fill = TRUE))
+      data <- data.table::setDF(data.table::rbindlist(data, use.names = TRUE,
+                                                      fill = TRUE))
       data <- tibble::as_data_frame(prune_result(data))
     }
 
@@ -137,12 +147,14 @@ occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
     limit=limit
   )
   if (!any(sapply(params, length) > 0)) {
-    stop(sprintf("At least one of the parmaters must have a value:\n%s", possparams()),
+    stop(sprintf("At least one of the parmaters must have a value:\n%s",
+                 possparams()),
          call. = FALSE)
   }
   iter <- params[which(sapply(params, length) > 1)]
   if (length(names(iter)) > 1) {
-    stop(sprintf("You can have multiple values for only one of:\n%s", possparams()),
+    stop(sprintf("You can have multiple values for only one of:\n%s",
+                 possparams()),
          call. = FALSE)
   }
 

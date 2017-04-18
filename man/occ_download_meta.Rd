@@ -4,21 +4,22 @@
 \alias{occ_download_meta}
 \title{Retrieves the occurrence download metadata by its unique key.}
 \usage{
-occ_download_meta(key, ...)
+occ_download_meta(key, curlopts = list())
 }
 \arguments{
 \item{key}{A key generated from a request, like that from
 \code{occ_download}}
 
-\item{...}{Further args passed to \code{\link[httr]{GET}}}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \description{
 Retrieves the occurrence download metadata by its unique key.
 }
 \examples{
 \dontrun{
-occ_download_meta("0003970-140910143529206")
-occ_download_meta("0000099-140929101555934")
+occ_download_meta(key="0003983-140910143529206")
+occ_download_meta("0000066-140928181241064")
 }
 }
-

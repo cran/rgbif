@@ -5,7 +5,7 @@
 #' @param input Input output from occ_search
 #' @param output Output folder path. If not given uses temporary folder.
 #' @param which One of map or table (default).
-#' @param browse (logical) Browse output (default: TRUE)
+#' @param browse (logical) Browse output (default: `TRUE`)
 #' @details The max number of photos you can see when which="map" is ~160,
 #' so cycle through if you have more than that.
 #' @section BEWARE: The maps in the table view may not show up correctly if
@@ -15,13 +15,14 @@
 #' gbif_photos(res)
 #' gbif_photos(res, which='map')
 #'
-#' res <- occ_search(scientificName = "Aves", mediaType = 'StillImage', return = "media", limit=150)
+#' res <- occ_search(scientificName = "Aves", mediaType = 'StillImage',
+#'   return = "media", limit=150)
 #' gbif_photos(res)
 #' gbif_photos(res, output = '~/barfoo')
 #' }
 
 gbif_photos <- function(input, output = NULL, which='table', browse = TRUE) {
-  if (!inherits(input, "gbif")) stop("input should be of class gbif", call. = FALSE)
+  if (!inherits(input, "gbif")) stop("input should be of class gbif")
 
   which <- match.arg(which, c("map", "table"))
   if (which == 'map') {
@@ -31,7 +32,7 @@ gbif_photos <- function(input, output = NULL, which='table', browse = TRUE) {
     ff <- paste(readLines(filepath), collapse = "\n")
     rr <- whisker.render(ff)
     write(rr, file = outfile)
-    if (browse) browseURL(outfile, browser = pick_browser()) else outfile
+    if (browse) utils::browseURL(outfile, browser = pick_browser()) else outfile
   } else {
     if (length(input) > 20) {
       outdir <- dirhandler(output, 'dir')
@@ -51,7 +52,7 @@ gbif_photos <- function(input, output = NULL, which='table', browse = TRUE) {
         write(rendered, file = filenames[[i]])
       }
 
-      if (browse) browseURL(filenames[[1]], browser = pick_browser()) else filenames[[1]]
+      if (browse) utils::browseURL(filenames[[1]], browser = pick_browser()) else filenames[[1]]
     } else {
       outfile <- dirhandler(output)
       outdir <- dirname(outfile)
@@ -61,7 +62,7 @@ gbif_photos <- function(input, output = NULL, which='table', browse = TRUE) {
       rendered <- whisker.render(template)
       rendered <- paste0(rendered, footer)
       write(rendered, file = outfile)
-      if (browse) browseURL(outfile, browser = pick_browser()) else outfile
+      if (browse) utils::browseURL(outfile, browser = pick_browser()) else outfile
     }
   }
 }

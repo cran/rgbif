@@ -3,7 +3,7 @@
 #' @export
 #'
 #' @param ... One or more of query arguments to kick of a download job.
-#' If you use this, don't use \code{body} parameter. See Details.
+#' If you use this, don't use `body` parameter. See Details.
 #' @param body if you prefer to pass in the payload yourself, use this
 #' parameter. if use this, don't ass anythig to the dots. accepts
 #' either an R list, or JSON. JSON is likely easier, since the JSON
@@ -14,41 +14,42 @@
 #' lessThanOrEquals (<=), greaterThan (>), greaterThanOrEquals (>=), in,
 #' within, not (!), like
 #' @param user (character) User name within GBIF's website. Required. Set in
-#' your \code{.Rprofile} file with the option \code{gbif_user}
+#' your `.Rprofile` file with the option `gbif_user`
 #' @param pwd (character) User password within GBIF's website. Required. Set
-#' in your \code{.Rprofile} file with the option \code{gbif_pwd}
+#' in your `.Rprofile` file with the option `gbif_pwd`
 #' @param email (character) Email address to recieve download notice done
-#' email. Required. Set in your \code{.Rprofile} file with the option
-#' \code{gbif_email}
-#' @param callopts Further named arguments passed on to \code{\link[httr]{POST}}
+#' email. Required. Set in your `.Rprofile` file with the option
+#' `gbif_email`
+#' @template occ
 #'
 #' @details Argument passed have to be passed as character (e.g.,
 #' 'country = US'), with a space between key ('country'), operator ('='),
-#' and value ('US'). See the \code{type} parameter for possible options for
+#' and value ('US'). See the `type` parameter for possible options for
 #' the operator.  This character string is parsed internally.
 #'
 #' The value can be comma separated, in which case we'll turn that into a
 #' predicate combined with the OR operator, for example,
-#' \code{"taxonKey = 2480946,5229208"} will turn into
-#' \code{
-#' '{
-#'     "type": "or",
-#'     "predicates": [
-#'         {
-#'             "type": "equals",
-#'             "key": "TAXON_KEY",
-#'             "value": "2480946"
-#'         },
-#'         {
-#'             "type": "equals",
-#'             "key": "TAXON_KEY",
-#'             "value": "5229208"
-#'         }
-#'     ]
-#' }'
-#' }
+#' `"taxonKey = 2480946,5229208"` will turn into
 #'
-#' Acceptable arguments to \code{...} are:
+#' ```
+#' '{
+#'    "type": "or",
+#'    "predicates": [
+#'      {
+#'       "type": "equals",
+#'       "key": "TAXON_KEY",
+#'       "value": "2480946"
+#'      },
+#'      {
+#'       "type": "equals",
+#'       "key": "TAXON_KEY",
+#'       "value": "5229208"
+#'      }
+#'    ]
+#' }'
+#' ```
+#'
+#' Acceptable arguments to `...` are:
 #' \itemize{
 #'  \item taxonKey = 'TAXON_KEY'
 #'  \item scientificName = 'SCIENTIFIC_NAME'
@@ -79,9 +80,9 @@
 #' }
 #'
 #' @references See the API docs
-#' \url{http://www.gbif.org/developer/occurrence#download} for more info,
+#' <http://www.gbif.org/developer/occurrence#download> for more info,
 #' and the predicates docs
-#' \url{http://www.gbif.org/developer/occurrence#predicates}
+#' <http://www.gbif.org/developer/occurrence#predicates>
 #'
 #' @examples \dontrun{
 #' # occ_download("basisOfRecord = LITERATURE")
@@ -124,7 +125,7 @@
 #'     {"type":"equals","key":"TAXON_KEY","value":"7264332"},
 #'     {"type":"equals","key":"HAS_COORDINATE","value":"TRUE"}]}
 #'  }'
-#' # res <- occ_download(body = query, callopts=verbose())
+#' # res <- occ_download(body = query1, curlopts=list(verbose=TRUE))
 #'
 #' ## as a list
 #' library(jsonlite)
@@ -134,17 +135,19 @@
 #'   predicate = list(
 #'     type = unbox("and"),
 #'     predicates = list(
-#'       list(type = unbox("equals"), key = unbox("TAXON_KEY"), value = unbox("7264332")),
-#'       list(type = unbox("equals"), key = unbox("HAS_COORDINATE"), value = unbox("TRUE"))
+#'       list(type = unbox("equals"), key = unbox("TAXON_KEY"),
+#'         value = unbox("7264332")),
+#'       list(type = unbox("equals"), key = unbox("HAS_COORDINATE"),
+#'         value = unbox("TRUE"))
 #'     )
 #'   )
 #' )
-#' # res <- occ_download(body = query, callopts=verbose())
+#' # res <- occ_download(body = query, curlopts = list(verbose = TRUE))
 #' }
 
 occ_download <- function(..., body = NULL,
    type = "and", user = getOption("gbif_user"), pwd = getOption("gbif_pwd"),
-   email = getOption("gbif_email"), callopts = list()) {
+   email = getOption("gbif_email"), curlopts = list()) {
 
   url <- paste0(gbif_base(), '/occurrence/download/request')
   stopifnot(!is.null(user), !is.null(email))
@@ -153,7 +156,7 @@ occ_download <- function(..., body = NULL,
   } else {
     req <- parse_occd(user, email, type, ...)
   }
-  out <- rg_POST(url, req = req, user = user, pwd = pwd, callopts)
+  out <- rg_POST(url, req = req, user = user, pwd = pwd, curlopts)
   structure(out, class = "occ_download", user = user, email = email)
 }
 
@@ -216,25 +219,26 @@ parse_occd <- function(user, email, type, ...) {
   }
 }
 
-rg_POST <- function(url, req, user, pwd, callopts) {
-  tmp <- httr::POST(url, config = c(
-    content_type_json(),
-    accept_json(),
-    authenticate(user = user, password = pwd),
-    callopts),
-    #body = jsonlite::toJSON(req),
-    body = check_inputs(req),
-    make_rgbif_ua())
-  if (tmp$status_code > 203) stop(catch_err(tmp), call. = FALSE)
-  stopifnot(tmp$header$`content-type` == 'application/json')
-  c_utf8(tmp)
+rg_POST <- function(url, req, user, pwd, curlopts) {
+  cli <- crul::HttpClient$new(url = url, opts = c(
+    curlopts, httpauth = 1, userpwd = paste0(user, ":", pwd)),
+    headers = c(
+      rgbif_ual, `Content-Type` = "application/json",
+      Accept = "application/json"
+    )
+  )
+  res <- cli$post(body = check_inputs(req))
+  res$raise_for_status()
+  if (res$status_code > 203) stop(catch_err(res), call. = FALSE)
+  stopifnot(res$response_headers$`content-type` == 'application/json')
+  res$parse("UTF-8")
 }
 
 catch_err <- function(x) {
-  if (httr::has_content(x)) {
-    c_utf8(x)
+  if (length(x$content) > 0) {
+    x$parse("UTF-8")
   } else {
-    httr::http_condition(x, "message")$message
+    x$http_status()$message
   }
 }
 
@@ -266,7 +270,8 @@ parse_args <- function(x){
   )
   if (
     grepl(",", value) &&
-    !grepl("polygon|multipolygon|linestring|multilinestring|point|mulitpoint", value, ignore.case = TRUE)
+    !grepl("polygon|multipolygon|linestring|multilinestring|point|mulitpoint",
+           value, ignore.case = TRUE)
   ) {
     value <- strsplit(value, ",")[[1]]
     out <- list(
@@ -282,16 +287,18 @@ parse_args <- function(x){
 operators_regex <- c("=", "\\&", "<", "<=", ">", ">=", "\\!", "\\sin\\s",
                      "\\swithin\\s", "\\slike\\s", "\\|")
 
-operator_lkup <- list(`=` = 'equals', `&` = 'and', `|` = 'or', `<` = 'lessThan',
-    `<=` = 'lessThanOrEquals', `>` = 'greaterThan',
-    `>=` = 'greaterThanOrEquals', `!` = 'not',
-    'in' = 'in', 'within' = 'within', 'like' = 'like')
+operator_lkup <- list(`=` = 'equals', `&` = 'and', `|` = 'or',
+                      `<` = 'lessThan', `<=` = 'lessThanOrEquals',
+                      `>` = 'greaterThan', `>=` = 'greaterThanOrEquals',
+                      `!` = 'not', 'in' = 'in', 'within' = 'within',
+                      'like' = 'like')
 
 key_lkup <- list(taxonKey='TAXON_KEY', scientificName='SCIENTIFIC_NAME',
     country='COUNTRY', publishingCountry='PUBLISHING_COUNTRY',
     hasCoordinate='HAS_COORDINATE', hasGeospatialIssue='HAS_GEOSPATIAL_ISSUE',
     typeStatus='TYPE_STATUS', recordNumber='RECORD_NUMBER',
-    lastInterpreted='LAST_INTERPRETED', continent='CONTINENT', geometry='GEOMETRY',
+    lastInterpreted='LAST_INTERPRETED', continent='CONTINENT',
+    geometry='GEOMETRY',
     basisOfRecord='BASIS_OF_RECORD', datasetKey='DATASET_KEY',
     eventDate='EVENT_DATE', catalogNumber='CATALOG_NUMBER', year='YEAR',
     month='MONTH', decimalLatitude='DECIMAL_LATITUDE',

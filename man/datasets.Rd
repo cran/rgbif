@@ -5,13 +5,13 @@
 \title{Search for datasets and dataset metadata.}
 \usage{
 datasets(data = "all", type = NULL, uuid = NULL, query = NULL,
-  id = NULL, limit = 100, start = NULL, ...)
+  id = NULL, limit = 100, start = NULL, curlopts = list())
 }
 \arguments{
-\item{data}{The type of data to get. One or more of: 'organization', 'contact',
-'endpoint', 'identifier', 'tag', 'machinetag', 'comment', 'constituents',
-'document', 'metadata', 'deleted', 'duplicate', 'subDataset', 'withNoEndpoint',
-or the special 'all'. Default: \code{'all'}}
+\item{data}{The type of data to get. One or more of: 'organization',
+'contact', 'endpoint', 'identifier', 'tag', 'machinetag', 'comment',
+'constituents', 'document', 'metadata', 'deleted', 'duplicate',
+'subDataset', 'withNoEndpoint', or the special 'all'. Default: \code{all}}
 
 \item{type}{Type of dataset. Options: include occurrence, checklist,
 metadata, or sampling_event.}
@@ -25,12 +25,12 @@ is anything other than \code{all}}
 
 \item{limit}{Number of records to return. Default: 100. Maximum: 1000.}
 
-\item{start}{Record number to start at. Default: 0. Use in combination with \code{limit} to
-page through results.}
+\item{start}{Record number to start at. Default: 0. Use in combination
+with \code{limit} to page through results.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
-\code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will
-be combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
 A list.
@@ -45,16 +45,15 @@ datasets(type="occurrence", limit=10)
 datasets(uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
 datasets(data='contact', uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
 datasets(data='metadata', uuid="a6998220-7e3a-485d-9cd6-73076bd85657")
-datasets(data='metadata', uuid="a6998220-7e3a-485d-9cd6-73076bd85657", id=598)
+datasets(data='metadata', uuid="a6998220-7e3a-485d-9cd6-73076bd85657",
+  id=598)
 datasets(data=c('deleted','duplicate'))
 datasets(data=c('deleted','duplicate'), limit=1)
 
-# httr options
-library('httr')
-res <- datasets(data=c('deleted','duplicate'), config=progress())
+# curl options
+datasets(data=c('deleted','duplicate'), curlopts = list(verbose=TRUE))
 }
 }
 \references{
 \url{http://www.gbif.org/developer/registry#datasets}
 }
-

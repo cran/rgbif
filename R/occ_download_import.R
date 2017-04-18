@@ -2,16 +2,17 @@
 #'
 #' @export
 #'
-#' @param x The output of a call to \code{occ_download_get}
+#' @param x The output of a call to `occ_download_get`
 #' @param key A key generated from a request, like that from
 #' \code{occ_download}
-#' @param path Path to unzip file to. Default: \code{"."} Writes to
+#' @param path Path to unzip file to. Default: `"."` Writes to
 #' folder matching zip file name
+#' @param ... parameters passed on to [data.table::fread()]
 #'
 #' @return a tibble (data.frame)
 #'
 #' @details You can provide either x as input, or both key and path. We use
-#' \code{\link[data.table]{fread}} internally to read data.
+#' [data.table::fread()] internally to read data.
 #'
 #' @examples \dontrun{
 #' # First, kick off at least 1 download, then wait for the job to be complete
@@ -26,9 +27,14 @@
 #' as.download("0000066-140928181241064.zip")
 #' as.download(key = "0000066-140928181241064")
 #' occ_download_import(as.download("0000066-140928181241064.zip"))
+#'
+#' # download a dump that has a CSV file
+#' res <- occ_download_get(key = "0001369-160509122628363", overwrite=TRUE)
+#' occ_download_import(res)
+#' occ_download_import(key = "0001369-160509122628363")
 #' }
 
-occ_download_import <- function(x=NULL, key=NULL, path=".") {
+occ_download_import <- function(x=NULL, key=NULL, path=".", ...) {
   if (!is.null(x)) {
     stopifnot(inherits(x, "occ_download_get"))
     path <- x[[1]]
@@ -37,10 +43,20 @@ occ_download_import <- function(x=NULL, key=NULL, path=".") {
     stopifnot(!is.null(key), !is.null(path))
     path <- sprintf("%s/%s.zip", path, key)
   }
-  tmpdir <- file.path(tempdir(), key)
-  unzip(path, exdir = tmpdir, overwrite = TRUE)
+  if (!file.exists(path)) stop("file does not exist", call. = FALSE)
+  tmpdir <- file.path(tempdir(), "gbifdownload", key)
+  utils::unzip(path, exdir = tmpdir, overwrite = TRUE)
+  xx <- list.files(tmpdir)
+  if (any(grepl("occurrence.txt", xx))) {
+    tpath <- "occurrence.txt"
+  } else if (any(grepl("\\.csv", xx))) {
+    tpath <- grep("\\.csv", xx, value = TRUE)
+    if (length(tpath) > 1) stop("more than one .csv file found", call. = FALSE)
+  }
+  targetpath <- file.path(tmpdir, tpath)
+  if (!file.exists(tmpdir)) stop("appropriate file not found", call. = FALSE)
   tibble::as_tibble(
-    data.table::fread(file.path(tmpdir, "occurrence.txt"), data.table = FALSE)
+    data.table::fread(targetpath, data.table = FALSE, fill = TRUE, ...)
   )
 }
 

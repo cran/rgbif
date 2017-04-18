@@ -8,59 +8,65 @@ dataset_suggest(query = NULL, country = NULL, type = NULL,
   subtype = NULL, keyword = NULL, owningOrg = NULL,
   publishingOrg = NULL, hostingOrg = NULL, publishingCountry = NULL,
   decade = NULL, continent = NULL, limit = 100, start = NULL,
-  pretty = FALSE, description = FALSE, ...)
+  pretty = FALSE, description = FALSE, curlopts = list())
 }
 \arguments{
-\item{query}{Query term(s) for full text search.  The value for this parameter
-can be a simple word or a phrase. Wildcards can be added to the simple word
-parameters only, e.g. q=*puma*}
+\item{query}{Query term(s) for full text search.  The value for this
+parameter can be a simple word or a phrase. Wildcards can be added to the
+simple word parameters only, e.g. \code{q=*puma*}}
 
-\item{country}{NOT YET IMPLEMENTED. Filters by country as given in isocodes$gbif_name,
-e.g. country=CANADA.}
+\item{country}{NOT YET IMPLEMENTED. Filters by country as given in
+isocodes$gbif_name, e.g. \code{country=CANADA}}
 
-\item{type}{Type of dataset, options include OCCURRENCE, etc.}
+\item{type}{Type of dataset, options include occurrene, metadata, checklist,
+sampling_event
+(http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/DatasetType.html)}
 
-\item{subtype}{NOT YET IMPLEMENTED. Will allow filtering of datasets by their
-dataset subtypes, DC or EML.}
+\item{subtype}{NOT YET IMPLEMENTED. Will allow filtering of datasets by
+their dataset subtypes, DC or EML.}
 
-\item{keyword}{Keyword to search by. Datasets can be tagged by keywords, which
-you can search on. The search is done on the merged collection of tags, the
-dataset keywordCollections and temporalCoverages. SEEMS TO NOT BE WORKING
-ANYMORE AS OF 2016-09-02.}
+\item{keyword}{Keyword to search by. Datasets can be tagged by keywords,
+which you can search on. The search is done on the merged collection of
+tags, the dataset keywordCollections and temporalCoverages.}
 
-\item{owningOrg}{Owning organization. A uuid string. See \code{\link{organizations}}}
+\item{owningOrg}{Owning organization. DEFUNCT.}
 
-\item{publishingOrg}{Publishing organization. A uuid string. See \code{\link{organizations}}}
+\item{publishingOrg}{Publishing organization. A uuid string. See
+\code{\link{organizations}}}
 
-\item{hostingOrg}{Hosting organization. A uuid string. See \code{\link{organizations}}}
+\item{hostingOrg}{Hosting organization. A uuid string. See
+\code{\link{organizations}}}
 
-\item{publishingCountry}{Publishing country. See options at isocodes$gbif_name}
+\item{publishingCountry}{Publishing country. See options at
+isocodes$gbif_name}
 
 \item{decade}{Decade, e.g., 1980. Filters datasets by their temporal coverage
-broken down to decades. Decades are given as a full year, e.g. 1880, 1960, 2000,
-etc, and will return datasets wholly contained in the decade as well as those
-that cover the entire decade or more. Facet by decade to get the break down,
-e.g. /search?facet=DECADE&facet_only=true (see example below)}
+broken down to decades. Decades are given as a full year, e.g. 1880, 1960,
+2000, etc, and will return datasets wholly contained in the decade as well
+as those that cover the entire decade or more. Facet by decade to get the
+break down, e.g. /search?facet=DECADE&facet_only=true (see example below)}
 
-\item{continent}{Not yet implemented, but will eventually allow filtering datasets
-by their continent(s) as given in our Continent enum.}
+\item{continent}{Not yet implemented, but will eventually allow filtering
+datasets by their continent(s) as given in our Continent enum.}
 
 \item{limit}{Number of records to return. Default: 100. Maximum: 1000.}
 
-\item{start}{Record number to start at. Default: 0. Use in combination with \code{limit} to
-page through results.}
+\item{start}{Record number to start at. Default: 0. Use in combination
+with \code{limit} to page through results.}
 
-\item{pretty}{Print informative metadata using \code{\link{cat}}. Not easy to
-manipulate output though.}
+\item{pretty}{Print informative metadata using \code{\link{cat}}. Not easy
+to manipulate output though.}
 
-\item{description}{Return descriptions only (TRUE) or all data (FALSE, default)}
+\item{description}{Return descriptions only (TRUE) or all data (FALSE,
+default)}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
-\code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will
-be combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
-A data.frame, list, or message printed to console (using pretty=TRUE).
+A data.frame, list, or message printed to console (using
+\code{pretty=TRUE}).
 }
 \description{
 Suggest datasets in GBIF.
@@ -72,10 +78,6 @@ dataset_suggest(query="Amazon", type="OCCURRENCE")
 
 # Suggest datasets tagged with keyword "france".
 dataset_suggest(keyword="france")
-
-# Suggest datasets owned by the organization with key
-# "07f617d0-c688-11d8-bf62-b8a03c50a862" (UK NBN).
-dataset_suggest(owningOrg="07f617d0-c688-11d8-bf62-b8a03c50a862")
 
 # Fulltext search for all datasets having the word "amsterdam" somewhere in
 # its metadata (title, description, etc).
@@ -98,12 +100,20 @@ dataset_suggest(country="US", limit = 25)
 # Search by decade
 dataset_suggest(decade=1980, limit = 30)
 
-# httr options
-library('httr')
-dataset_suggest(type="OCCURRENCE", limit = 2, config=verbose())
+# Some parameters accept many inputs, treated as OR
+dataset_suggest(type = c("metadata", "checklist"))
+dataset_suggest(keyword = c("fern", "algae"))
+dataset_suggest(publishingOrg = c("e2e717bf-551a-4917-bdc9-4fa0f342c530",
+  "90fd6680-349f-11d8-aa2d-b8a03c50a862"))
+dataset_suggest(hostingOrg = c("c5f7ef70-e233-11d9-a4d6-b8a03c50a862",
+  "c5e4331-7f2f-4a8d-aa56-81ece7014fc8"))
+dataset_suggest(publishingCountry = c("DE", "NZ"))
+dataset_suggest(decade = c(1910, 1930))
+
+# curl options
+dataset_suggest(type="OCCURRENCE", limit = 2, curlopts = list(verbose=TRUE))
 }
 }
 \references{
 \url{http://www.gbif.org/developer/registry#datasetSearch}
 }
-

@@ -179,7 +179,7 @@ test_that("geometry inputs work as expected", {
   aa <- occ_data(geometry='POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1))', limit=20)
   expect_is(aa, "gbif_data")
   expect_is(unclass(aa), "list")
-  expect_named(attr(aa, "args"), c('geometry', 'limit', 'offset'))
+  expect_named(attr(aa, "args"), c('limit', 'offset', 'geometry'))
   expect_gt(NROW(aa$data), 0)
 
   # with a taxon key
@@ -188,7 +188,7 @@ test_that("geometry inputs work as expected", {
                    limit=20)
   expect_is(bb, "gbif_data")
   expect_is(unclass(bb), "list")
-  expect_named(attr(bb, "args"), c('taxonKey', 'geometry', 'limit', 'offset'))
+  expect_named(attr(bb, "args"), c('limit', 'offset', 'taxonKey', 'geometry'))
   expect_gt(NROW(bb$data), 0)
   expect_lt(NROW(bb$data), NROW(aa$data))
 
@@ -196,7 +196,7 @@ test_that("geometry inputs work as expected", {
   cc <- occ_data(geometry=c(-125.0,38.4,-121.8,40.9), limit=20)
   expect_is(cc, "gbif_data")
   expect_is(unclass(cc), "list")
-  expect_named(attr(cc, "args"), c('geometry', 'limit', 'offset'))
+  expect_named(attr(cc, "args"), c('limit', 'offset', 'geometry'))
   expect_gt(NROW(cc$data), 0)
   expect_equal(NROW(cc$data), NROW(aa$data))
 
@@ -249,6 +249,33 @@ test_that("geometry inputs work as expected", {
   gg <- occ_data(geometry = wkt, geom_big = "axe", geom_size = 30, limit = 5)
 
   expect_gt(length(names(gg)), length(names(ee)))
+
+
+
+  # bad wkt is caught and handled appropriately
+  badwkt1 <- "POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 a))"
+  expect_error(
+    occ_data(geometry = badwkt1),
+    "source type value could not be interpreted as target at 'a'"
+  )
+
+  badwkt2 <- "POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 '10.1'))"
+  expect_error(
+    occ_data(geometry = badwkt2),
+    "source type value could not be interpreted as target at ''10.1''"
+  )
+
+  badwkt3 <- "POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1)"
+  expect_error(
+    occ_data(geometry = badwkt3),
+    "Expected ')' in "
+  )
+
+  badwkt4 <- "CIRCULARSTRING(1 5, 6 2, 7 3)"
+  expect_error(
+    occ_data(geometry = badwkt4),
+    "WKT must be one of the types"
+  )
 })
 
 ######### spell check works
@@ -272,4 +299,26 @@ test_that("spell check param works", {
     occ_data(search = "helir", limit=20, spellCheck = TRUE),
     "spelling bad - suggestions"
   )
+})
+
+
+# many args
+test_that("works with parameters that allow many inputs", {
+  skip_on_cran()
+
+  ## separate requests: use a vector of strings
+  aa <- occ_data(recordedBy=c("smith","BJ Stacey"), limit=3)
+  ## one request, many instances of same parameter: use semi-colon sep. string
+  bb <- occ_data(recordedBy="smith;BJ Stacey", limit=3)
+
+  expect_is(aa, "gbif_data")
+  expect_is(bb, "gbif_data")
+
+  expect_named(aa, c('smith', 'BJ Stacey'))
+  expect_named(bb, c('meta', 'data'))
+
+  expect_equal(unique(tolower(aa[[1]]$data$recordedBy)), "smith")
+  expect_equal(unique(tolower(aa[[2]]$data$recordedBy)), "bj stacey")
+
+  expect_true(unique(tolower(bb$data$recordedBy)) %in% c('smith', 'bj stacey'))
 })

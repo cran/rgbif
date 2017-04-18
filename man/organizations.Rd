@@ -5,31 +5,32 @@
 \title{Organizations metadata.}
 \usage{
 organizations(data = "all", uuid = NULL, query = NULL, limit = 100,
-  start = NULL, ...)
+  start = NULL, curlopts = list())
 }
 \arguments{
-\item{data}{(character) The type of data to get. One or more of: 'organization', 'contact',
-'endpoint', 'identifier', 'tag', 'machineTag', 'comment', 'hostedDataset',
-'ownedDataset', 'deleted', 'pending', 'nonPublishing', or the special
-'all'. Default: \code{'all'}}
+\item{data}{(character) The type of data to get. One or more of:
+'organization', 'contact', 'endpoint', 'identifier', 'tag', 'machineTag',
+'comment', 'hostedDataset', 'ownedDataset', 'deleted', 'pending',
+'nonPublishing', or the special 'all'. Default: \code{'all'}}
 
-\item{uuid}{(character) UUID of the data node provider. This must be specified if data
-is anything other than 'all'.}
+\item{uuid}{(character) UUID of the data node provider. This must be
+specified if data is anything other than 'all'.}
 
 \item{query}{(character) Query nodes. Only used when \code{data='all'}}
 
 \item{limit}{Number of records to return. Default: 100. Maximum: 1000.}
 
-\item{start}{Record number to start at. Default: 0. Use in combination with \code{limit} to
-page through results.}
+\item{start}{Record number to start at. Default: 0. Use in combination
+with \code{limit} to page through results.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
-\code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will
-be combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
-A list of length one or two. If \code{uuid} is NULL, then a data.frame with
-call metadata, and a data.frame, but if \code{uuid} given, then a list.
+A list of length one or two. If \code{uuid} is NULL, then a
+data.frame with call metadata, and a data.frame, but if \code{uuid} given,
+then a list.
 }
 \description{
 Organizations metadata.
@@ -41,14 +42,13 @@ organizations(query="france", limit=5)
 organizations(uuid="4b4b2111-ee51-45f5-bf5e-f535f4a1c9dc")
 organizations(data='contact', uuid="4b4b2111-ee51-45f5-bf5e-f535f4a1c9dc")
 organizations(data='pending')
-organizations(data=c('contact','endpoint'), uuid="4b4b2111-ee51-45f5-bf5e-f535f4a1c9dc")
+organizations(data=c('contact','endpoint'),
+  uuid="4b4b2111-ee51-45f5-bf5e-f535f4a1c9dc")
 
-# Pass on options to httr
-library('httr')
-res <- organizations(query="spain", config=progress())
+# Pass on curl options
+organizations(query="spain", curlopts = list(verbose=TRUE))
 }
 }
 \references{
 \url{http://www.gbif.org/developer/registry#organizations}
 }
-

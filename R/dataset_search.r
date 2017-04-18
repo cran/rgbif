@@ -11,7 +11,7 @@
 #' @param return What to return. One of meta, descriptions, data, facets,
 #'    or all (Default).
 #'
-#' @references \url{http://www.gbif.org/developer/registry#datasetSearch}
+#' @references <http://www.gbif.org/developer/registry#datasetSearch>
 #'
 #' @examples \dontrun{
 #' # Gets all datasets of type "OCCURRENCE".
@@ -45,16 +45,33 @@
 #' ## data and facets
 #' dataset_search(facet="decade", facetMincount="10", limit=2)
 #'
-#' ## httr options
-#' library('httr')
-#' dataset_search(facet="decade", facetMincount="10", limit=2, config=verbose())
+#' # Some parameters accept many inputs, treated as OR
+#' dataset_search(type = c("metadata", "checklist"))$data
+#' dataset_search(keyword = c("fern", "algae"))$data
+#' dataset_search(publishingOrg = c("e2e717bf-551a-4917-bdc9-4fa0f342c530",
+#'   "90fd6680-349f-11d8-aa2d-b8a03c50a862"))$data
+#' dataset_search(hostingOrg = c("c5f7ef70-e233-11d9-a4d6-b8a03c50a862",
+#'   "c5e4331-7f2f-4a8d-aa56-81ece7014fc8"))$data
+#' dataset_search(publishingCountry = c("DE", "NZ"))$data
+#' dataset_search(decade = c(1910, 1930))$data
+#'
+#' ## curl options
+#' dataset_search(facet="decade", facetMincount="10", limit=2,
+#'   curlopts = list(verbose=TRUE))
 #' }
 
-dataset_search <- function(query = NULL, country = NULL, type = NULL, keyword = NULL,
-  owningOrg = NULL, publishingOrg = NULL, hostingOrg = NULL, publishingCountry = NULL,
-  decade = NULL, facet=NULL, facetMincount=NULL, facetMultiselect=NULL, limit=100,
-  start=NULL, pretty=FALSE, return="all", ...)
-{
+dataset_search <- function(query = NULL, country = NULL, type = NULL,
+  keyword = NULL, owningOrg = NULL, publishingOrg = NULL, hostingOrg = NULL,
+  publishingCountry = NULL, decade = NULL, facet=NULL, facetMincount=NULL,
+  facetMultiselect=NULL, limit=100, start=NULL, pretty=FALSE, return="all",
+  curlopts = list()) {
+
+  calls <- names(sapply(match.call(), deparse))[-1]
+  calls_vec <- c("owningOrg") %in% calls
+  if (any(calls_vec)) {
+    stop("Parameters gone: owningOrg", call. = FALSE)
+  }
+
   if (!is.null(facetMincount) && inherits(facetMincount, "numeric")) {
     stop("Make sure facetMincount is character", call. = FALSE)
   }
@@ -65,14 +82,21 @@ dataset_search <- function(query = NULL, country = NULL, type = NULL, keyword = 
     facetbyname <- NULL
   }
 
+  type <- as_many_args(type)
+  keyword <- as_many_args(keyword)
+  publishingOrg <- as_many_args(publishingOrg)
+  hostingOrg <- as_many_args(hostingOrg)
+  publishingCountry <- as_many_args(publishingCountry)
+  decade <- as_many_args(decade)
+
   url <- paste0(gbif_base(), '/dataset/search')
-  args <- as.list(rgbif_compact(c(q=query,type=type,keyword=keyword,owningOrg=owningOrg,
-                       publishingOrg=publishingOrg,
-                       hostingOrg=hostingOrg,publishingCountry=publishingCountry,
-                       decade=decade,limit=limit,offset=start,facetbyname,
-                       facetMincount=facetMincount,
-                       facetMultiselect=facetMultiselect)))
-  tt <- gbif_GET(url, args, FALSE, ...)
+  args <- as.list(
+    rgbif_compact(c(q=query, limit=limit, offset=start, facetbyname,
+                    facetMincount=facetMincount,
+                    facetMultiselect=facetMultiselect)))
+  args <- c(args, type, keyword, publishingOrg, hostingOrg,
+            publishingCountry, decade)
+  tt <- gbif_GET(url, args, FALSE, curlopts)
 
   # metadata
   meta <- tt[c('offset','limit','endOfRecords','count')]
@@ -88,7 +112,8 @@ dataset_search <- function(query = NULL, country = NULL, type = NULL, keyword = 
     # facets
     facets <- tt$facets
     if (!length(facets) == 0) {
-      facetsdat <- lapply(facets, function(x) do.call(rbind, lapply(x$counts, data.frame, stringsAsFactors = FALSE)))
+      facetsdat <- lapply(facets, function(x)
+        do.call(rbind, lapply(x$counts, data.frame, stringsAsFactors = FALSE)))
       names(facetsdat) <- facet
     } else {
       facetsdat <- NULL
@@ -104,17 +129,20 @@ dataset_search <- function(query = NULL, country = NULL, type = NULL, keyword = 
     } else if (length(tt$results) == 1) {
       out <- parse_dataset(x = tt$results)
     } else {
-      out <- tibble::as_data_frame(do.call(rbind_fill, lapply(tt$results, parse_dataset)))
+      out <- tibble::as_data_frame(do.call(rbind_fill,
+                                           lapply(tt$results, parse_dataset)))
     }
 
     # select output
-    return <- match.arg(return, c("meta", "descriptions", "data", "facets", "all"))
+    return <- match.arg(return, c("meta", "descriptions", "data",
+                                  "facets", "all"))
     switch(return,
            meta = data.frame(meta),
            descriptions = descs,
            data = out,
            facets = facetsdat,
-           all = list(meta = data.frame(meta), data = out, facets = facetsdat, descriptions = descs))
+           all = list(meta = data.frame(meta), data = out,
+                      facets = facetsdat, descriptions = descs))
   }
 }
 

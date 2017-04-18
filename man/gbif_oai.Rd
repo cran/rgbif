@@ -2,12 +2,12 @@
 % Please edit documentation in R/oai-pmh.R
 \name{gbif_oai}
 \alias{gbif_oai}
-\alias{gbif_oai_get_records}
 \alias{gbif_oai_identify}
 \alias{gbif_oai_list_identifiers}
-\alias{gbif_oai_list_metadataformats}
 \alias{gbif_oai_list_records}
+\alias{gbif_oai_list_metadataformats}
 \alias{gbif_oai_list_sets}
+\alias{gbif_oai_get_records}
 \title{GBIF registry data via OAI-PMH}
 \usage{
 gbif_oai_identify(...)
@@ -25,7 +25,7 @@ gbif_oai_list_sets(token = NULL, as = "df", ...)
 gbif_oai_get_records(ids, prefix = "oai_dc", as = "parsed", ...)
 }
 \arguments{
-\item{...}{Curl options passed on to \code{\link[httr]{GET}}}
+\item{...}{Curl options passed on to \code{httr::GET}}
 
 \item{prefix}{(character) A string to specify the metadata format in OAI-PMH
 requests issued to the repository. The default (\code{"oai_dc"}) corresponds
@@ -89,4 +89,3 @@ ids <- c("9c4e36c1-d3f9-49ce-8ec1-8c434fa9e6eb",
 gbif_oai_get_records(ids)
 }
 }
-

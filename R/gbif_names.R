@@ -4,7 +4,7 @@
 #'
 #' @param input Input output from occ_search
 #' @param output Output folder path. If not given uses temporary folder.
-#' @param browse (logical) Browse output (default: TRUE)
+#' @param browse (logical) Browse output (default: `TRUE`)
 #'
 #' @examples \dontrun{
 #' # browse=FALSE returns path to file
@@ -29,7 +29,7 @@ gbif_names <- function(input, output = NULL, browse = TRUE) {
   rr <- gsub("&lt;em class=&quot;gbifHl&quot;&gt;", "<b>", rr)
   rr <- gsub("&lt;/em&gt;", "</b>", rr)
   write(rr, file = outfile)
-  if (browse) browseURL(outfile) else outfile
+  if (browse) utils::browseURL(outfile) else outfile
 }
 
 gn_dirhandler <- function(x, which="file"){

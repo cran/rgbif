@@ -2,30 +2,31 @@
 % Please edit documentation in R/occ_metadata.r
 \name{occ_metadata}
 \alias{occ_metadata}
-\title{Search for catalog numbers, collection codes, collector names, and institution
-codes.}
+\title{Search for catalog numbers, collection codes, collector names, and
+institution codes.}
 \usage{
 occ_metadata(type = "catalogNumber", q = NULL, limit = 5, pretty = TRUE,
-  ...)
+  curlopts = list())
 }
 \arguments{
-\item{type}{Type of data, one of catalogNumber, collectionCode, recordedBy, or
-institutionCode. Unique partial strings work too, like 'cat' for catalogNumber}
+\item{type}{Type of data, one of catalogNumber, collectionCode, recordedBy,
+or institutionCode. Unique partial strings work too, like 'cat' for
+catalogNumber}
 
 \item{q}{Search term}
 
 \item{limit}{Number of results, default=5}
 
-\item{pretty}{Pretty as true (Default) uses cat to print data, FALSE gives
+\item{pretty}{Pretty as true (Default) uses cat to print data, \code{FALSE} gives
 character strings.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
-\code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters
-will be combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \description{
-Search for catalog numbers, collection codes, collector names, and institution
-codes.
+Search for catalog numbers, collection codes, collector names, and
+institution codes.
 }
 \examples{
 \dontrun{
@@ -50,13 +51,10 @@ occ_metadata(type = "catalogNumber", q=122, limit=10)
 # Partial unique type strings work too
 occ_metadata(type = "cat", q=122)
 
-# Pass on options to httr
-library('httr')
-occ_metadata(type = "cat", q=122, config=verbose())
-# occ_metadata(type = "cat", q=122, config=progress())
+# Pass on curl options
+occ_metadata(type = "cat", q=122, curlopts = list(verbose = TRUE))
 }
 }
 \references{
 \url{http://www.gbif.org/developer/occurrence#search}
 }
-

@@ -8,7 +8,7 @@ occ_count(taxonKey = NULL, georeferenced = NULL, basisOfRecord = NULL,
   datasetKey = NULL, date = NULL, typeStatus = NULL,
   catalogNumber = NULL, country = NULL, hostCountry = NULL, year = NULL,
   from = 2000, to = 2012, type = "count", publishingCountry = "US",
-  nubKey = NULL, protocol = NULL, ...)
+  nubKey = NULL, protocol = NULL, curlopts = list())
 }
 \arguments{
 \item{taxonKey}{Species key}
@@ -22,7 +22,7 @@ occ_count(taxonKey = NULL, georeferenced = NULL, basisOfRecord = NULL,
 
 \item{date}{Collection date}
 
-\item{typeStatus}{A type status. See \code{\link{typestatus}} dataset for
+\item{typeStatus}{A type status. See \code{\link[=typestatus]{typestatus()}} dataset for
 options}
 
 \item{catalogNumber}{Catalog number. PARAMETER GONE.}
@@ -47,9 +47,9 @@ year.}
 
 \item{protocol}{Protocol. E.g., 'DWC_ARCHIVE'}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc,
-passed on to \code{\link[httr]{modify_url}} within \code{\link[httr]{GET}}
-call. Unnamed parameters will be combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
 A single numeric value, or a list of numerics.
@@ -59,8 +59,8 @@ Get number of occurrence records.
 }
 \details{
 There is a slight difference in the way records are counted here vs.
-results from \code{\link{occ_search}}. For equivalent outcomes, in the
-\code{\link{occ_search}} function use \code{hasCoordinate=TRUE}, and
+results from \code{\link[=occ_search]{occ_search()}}. For equivalent outcomes, in the
+\code{\link[=occ_search]{occ_search()}} function use \code{hasCoordinate=TRUE}, and
 \code{hasGeospatialIssue=FALSE} to have the same outcome for this function
 using \code{georeferenced=TRUE}.
 }
@@ -71,50 +71,51 @@ combinations that GBIF allows on this API route. They can be found with the
 call \code{occ_count(type='schema')}. They are also presented below:
 
 \itemize{
- \item basisOfRecord
- \item basisOfRecord, country
- \item basisOfRecord, country, isGeoreferenced
- \item basisOfRecord, country, isGeoreferenced, taxonKey
- \item basisOfRecord, country, taxonKey
- \item basisOfRecord, datasetKey
- \item basisOfRecord, datasetKey, isGeoreferenced
- \item basisOfRecord, datasetKey, isGeoreferenced, taxonKey
- \item basisOfRecord, datasetKey, taxonKey
- \item basisOfRecord, isGeoreferenced, taxonKey
- \item basisOfRecord, isGeoreferenced, publishingCountry
- \item basisOfRecord, isGeoreferenced, publishingCountry, taxonKey
- \item basisOfRecord, publishingCountry
- \item basisOfRecord, publishingCountry, taxonKey
- \item basisOfRecord, taxonKey
- \item country
- \item country, datasetKey, isGeoreferenced
- \item country, isGeoreferenced
- \item country, isGeoreferenced, publishingCountry
- \item country, isGeoreferenced, taxonKey
- \item country, publishingCountry
- \item country, taxonKey
- \item country, typeStatus
- \item datasetKey
- \item datasetKey, isGeoreferenced
- \item datasetKey, isGeoreferenced, taxonKey
- \item datasetKey, issue
- \item datasetKey, taxonKey
- \item datasetKey, typeStatus
- \item isGeoreferenced
- \item isGeoreferenced, publishingCountry
- \item isGeoreferenced, publishingCountry, taxonKey
- \item isGeoreferenced, taxonKey
- \item issue
- \item publishingCountry
- \item publishingCountry, taxonKey
- \item publishingCountry, typeStatus
- \item taxonKey
- \item taxonKey, typeStatus
- \item typeStatus
- \item protocol
- \item year
+\item basisOfRecord
+\item basisOfRecord, country
+\item basisOfRecord, country, isGeoreferenced
+\item basisOfRecord, country, isGeoreferenced, taxonKey
+\item basisOfRecord, country, taxonKey
+\item basisOfRecord, datasetKey
+\item basisOfRecord, datasetKey, isGeoreferenced
+\item basisOfRecord, datasetKey, isGeoreferenced, taxonKey
+\item basisOfRecord, datasetKey, taxonKey
+\item basisOfRecord, isGeoreferenced, taxonKey
+\item basisOfRecord, isGeoreferenced, publishingCountry
+\item basisOfRecord, isGeoreferenced, publishingCountry, taxonKey
+\item basisOfRecord, publishingCountry
+\item basisOfRecord, publishingCountry, taxonKey
+\item basisOfRecord, taxonKey
+\item country
+\item country, datasetKey, isGeoreferenced
+\item country, isGeoreferenced
+\item country, isGeoreferenced, publishingCountry
+\item country, isGeoreferenced, taxonKey
+\item country, publishingCountry
+\item country, taxonKey
+\item country, typeStatus
+\item datasetKey
+\item datasetKey, isGeoreferenced
+\item datasetKey, isGeoreferenced, taxonKey
+\item datasetKey, issue
+\item datasetKey, taxonKey
+\item datasetKey, typeStatus
+\item isGeoreferenced
+\item isGeoreferenced, publishingCountry
+\item isGeoreferenced, publishingCountry, taxonKey
+\item isGeoreferenced, taxonKey
+\item issue
+\item publishingCountry
+\item publishingCountry, taxonKey
+\item publishingCountry, typeStatus
+\item taxonKey
+\item taxonKey, typeStatus
+\item typeStatus
+\item protocol
+\item year
 }
 }
+
 \examples{
 \dontrun{
 occ_count(basisOfRecord='OBSERVATION')
@@ -140,20 +141,18 @@ occ_count(typeStatus='HOLOTYPE')
 # Counts by countries. publishingCountry must be supplied (default to US)
 occ_count(type='countries')
 
-# Counts by year. from and to years have to be supplied, default to 2000 and 2012
+# Counts by year. from and to years have to be supplied, default to 2000
+# and 2012
 occ_count(type='year', from=2000, to=2012)
 
 # Counts by publishingCountry, must supply a country (default to US)
 occ_count(type='publishingCountry')
 occ_count(type='publishingCountry', country='BZ')
 
-# Pass on options to httr
-library('httr')
-# res <- occ_count(type='year', from=2000, to=2012, config=progress())
-# res
+# Pass on curl options
+occ_count(type='year', from=2000, to=2012, curlopts = list(verbose = TRUE))
 }
 }
 \references{
 \url{http://www.gbif.org/developer/occurrence#metrics}
 }
-

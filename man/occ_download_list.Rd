@@ -5,7 +5,7 @@
 \title{Lists the downloads created by a user.}
 \usage{
 occ_download_list(user = getOption("gbif_user"),
-  pwd = getOption("gbif_pwd"), limit = 20, start = 0, ...)
+  pwd = getOption("gbif_pwd"), limit = 20, start = 0, curlopts = list())
 }
 \arguments{
 \item{user}{A user name, look at option "gbif_user" first}
@@ -16,7 +16,9 @@ occ_download_list(user = getOption("gbif_user"),
 
 \item{start}{Record number to start at. Default: 0}
 
-\item{...}{Further args passed to \code{\link[httr]{GET}}}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \description{
 Lists the downloads created by a user.
@@ -28,4 +30,3 @@ occ_download_list(user="sckott", limit = 5)
 occ_download_list(user="sckott", start = 21)
 }
 }
-

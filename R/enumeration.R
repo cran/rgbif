@@ -7,8 +7,8 @@
 #'
 #' @param x A given enumeration.
 #' @template occ
-#' @return \code{enumeration} returns a character vector, while
-#' \code{enumeration_country} returns a data.frame.
+#' @return `enumeration` returns a character vector, while
+#' `enumeration_country` returns a data.frame.
 #' @examples \dontrun{
 #' # basic enumeration
 #' enumeration()
@@ -20,17 +20,16 @@
 #' enumeration_country()
 #'
 #' # curl options
-#' library("httr")
-#' enumeration(config = verbose())
+#' enumeration(curlopts = list(verbose=TRUE))
 #' }
-enumeration <- function(x = NULL, ...) {
+enumeration <- function(x = NULL, curlopts = list()) {
   url <- paste0(gbif_base(), "/enumeration/basic/", x)
-  gbif_GET(url, NULL, parse = TRUE, ...)
+  gbif_GET(url, NULL, parse = TRUE, curlopts)
 }
 
 #' @export
 #' @rdname enumeration
-enumeration_country <- function(...) {
+enumeration_country <- function(curlopts = list()) {
   url <- paste0(gbif_base(), "/enumeration/country/")
-  gbif_GET(url, NULL, parse = TRUE, ...)
+  gbif_GET(url, NULL, parse = TRUE, curlopts = curlopts)
 }

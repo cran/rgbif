@@ -5,16 +5,16 @@
 #' @param nubKey Species key. PARAMETER NAME CHANGED TO taxonKey.
 #' @param taxonKey Species key
 #' @param georeferenced Return only occurence records with lat/long data
-#' (\code{TRUE}) or all records (\code{FALSE}, default).
+#' (`TRUE`) or all records (`FALSE`, default).
 #' @param basisOfRecord Basis of record
 #' @param datasetKey Dataset key
 #' @param date Collection date
-#' @param typeStatus A type status. See \code{\link{typestatus}} dataset for
+#' @param typeStatus A type status. See [typestatus()] dataset for
 #' options
 #' @param year Year data were collected in
 #' @param catalogNumber Catalog number. PARAMETER GONE.
 #' @param country Country data was collected in, two letter abbreviation. See
-#' \url{http://countrycode.org/} for abbreviations.
+#' <http://countrycode.org/> for abbreviations.
 #' @param protocol Protocol. E.g., 'DWC_ARCHIVE'
 #' @param hostCountry Country that hosted the data. PARAMETER GONE.
 #' @param publishingCountry Publishing country, two letter ISO country code
@@ -22,23 +22,21 @@
 #' @param to Year to end at
 #' @param type One of count (default), schema, basis_of_record, countries, or
 #' year.
-#' @param ... Further named parameters, such as \code{query}, \code{path}, etc,
-#' passed on to \code{\link[httr]{modify_url}} within \code{\link[httr]{GET}}
-#' call. Unnamed parameters will be combined with \code{\link[httr]{config}}.
+#' @template occ
 #'
 #' @return A single numeric value, or a list of numerics.
-#' @references \url{http://www.gbif.org/developer/occurrence#metrics}
+#' @references <http://www.gbif.org/developer/occurrence#metrics>
 #'
 #' @details There is a slight difference in the way records are counted here vs.
-#' results from \code{\link{occ_search}}. For equivalent outcomes, in the
-#' \code{\link{occ_search}} function use \code{hasCoordinate=TRUE}, and
-#' \code{hasGeospatialIssue=FALSE} to have the same outcome for this function
-#' using \code{georeferenced=TRUE}.
+#' results from [occ_search()]. For equivalent outcomes, in the
+#' [occ_search()] function use `hasCoordinate=TRUE`, and
+#' `hasGeospatialIssue=FALSE` to have the same outcome for this function
+#' using `georeferenced=TRUE`.
 #'
 #' @section Supported dimensions:
 #' That is, there are only a certain set of supported query parameter
 #' combinations that GBIF allows on this API route. They can be found with the
-#' call \code{occ_count(type='schema')}. They are also presented below:
+#' call `occ_count(type='schema')`. They are also presented below:
 #'
 #' \itemize{
 #'  \item basisOfRecord
@@ -109,24 +107,23 @@
 #' # Counts by countries. publishingCountry must be supplied (default to US)
 #' occ_count(type='countries')
 #'
-#' # Counts by year. from and to years have to be supplied, default to 2000 and 2012
+#' # Counts by year. from and to years have to be supplied, default to 2000
+#' # and 2012
 #' occ_count(type='year', from=2000, to=2012)
 #'
 #' # Counts by publishingCountry, must supply a country (default to US)
 #' occ_count(type='publishingCountry')
 #' occ_count(type='publishingCountry', country='BZ')
 #'
-#' # Pass on options to httr
-#' library('httr')
-#' # res <- occ_count(type='year', from=2000, to=2012, config=progress())
-#' # res
+#' # Pass on curl options
+#' occ_count(type='year', from=2000, to=2012, curlopts = list(verbose = TRUE))
 #' }
 
-occ_count <- function(taxonKey = NULL, georeferenced = NULL, basisOfRecord = NULL,
-  datasetKey = NULL, date = NULL, typeStatus = NULL, catalogNumber = NULL,
-  country = NULL, hostCountry = NULL, year = NULL, from = 2000, to = 2012,
-  type = 'count', publishingCountry = 'US', nubKey = NULL,
-  protocol = NULL, ...) {
+occ_count <- function(taxonKey = NULL, georeferenced = NULL,
+  basisOfRecord = NULL, datasetKey = NULL, date = NULL, typeStatus = NULL,
+  catalogNumber = NULL, country = NULL, hostCountry = NULL, year = NULL,
+  from = 2000, to = 2012, type = 'count', publishingCountry = 'US',
+  nubKey = NULL, protocol = NULL, curlopts = list()) {
 
   calls <- names(sapply(match.call(), deparse))[-1]
   calls_vec <- c("nubKey","hostCountry","catalogNumber") %in% calls
@@ -135,10 +132,11 @@ occ_count <- function(taxonKey = NULL, georeferenced = NULL, basisOfRecord = NUL
   }
 
   args <- rgbif_compact(
-    list(taxonKey=taxonKey, isGeoreferenced=georeferenced,
-         basisOfRecord=basisOfRecord, datasetKey=datasetKey,
-         date=date, typeStatus=typeStatus, catalogNumber=catalogNumber,
-         country=country, hostCountry=hostCountry, year=year, protocol=protocol))
+    list(
+      taxonKey=taxonKey, isGeoreferenced=georeferenced,
+      basisOfRecord=basisOfRecord, datasetKey=datasetKey,
+      date=date, typeStatus=typeStatus, catalogNumber=catalogNumber,
+      country=country, hostCountry=hostCountry, year=year, protocol=protocol))
   type <- match.arg(type, choices=c("count","schema","basisOfRecord",
                                     "countries","year","publishingCountry"))
   url <- switch(type,
@@ -161,6 +159,6 @@ occ_count <- function(taxonKey = NULL, georeferenced = NULL, basisOfRecord = NUL
                 publishingCountry =
                   rgbif_compact(
                     list(country=ifelse(is.null(country), "US", country) )))
-  res <- gbif_GET_content(url, args, ...)
+  res <- gbif_GET_content(url, args, curlopts)
   if (type == 'count') as.numeric(res) else jsonlite::fromJSON(res, FALSE)
 }

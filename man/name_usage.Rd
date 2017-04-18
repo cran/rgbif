@@ -6,7 +6,8 @@
 \usage{
 name_usage(key = NULL, name = NULL, data = "all", language = NULL,
   datasetKey = NULL, uuid = NULL, sourceId = NULL, rank = NULL,
-  shortname = NULL, start = NULL, limit = 100, return = "all", ...)
+  shortname = NULL, start = NULL, limit = 100, return = "all",
+  curlopts = list())
 }
 \arguments{
 \item{key}{(numeric) A GBIF key for a taxon}
@@ -14,38 +15,42 @@ name_usage(key = NULL, name = NULL, data = "all", language = NULL,
 \item{name}{(character) Filters by a case insensitive, canonical namestring,
 e.g. 'Puma concolor'}
 
-\item{data}{(character) Specify an option to select what data is returned. See Description
-below.}
+\item{data}{(character) Specify an option to select what data is returned.
+See Description below.}
 
 \item{language}{(character) Language, default is english}
 
 \item{datasetKey}{(character) Filters by the dataset's key (a uuid)}
 
-\item{uuid}{(character) A uuid for a dataset. Should give exact same results as datasetKey.}
+\item{uuid}{(character) A uuid for a dataset. Should give exact same
+results as datasetKey.}
 
-\item{sourceId}{(numeric) Filters by the source identifier. Not used right now.}
+\item{sourceId}{(numeric) Filters by the source identifier. Not used
+right now.}
 
-\item{rank}{(character) Taxonomic rank. Filters by taxonomic rank as one of:
-  CLASS, CULTIVAR, CULTIVAR_GROUP, DOMAIN, FAMILY, FORM, GENUS, INFORMAL,
-  INFRAGENERIC_NAME, INFRAORDER, INFRASPECIFIC_NAME, INFRASUBSPECIFIC_NAME,
-KINGDOM, ORDER, PHYLUM, SECTION, SERIES, SPECIES, STRAIN, SUBCLASS, SUBFAMILY,
-SUBFORM, SUBGENUS, SUBKINGDOM, SUBORDER, SUBPHYLUM, SUBSECTION, SUBSERIES,
-SUBSPECIES, SUBTRIBE, SUBVARIETY, SUPERCLASS, SUPERFAMILY, SUPERORDER,
-SUPERPHYLUM, SUPRAGENERIC_NAME, TRIBE, UNRANKED, VARIETY}
+\item{rank}{(character) Taxonomic rank. Filters by taxonomic rank as
+one of: CLASS, CULTIVAR, CULTIVAR_GROUP, DOMAIN, FAMILY, FORM, GENUS,
+INFORMAL, INFRAGENERIC_NAME, INFRAORDER, INFRASPECIFIC_NAME,
+INFRASUBSPECIFIC_NAME, KINGDOM, ORDER, PHYLUM, SECTION, SERIES, SPECIES,
+STRAIN, SUBCLASS, SUBFAMILY, SUBFORM, SUBGENUS, SUBKINGDOM, SUBORDER,
+SUBPHYLUM, SUBSECTION, SUBSERIES, SUBSPECIES, SUBTRIBE, SUBVARIETY,
+SUPERCLASS, SUPERFAMILY, SUPERORDER, SUPERPHYLUM, SUPRAGENERIC_NAME,
+TRIBE, UNRANKED, VARIETY}
 
 \item{shortname}{(character) A short name..need more info on this?}
 
-\item{start}{Record number to start at. Default: 0. Use in combination with \code{limit} to
-page through results.}
+\item{start}{Record number to start at. Default: 0. Use in combination
+with \code{limit} to page through results.}
 
 \item{limit}{Number of records to return. Default: 100. Maximum: 1000.}
 
 \item{return}{One of data, meta, or all. If data, a data.frame with the
-data. meta returns the metadata for the entire call. all gives all data back in a list.}
+data. meta returns the metadata for the entire call. all gives all data
+back in a list.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
-\code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will
-be combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
 A list of length two. The first element is metadata. The second is
@@ -58,23 +63,38 @@ Lookup details for specific names in all taxonomies in GBIF.
 This service uses fuzzy lookup so that you can put in partial names and
 you should get back those things that match. See examples below.
 
-This function is different from \code{name_lookup} in that that function
+This function is different from \code{\link[=name_lookup]{name_lookup()}} in that that function
 searches for names. This function encompasses a bunch of API endpoints,
 most of which require that you already have a taxon key, but there is one
 endpoint that allows name searches (see examples below).
 
 Note that \code{data="verbatim"} hasn't been working.
 
-Options for the data parameter are: 'all', 'verbatim', 'name', 'parents', 'children',
-'related', 'synonyms', 'descriptions','distributions', 'media',
+Options for the data parameter are: 'all', 'verbatim', 'name', 'parents',
+'children', 'related', 'synonyms', 'descriptions','distributions', 'media',
 'references', 'speciesProfiles', 'vernacularNames', 'typeSpecimens', 'root'
 
-This function used to be vectorized with respect to the \code{data} parameter,
-where you could pass in multiple values and the function internally loops
-over each option making separate requests. This has been removed. You can still
-loop over many options for the \code{data} parameter, just use an \code{lapply}
-family function, or a for loop, etc.
+This function used to be vectorized with respect to the \code{data}
+parameter, where you could pass in multiple values and the function
+internally loops over each option making separate requests. This has been
+removed. You can still loop over many options for the \code{data} parameter,
+just use an \code{lapply} family function, or a for loop, etc.
 }
+\section{Repeat parmeter inputs}{
+
+Some parameters can tak emany inputs, and treated as 'OR' (e.g., a or b or
+c). The following take many inputs:
+\itemize{
+ \item \strong{rank}
+ \item \strong{datasetKey}
+ \item \strong{uuid}
+ \item \strong{name}
+ \item \strong{langugae}
+}
+
+see also \code{\link{many-values}}
+}
+
 \examples{
 \dontrun{
 # A single name usage
@@ -106,13 +126,19 @@ name_usage(datasetKey="d7dddbf4-2cf0-4f39-9b2a-bb099caae36c")
 # Search for a particular language
 name_usage(key=3119195, language="FRENCH", data='vernacularNames')
 
-# Pass on httr options
-## here, print progress, notice the progress bar
-library('httr')
-# res <- name_usage(name='Puma concolor', limit=300, config=progress())
+# Some parameters accept many inputs, treated as OR
+name_usage(rank = c("family", "genus"))
+name_usage(datasetKey = c("73605f3a-af85-4ade-bbc5-522bfb90d847",
+  "d7c60346-44b6-400d-ba27-8d3fbeffc8a5"))
+name_usage(uuid = c("73605f3a-af85-4ade-bbc5-522bfb90d847",
+  "d7c60346-44b6-400d-ba27-8d3fbeffc8a5"))
+name_usage(name = c("Puma", "Quercus"))
+name_usage(language = c("spanish", "german"))
+
+# Pass on curl options
+name_usage(name='Puma concolor', limit=300, curlopts = list(verbose=TRUE))
 }
 }
 \references{
-\url{http://www.gbif.org/developer/species#nameUsages}
+<http://www.gbif.org/developer/species#nameUsages.
 }
-

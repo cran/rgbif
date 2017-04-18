@@ -3,7 +3,7 @@
 \name{densitylist}
 \alias{densitylist}
 \title{The density web service provides access to records showing the density
-    of occurrence records from the GBIF Network by one-degree cell.}
+of occurrence records from the GBIF Network by one-degree cell.}
 \usage{
 densitylist(...)
 }
@@ -11,4 +11,3 @@ densitylist(...)
 This function is defunct.
 }
 \keyword{internal}
-

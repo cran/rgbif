@@ -6,7 +6,7 @@
 \usage{
 occ_download(..., body = NULL, type = "and",
   user = getOption("gbif_user"), pwd = getOption("gbif_pwd"),
-  email = getOption("gbif_email"), callopts = list())
+  email = getOption("gbif_email"), curlopts = list())
 }
 \arguments{
 \item{...}{One or more of query arguments to kick of a download job.
@@ -33,7 +33,9 @@ in your \code{.Rprofile} file with the option \code{gbif_pwd}}
 email. Required. Set in your \code{.Rprofile} file with the option
 \code{gbif_email}}
 
-\item{callopts}{Further named arguments passed on to \code{\link[httr]{POST}}}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \description{
 Spin up a download request for GBIF occurrence data.
@@ -46,53 +48,51 @@ the operator.  This character string is parsed internally.
 
 The value can be comma separated, in which case we'll turn that into a
 predicate combined with the OR operator, for example,
-\code{"taxonKey = 2480946,5229208"} will turn into
-\code{
-'{
-    "type": "or",
-    "predicates": [
-        {
-            "type": "equals",
-            "key": "TAXON_KEY",
-            "value": "2480946"
-        },
-        {
-            "type": "equals",
-            "key": "TAXON_KEY",
-            "value": "5229208"
-        }
-    ]
+\code{"taxonKey = 2480946,5229208"} will turn into\preformatted{'{
+   "type": "or",
+   "predicates": [
+     {
+      "type": "equals",
+      "key": "TAXON_KEY",
+      "value": "2480946"
+     },
+     {
+      "type": "equals",
+      "key": "TAXON_KEY",
+      "value": "5229208"
+     }
+   ]
 }'
 }
 
 Acceptable arguments to \code{...} are:
 \itemize{
- \item taxonKey = 'TAXON_KEY'
- \item scientificName = 'SCIENTIFIC_NAME'
- \item country = 'COUNTRY'
- \item publishingCountry = 'PUBLISHING_COUNTRY'
- \item hasCoordinate = 'HAS_COORDINATE'
- \item hasGeospatialIssue = 'HAS_GEOSPATIAL_ISSUE'
- \item typeStatus = 'TYPE_STATUS'
- \item recordNumber = 'RECORD_NUMBER'
- \item lastInterpreted = 'LAST_INTERPRETED'
- \item continent = 'CONTINENT'
- \item geometry = 'GEOMETRY'
- \item basisOfRecord = 'BASIS_OF_RECORD'
- \item datasetKey = 'DATASET_KEY'
- \item eventDate = 'EVENT_DATE'
- \item catalogNumber = 'CATALOG_NUMBER'
- \item year = 'YEAR'
- \item month = 'MONTH'
- \item decimalLatitude = 'DECIMAL_LATITUDE'
- \item decimalLongitude = 'DECIMAL_LONGITUDE'
- \item elevation = 'ELEVATION'
- \item depth = 'DEPTH'
- \item institutionCode = 'INSTITUTION_CODE'
- \item collectionCode = 'COLLECTION_CODE'
- \item issue = 'ISSUE'
- \item mediatype = 'MEDIA_TYPE'
- \item recordedBy = 'RECORDED_BY'
+\item taxonKey = 'TAXON_KEY'
+\item scientificName = 'SCIENTIFIC_NAME'
+\item country = 'COUNTRY'
+\item publishingCountry = 'PUBLISHING_COUNTRY'
+\item hasCoordinate = 'HAS_COORDINATE'
+\item hasGeospatialIssue = 'HAS_GEOSPATIAL_ISSUE'
+\item typeStatus = 'TYPE_STATUS'
+\item recordNumber = 'RECORD_NUMBER'
+\item lastInterpreted = 'LAST_INTERPRETED'
+\item continent = 'CONTINENT'
+\item geometry = 'GEOMETRY'
+\item basisOfRecord = 'BASIS_OF_RECORD'
+\item datasetKey = 'DATASET_KEY'
+\item eventDate = 'EVENT_DATE'
+\item catalogNumber = 'CATALOG_NUMBER'
+\item year = 'YEAR'
+\item month = 'MONTH'
+\item decimalLatitude = 'DECIMAL_LATITUDE'
+\item decimalLongitude = 'DECIMAL_LONGITUDE'
+\item elevation = 'ELEVATION'
+\item depth = 'DEPTH'
+\item institutionCode = 'INSTITUTION_CODE'
+\item collectionCode = 'COLLECTION_CODE'
+\item issue = 'ISSUE'
+\item mediatype = 'MEDIA_TYPE'
+\item recordedBy = 'RECORDED_BY'
 }
 }
 \examples{
@@ -137,7 +137,7 @@ query1 <- '{"creator":"sckott",
     {"type":"equals","key":"TAXON_KEY","value":"7264332"},
     {"type":"equals","key":"HAS_COORDINATE","value":"TRUE"}]}
  }'
-# res <- occ_download(body = query, callopts=verbose())
+# res <- occ_download(body = query1, curlopts=list(verbose=TRUE))
 
 ## as a list
 library(jsonlite)
@@ -147,12 +147,14 @@ query <- list(
   predicate = list(
     type = unbox("and"),
     predicates = list(
-      list(type = unbox("equals"), key = unbox("TAXON_KEY"), value = unbox("7264332")),
-      list(type = unbox("equals"), key = unbox("HAS_COORDINATE"), value = unbox("TRUE"))
+      list(type = unbox("equals"), key = unbox("TAXON_KEY"),
+        value = unbox("7264332")),
+      list(type = unbox("equals"), key = unbox("HAS_COORDINATE"),
+        value = unbox("TRUE"))
     )
   )
 )
-# res <- occ_download(body = query, callopts=verbose())
+# res <- occ_download(body = query, curlopts = list(verbose = TRUE))
 }
 }
 \references{
@@ -161,4 +163,3 @@ See the API docs
 and the predicates docs
 \url{http://www.gbif.org/developer/occurrence#predicates}
 }
-

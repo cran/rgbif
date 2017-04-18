@@ -2,44 +2,61 @@
 % Please edit documentation in R/name_suggest.r
 \name{name_suggest}
 \alias{name_suggest}
-\title{A quick and simple autocomplete service that returns up to 20 name usages by
-doing prefix matching against the scientific name. Results are ordered by relevance.}
+\title{A quick and simple autocomplete service that returns up to 20 name
+usages by doing prefix matching against the scientific name. Results
+are ordered by relevance.}
 \usage{
 name_suggest(q = NULL, datasetKey = NULL, rank = NULL, fields = NULL,
-  start = NULL, limit = 100, ...)
+  start = NULL, limit = 100, curlopts = list())
 }
 \arguments{
-\item{q}{(character, required) Simple search parameter. The value for this parameter can be a
-simple word or a phrase. Wildcards can be added to the simple word parameters only,
-e.g. q=*puma*}
+\item{q}{(character, required) Simple search parameter. The value for
+this parameter can be a simple word or a phrase. Wildcards can be added to
+the simple word parameters only, e.g. q=\emph{puma}}
 
-\item{datasetKey}{(character) Filters by the checklist dataset key (a uuid, see examples)}
+\item{datasetKey}{(character) Filters by the checklist dataset key (a uuid,
+see examples)}
 
-\item{rank}{(character) A taxonomic rank. One of class, cultivar, cultivar_group, domain, family,
-form, genus, informal, infrageneric_name, infraorder, infraspecific_name,
-infrasubspecific_name, kingdom, order, phylum, section, series, species, strain, subclass,
-subfamily, subform, subgenus, subkingdom, suborder, subphylum, subsection, subseries,
-subspecies, subtribe, subvariety, superclass, superfamily, superorder, superphylum,
-suprageneric_name, tribe, unranked, or variety.}
+\item{rank}{(character) A taxonomic rank. One of class, cultivar,
+cultivar_group, domain, family, form, genus, informal, infrageneric_name,
+infraorder, infraspecific_name, infrasubspecific_name, kingdom, order,
+phylum, section, series, species, strain, subclass, subfamily, subform,
+subgenus, subkingdom, suborder, subphylum, subsection, subseries,
+subspecies, subtribe, subvariety, superclass, superfamily, superorder,
+superphylum, suprageneric_name, tribe, unranked, or variety.}
 
-\item{fields}{(character) Fields to return in output data.frame (simply prunes columns off)}
+\item{fields}{(character) Fields to return in output data.frame (simply
+prunes columns off)}
 
-\item{start}{Record number to start at. Default: 0. Use in combination with \code{limit} to
-page through results.}
+\item{start}{Record number to start at. Default: 0. Use in combination
+with \code{limit} to page through results.}
 
 \item{limit}{Number of records to return. Default: 100. Maximum: 1000.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
-\code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will
-be combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
 A data.frame with fields selected by fields arg.
 }
 \description{
-A quick and simple autocomplete service that returns up to 20 name usages by
-doing prefix matching against the scientific name. Results are ordered by relevance.
+A quick and simple autocomplete service that returns up to 20 name
+usages by doing prefix matching against the scientific name. Results
+are ordered by relevance.
 }
+\section{Repeat parmeter inputs}{
+
+Some parameters can tak emany inputs, and treated as 'OR' (e.g., a or b or
+c). The following take many inputs:
+\itemize{
+\item \strong{rank}
+\item \strong{datasetKey}
+}
+
+see also \link{many-values}
+}
+
 \examples{
 \dontrun{
 name_suggest(q='Puma concolor')
@@ -51,14 +68,18 @@ name_suggest(q='Puma', rank="infraspecific_name")
 
 name_suggest(q='Puma', limit=2)
 name_suggest(q='Puma', fields=c('key','canonicalName'))
-name_suggest(q='Puma', fields=c('key','canonicalName','higherClassificationMap'))
+name_suggest(q='Puma', fields=c('key','canonicalName',
+  'higherClassificationMap'))
 
-# Pass on httr options
-library('httr')
-# res <- name_suggest(q='Puma', limit=200, config=progress())
+# Some parameters accept many inputs, treated as OR
+name_suggest(rank = c("family", "genus"))
+name_suggest(datasetKey = c("73605f3a-af85-4ade-bbc5-522bfb90d847",
+  "d7c60346-44b6-400d-ba27-8d3fbeffc8a5"))
+
+# Pass on curl options
+name_suggest(q='Puma', limit=200, curlopts = list(verbose=TRUE))
 }
 }
 \references{
 \url{http://www.gbif.org/developer/species#searching}
 }
-

@@ -5,62 +5,62 @@
 \title{Get elevation for lat/long points from a data.frame or list of points.}
 \usage{
 elevation(input = NULL, latitude = NULL, longitude = NULL,
-  latlong = NULL, key, ...)
+  latlong = NULL, key, curlopts = list())
 }
 \arguments{
-\item{input}{A data.frame of lat/long data. There must be columns decimalLatitude and
-decimalLongitude.}
+\item{input}{A data.frame of lat/long data. There must be columns
+decimalLatitude and decimalLongitude.}
 
-\item{latitude}{A vector of latitude's. Must be the same length as the longitude
-vector.}
+\item{latitude}{A vector of latitude's. Must be the same length as the
+longitude vector.}
 
-\item{longitude}{A vector of longitude's. Must be the same length as the latitude
-vector.}
+\item{longitude}{A vector of longitude's. Must be the same length as
+the latitude vector.}
 
 \item{latlong}{A vector of lat/long pairs. See examples.}
 
 \item{key}{(character) Required. An API key. See Details.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc, passed on to
-\code{\link[httr]{modify_url}} within \code{\link[httr]{GET}} call. Unnamed parameters will be
-combined with \code{\link[httr]{config}}.}
+\item{curlopts}{list of named curl options passed on to
+\code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
+for curl options}
 }
 \value{
-A new column named elevation in the supplied data.frame or a vector with elevation of
-each location in meters.
+A new column named elevation in the supplied data.frame or a vector
+with elevation of each location in meters.
 }
 \description{
 Get elevation for lat/long points from a data.frame or list of points.
 }
 \details{
 To get an API key, see instructions at
-https://developers.google.com/maps/documentation/elevation/#api_key - It should be an
-easy process. Once you have the key pass it in to the \code{key} parameter. You can store
-the key in your \code{.Rprofile} file and read it in via \code{getOption} as in the
-examples below.
+https://developers.google.com/maps/documentation/elevation/#api_key - It
+should be an easy process. Once you have the key pass it in to the \code{key}
+parameter. You can store the key in your \code{.Rprofile} file and read it in
+via \code{getOption} as in the examples below.
 }
 \examples{
 \dontrun{
 apikey <- getOption("g_elevation_api")
 key <- name_suggest('Puma concolor')$key[1]
-dat <- occ_search(taxonKey=key, return='data', limit=300, hasCoordinate=TRUE)
+dat <- occ_search(taxonKey=key, return='data', limit=300,
+  hasCoordinate=TRUE)
 head( elevation(dat, key = apikey) )
 
 # Pass in a vector of lat's and a vector of long's
-elevation(latitude=dat$decimalLatitude, longitude=dat$decimalLongitude, key = apikey)
+elevation(latitude=dat$decimalLatitude, longitude=dat$decimalLongitude,
+  key = apikey)
 
 # Pass in lat/long pairs in a single vector
 pairs <- list(c(31.8496,-110.576060), c(29.15503,-103.59828))
 elevation(latlong=pairs, key = apikey)
 
-# Pass on options to httr
-library('httr')
+# Pass on curl options
 pairs <- list(c(31.8496,-110.576060), c(29.15503,-103.59828))
-elevation(latlong=pairs, config=verbose(), key = apikey)
+elevation(latlong=pairs, curlopts = list(verbose=TRUE), key = apikey)
 }
 }
 \references{
 Uses the Google Elevation API at the following link
 https://developers.google.com/maps/documentation/elevation/start
 }
-
