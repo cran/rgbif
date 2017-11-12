@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Taxonomic Names</title>
+<title>GBIF Downloads</title>
 
 <script type="text/javascript">
 window.onload = function() {
@@ -203,154 +203,251 @@ hr {
 <body>
 <!--
 %\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{Taxonomic Names}
+%\VignetteIndexEntry{Downloads}
 %\VignetteEncoding{UTF-8}
 -->
 
-<h1>Taxonomic Names</h1>
+<h1>GBIF Downloads</h1>
 
-<p>You have probably, or will, run into problems with taxonomic names. For example,
-you may think you know how a taxonomic name is spelled, but then GBIF will not
-agree with you. Or, perhaps GBIF will have multiple versions of the taxon,
-spelled in slightly different ways. Or, the version of the name that they think
-is the <em>right one</em> does not match what yo think is the right one.</p>
+<p>GBIF provides two ways to get occurrence data: through the
+<code>/occurrence/search</code> route (see <code>occ_search()</code> and <code>occ_data()</code>),
+or via the <code>/occurrence/download</code> route (many functions, see below).
+<code>occ_search()</code>/<code>occ_data()</code> are more appropriate for smaller data, while
+<code>occ_download*()</code> functions are more appropriate for larger data requests.
+Note that the download service is equivalent to downloading a dataset
+from the GBIF website - but doing it here makes it reproducible
+(and easier once you learn the ropes)!</p>
 
-<p>This isn&#39;t really anyone&#39;s fault. It&#39;s a result of there not being one accepted
-taxonomic source of truth across the globe. There are many different taxonomic
-databases. GBIF makes their own <em>backbone taxonomy</em> that they use as a source
-of internal truth for taxonomic names. The accepted names in the backbone taxonomy
-match those in the database of occurrences - so do try to figure out what
-backbone taxonomy version of the name you want.</p>
+<p>The download functions are:</p>
 
-<p>Another source of problems stems from the fact that names are constantly changing.
-Sometimes epithets change, sometimes generic names, and sometimes higher names
-like family or tribe. These changes can take a while to work their way in to
-GBIF&#39;s data.</p>
+<ul>
+<li><code>occ_download()</code> - Start a download</li>
+<li><code>occ_download_meta()</code> - Get metadata progress on a single download</li>
+<li><code>occ_download_list()</code> - List your downloads</li>
+<li><code>occ_download_cancel()</code> - Cancel a download</li>
+<li><code>occ_download_cancel_staged()</code> - Cancels any jobs with status <code>RUNNING</code>
+or <code>PREPARING</code></li>
+<li><code>occ_download_get()</code> - Retrieve a download</li>
+<li><code>occ_download_import()</code> - Import a download from local file system</li>
+<li><code>occ_download_datasets()</code> - List datasets for a download</li>
+<li><code>occ_download_dataset_activity()</code> - Lists the downloads activity of a dataset</li>
+</ul>
 
-<p>The following are some examples of confusing name bits. We&#39;ll update these if
-GBIF&#39;s name&#39;s change. The difference between each pair of names is highlighted
-in bold.</p>
+<p><code>occ_download()</code> is the function to start off with when using the GBIF download
+service. With it you can specify what query you want. Unfortunately, the interfaces
+to the search vs. download services are different, so we couldn&#39;t make the <code>rgbif</code>
+interface to <code>occ_search</code>/<code>occ_data</code> the same as <code>occ_download</code>.</p>
+
+<p>Be aware that you can only perform 3 downloads simultaneously, so plan wisely.
+To help with this limitation, we are working on a queue helper, but it&#39;s not
+ready yet.</p>
+
+<p>Let&#39;s take a look at how to use the download functions:</p>
 
 <h2>Load rgbif</h2>
 
 <pre><code class="r">library(&quot;rgbif&quot;)
 </code></pre>
 
-<h2>Helper function</h2>
+<h2>Kick off a download</h2>
 
-<p>To reduce code duplication, we&#39;ll use a little helper function to make a call
-to <code>name_backbone()</code> for each input name, then <code>rbind</code> them together:</p>
+<p>Instead of passing parameters like <code>taxonkey = 12345</code> in <code>occ_search</code>, for downloads
+we pass the whole thing as a character string <strong>because</strong> you can use operators
+other than <code>=</code> (equal to).</p>
 
-<pre><code class="r">name_rbind &lt;- function(..., rank = &quot;species&quot;) {
- df &lt;- data.frame(do.call(rbind, lapply(list(...), name_backbone, rank = rank)))
- df[, c(&#39;usageKey&#39;, &#39;scientificName&#39;, &#39;canonicalName&#39;, &#39;rank&#39;,
-       &#39;status&#39;, &#39;confidence&#39;, &#39;matchType&#39;, &#39;synonym&#39;)]
-}
+<pre><code class="r">(res &lt;- occ_download(&#39;taxonKey = 7264332&#39;, &#39;hasCoordinate = TRUE&#39;))
+#&gt; &lt;&lt;gbif download&gt;&gt;
+#&gt;   Username: sckott
+#&gt;   E-mail: myrmecocystus@gmail.com
+#&gt;   Download key: 0000796-171109162308116
 </code></pre>
 
-<p>And another function to get the taxonomic data provider</p>
+<p>What <code>occ_download</code> returns is not the data itself!  When you send the request to
+GBIF, they have to prepare it first, then when it&#39;s done you can download it.</p>
 
-<pre><code class="r">taxon_provider &lt;- function(x) {
-  tt &lt;- name_usage(key = x)$data
-  datasets(uuid = tt$constituentKey)$data$title
-}
+<p>What <code>occ_download</code> returns is some useful metadata that tells you about the
+download, and helps us check and know when the download is done.</p>
+
+<h2>Check download status</h2>
+
+<p>After running <code>occ_download</code>, we can pass the resulting object to
+<code>occ_download_meta</code> - with primary goal of checking the download status.</p>
+
+<pre><code class="r">occ_download_meta(res)
+#&gt; &lt;&lt;gbif download metadata&gt;&gt;
+#&gt;   Status: PREPARING
+#&gt;   Format: DWCA
+#&gt;   Download key: 0000796-171109162308116
+#&gt;   Created: 2017-11-10T19:30:32.328+0000
+#&gt;   Modified: 2017-11-10T19:30:44.590+0000
+#&gt;   Download link: http://api.gbif.org/v1/occurrence/download/request/0000796-171109162308116.zip
+#&gt;   Total records: 1425
+#&gt;   Request:
+#&gt;     type:  and
+#&gt;     predicates:
+#&gt;       &gt; type: equals, key: TAXON_KEY, value: 7264332
+#&gt;       &gt; type: equals, key: HAS_COORDINATE, value: TRUE
 </code></pre>
 
-<p>We use <code>taxon_provider()</code> below to get the taxonomy provider in the bulleted list of details
-for each taxon (even though you don&#39;t see it called, we use it, but the code isn&#39;t shown :)).</p>
+<p>Continue running <code>occ_download_meta</code> until the <code>Status</code> value is <code>SUCCEEDED</code>
+or <code>KILLED</code>. If it is <code>KILLED</code> that means something went wrong - get in touch
+with us. If <code>SUCCEEDED</code>, then you can proceed to the next step (downloading
+the data with <code>occ_download_get</code>).</p>
 
-<h2>Pinus sylvestris vs. P. silvestris</h2>
+<p>Before we go to the next step, there&#39;s another function to help you out.</p>
 
-<pre><code class="r">(c1 &lt;- name_rbind(&quot;Pinus sylvestris&quot;, &quot;Pinus silvestris&quot;))
-#&gt;   usageKey      scientificName    canonicalName    rank   status
-#&gt; 1  5285637 Pinus sylvestris L. Pinus sylvestris SPECIES ACCEPTED
-#&gt; 2  5285637 Pinus sylvestris L. Pinus sylvestris SPECIES ACCEPTED
-#&gt;   confidence matchType synonym
-#&gt; 1         97     EXACT   FALSE
-#&gt; 2         94     FUZZY   FALSE
+<p>With <code>occ_download_list</code> you can get an overview of all your download
+requests, with</p>
+
+<pre><code class="r">x &lt;- occ_download_list()
+x$results &lt;- tibble::as_tibble(x$results)
+x
+#&gt; $meta
+#&gt;   offset limit endofrecords count
+#&gt; 1      0    20        FALSE   211
+#&gt;
+#&gt; $results
+#&gt; # A tibble: 20 x 18
+#&gt;                        key                    doi
+#&gt;  *                   &lt;chr&gt;                  &lt;chr&gt;
+#&gt;  1 0000796-171109162308116 doi:10.15468/dl.nv3r5p
+#&gt;  2 0000739-171109162308116 doi:10.15468/dl.jmachn
+#&gt;  3 0000198-171109162308116 doi:10.15468/dl.t5wjpe
+#&gt;  4 0000122-171020152545675 doi:10.15468/dl.yghxj7
+#&gt;  5 0000119-171020152545675 doi:10.15468/dl.qiowtc
+#&gt;  6 0000115-171020152545675 doi:10.15468/dl.tdbkzn
+#&gt;  7 0010067-170714134226665 doi:10.15468/dl.ro6qj1
+#&gt;  8 0010066-170714134226665 doi:10.15468/dl.bhekhi
+#&gt;  9 0010065-170714134226665 doi:10.15468/dl.xy4nfp
+#&gt; 10 0010064-170714134226665 doi:10.15468/dl.hsqp84
+#&gt; 11 0010062-170714134226665 doi:10.15468/dl.h2apik
+#&gt; 12 0010061-170714134226665 doi:10.15468/dl.1srstq
+#&gt; 13 0010059-170714134226665 doi:10.15468/dl.2me5hk
+#&gt; 14 0010058-170714134226665 doi:10.15468/dl.sjmxvf
+#&gt; 15 0010057-170714134226665 doi:10.15468/dl.f28182
+#&gt; 16 0010056-170714134226665 doi:10.15468/dl.4t2qim
+#&gt; 17 0010055-170714134226665 doi:10.15468/dl.lumz7s
+#&gt; 18 0010054-170714134226665 doi:10.15468/dl.wfkgqm
+#&gt; 19 0010053-170714134226665 doi:10.15468/dl.fintow
+#&gt; 20 0010050-170714134226665 doi:10.15468/dl.a2h9gu
+#&gt; # ... with 16 more variables: license &lt;chr&gt;, created &lt;chr&gt;, modified &lt;chr&gt;,
+#&gt; #   status &lt;chr&gt;, downloadLink &lt;chr&gt;, size &lt;dbl&gt;, totalRecords &lt;int&gt;,
+#&gt; #   numberDatasets &lt;int&gt;, request.creator &lt;chr&gt;, request.format &lt;chr&gt;,
+#&gt; #   request.notificationAddresses &lt;list&gt;, request.sendNotification &lt;lgl&gt;,
+#&gt; #   request.predicate.type &lt;chr&gt;, request.predicate.predicates &lt;list&gt;,
+#&gt; #   request.predicate.key &lt;chr&gt;, request.predicate.value &lt;chr&gt;
 </code></pre>
 
-<ul>
-<li>P. s<b>y</b>lvestris w/ 324515 occurrences - from Catalogue of Life</li>
-<li>P. s<b>i</b>lvestris w/ 324515 occurrences - from Catalogue of Life</li>
-</ul>
+<h2>Canceling downloads</h2>
 
-<h2>Macrozamia platyrachis vs. M. platyrhachis</h2>
+<p>If for some reason you need to cancel a download you can do so with
+<code>occ_download_cancel</code> or <code>occ_download_cancel_staged</code>.</p>
 
-<pre><code class="r">(c2 &lt;- name_rbind(&quot;Macrozamia platyrachis&quot;, &quot;Macrozamia platyrhachis&quot;))
-#&gt;   usageKey                     scientificName           canonicalName
-#&gt; 1  2683551 Macrozamia platyrhachis F.M.Bailey Macrozamia platyrhachis
-#&gt; 2  2683551 Macrozamia platyrhachis F.M.Bailey Macrozamia platyrhachis
-#&gt;      rank   status confidence matchType synonym
-#&gt; 1 SPECIES ACCEPTED         96     FUZZY   FALSE
-#&gt; 2 SPECIES ACCEPTED         98     EXACT   FALSE
+<p><code>occ_download_cancel</code> cancels a job by download key, while <code>occ_download_cancel_staged</code>
+cancels all jobs in <code>PREPARING</code> or <code>RUNNING</code> stage.</p>
+
+<h2>Fetch data</h2>
+
+<p>After you see the <code>SUCCEEDED</code> status on calling <code>occ_download_meta</code>, you can
+then download the data using <code>occ_download_get</code>.</p>
+
+<pre><code class="r">(dat &lt;- occ_download_get(&quot;0000796-171109162308116&quot;))
+#&gt; &lt;&lt;gbif downloaded get&gt;&gt;
+#&gt;   Path: ./0000796-171109162308116.zip
+#&gt;   File size: 0.35 MB
 </code></pre>
 
-<ul>
-<li>M. platyrachis w/ 59 occurrences - from Catalogue of Life</li>
-<li>M. platyr<b>h</b>achis w/ 59 occurrences - from Catalogue of Life</li>
-</ul>
+<p>This only download data to your machine - it does not read it into R.
+You can now move on to importing into R.</p>
 
-<h2>Cycas circinalis vs. C. circinnalis</h2>
+<h2>Import data into R</h2>
 
-<pre><code class="r">(c3 &lt;- name_rbind(&quot;Cycas circinalis&quot;, &quot;Cycas circinnalis&quot;))
-#&gt;   usageKey      scientificName    canonicalName    rank   status
-#&gt; 1  2683264 Cycas circinalis L. Cycas circinalis SPECIES ACCEPTED
-#&gt; 2  2683264 Cycas circinalis L. Cycas circinalis SPECIES ACCEPTED
-#&gt;   confidence matchType synonym
-#&gt; 1         98     EXACT   FALSE
-#&gt; 2         95     FUZZY   FALSE
+<p>Pass the output of <code>occ_download_get</code> directly to <code>occ_download_import</code> -
+they can be piped together if you like.</p>
+
+<pre><code class="r">occ_download_get(&quot;0000796-171109162308116&quot;) %&gt;% occ_download_import()
+# OR
+dat &lt;- occ_download_get(&quot;0000796-171109162308116&quot;)
+occ_download_import(dat)
+#&gt; # A tibble: 1,425 x 235
+#&gt;        gbifID abstract accessRights accrualMethod accrualPeriodicity
+#&gt;         &lt;int&gt;    &lt;lgl&gt;        &lt;chr&gt;         &lt;lgl&gt;              &lt;lgl&gt;
+#&gt;  1 1667184715       NA                         NA                 NA
+#&gt;  2 1667182218       NA                         NA                 NA
+#&gt;  3 1667179996       NA                         NA                 NA
+#&gt;  4 1667179527       NA                         NA                 NA
+#&gt;  5 1667171607       NA                         NA                 NA
+#&gt;  6 1667165448       NA                         NA                 NA
+#&gt;  7 1667163154       NA                         NA                 NA
+#&gt;  8 1667162324       NA                         NA                 NA
+#&gt;  9 1667162162       NA                         NA                 NA
+#&gt; 10 1667161552       NA                         NA                 NA
+#&gt; # ... with 1,415 more rows, and 230 more variables: accrualPolicy &lt;lgl&gt;,
+#&gt; #   alternative &lt;lgl&gt;, audience &lt;lgl&gt;, available &lt;lgl&gt;,
+#&gt; #   bibliographicCitation &lt;lgl&gt;, conformsTo &lt;lgl&gt;, contributor &lt;lgl&gt;,
+#&gt; #   coverage &lt;lgl&gt;, created &lt;lgl&gt;, creator &lt;lgl&gt;, date &lt;lgl&gt;,
+#&gt; #   dateAccepted &lt;lgl&gt;, dateCopyrighted &lt;lgl&gt;, dateSubmitted &lt;lgl&gt;,
+#&gt; #   description &lt;lgl&gt;, educationLevel &lt;lgl&gt;, extent &lt;lgl&gt;, format &lt;lgl&gt;,
+#&gt; #   hasFormat &lt;lgl&gt;, hasPart &lt;lgl&gt;, hasVersion &lt;lgl&gt;, identifier &lt;chr&gt;,
+#&gt;
+#&gt; ... cut for brevity
 </code></pre>
 
-<ul>
-<li>C. circinalis w/ 550 occurrences - from Catalogue of Life</li>
-<li>C. circin<b>n</b>alis w/ 550 occurrences - from Catalogue of Life</li>
-</ul>
+<h2>Citing download data</h2>
 
-<h2>Isolona perrieri vs. I. perrierii</h2>
+<p>The nice thing about data retrieved via GBIF&#39;s download service is that they
+provide DOIs for each download, so that you can give a link that resolves to
+the download with metadata on GBIF&#39;s website. And it makes for a nice citation.</p>
 
-<pre><code class="r">(c4 &lt;- name_rbind(&quot;Isolona perrieri&quot;, &quot;Isolona perrierii&quot;))
-#&gt;   usageKey          scientificName     canonicalName    rank   status
-#&gt; 1  6308376 Isolona perrierii Diels Isolona perrierii SPECIES ACCEPTED
-#&gt; 2  6308376 Isolona perrierii Diels Isolona perrierii SPECIES ACCEPTED
-#&gt;   confidence matchType synonym
-#&gt; 1         96     FUZZY   FALSE
-#&gt; 2         98     EXACT   FALSE
+<p>Using the funciton <code>gbif_citaiton</code> we can get citations for our downloads,
+with the output from <code>occ_download_get</code> or <code>occ_download_meta</code>.</p>
+
+<pre><code class="r">occ_download_meta(res) %&gt;% gbif_citation()
+#&gt; $download
+#&gt; [1] &quot;GBIF Occurrence Download https://doi.org/10.15468/dl.ohjevv Accessed from R via rgbif (https://github.com/ropensci/rgbif) on 2017-11-10&quot;
+#&gt;
+#&gt; $datasets
+#&gt; NULL
 </code></pre>
 
-<ul>
-<li>I. perrieri w/ 80 occurrences - from Catalogue of Life</li>
-<li>I. perrieri<b>i</b> w/ 80 occurrences - from Catalogue of Life</li>
-</ul>
+<p>You&#39;ll notice that the <code>datasets</code> slot is <code>NULL</code> - because when using <code>occ_download_meta</code>,
+we don&#39;t yet have any information about which datasets are in the download.</p>
 
-<h2>Wiesneria vs. Wisneria</h2>
+<p>But if you use <code>occ_download_get</code> you then have the individual datasets, and we
+can get citatations for each idividual dataset in addition to the entire download.</p>
 
-<pre><code class="r">(c5 &lt;- name_rbind(&quot;Wiesneria&quot;, &quot;Wisneria&quot;, rank = &quot;genus&quot;))
-#&gt;   usageKey                                                 scientificName
-#&gt; 1  2864604                                              Wiesneria Micheli
-#&gt; 2  7327444 Wisneria Micheli in Alph. de Candolle &amp; A.C. de Candolle, 1881
-#&gt;   canonicalName  rank   status confidence matchType synonym
-#&gt; 1     Wiesneria GENUS ACCEPTED         96     EXACT   FALSE
-#&gt; 2      Wisneria GENUS ACCEPTED         96     EXACT   FALSE
+<pre><code class="r">occ_download_get(&quot;0000796-171109162308116&quot;) %&gt;% gbif_citation()
+#&gt; $download
+#&gt; [1] &quot;GBIF Occurrence Download https://doi.org/10.15468/dl.nv3r5p Accessed from R via rgbif (https://github.com/ropensci/rgbif) on 2017-11-10&quot;
+#&gt;
+#&gt; $datasets
+#&gt; $datasets[[1]]
+#&gt; &lt;&lt;rgbif citation&gt;&gt;
+#&gt;    Citation: Office of Environment &amp; Heritage (2017). OEH Atlas of NSW
+#&gt;         Wildlife. Occurrence Dataset https://doi.org/10.15468/14jd9g accessed
+#&gt;         via GBIF.org on 2017-11-10.. Accessed from R via rgbif
+#&gt;         (https://github.com/ropensci/rgbif) on 2017-11-10
+#&gt;    Rights: This work is licensed under a Creative Commons Attribution (CC-BY)
+#&gt;         4.0 License.
+#&gt;
+#&gt; $datasets[[2]]
+#&gt; &lt;&lt;rgbif citation&gt;&gt;
+#&gt;    Citation: Creuwels J (2017). Naturalis Biodiversity Center (NL) - Botany.
+#&gt;         Naturalis Biodiversity Center. Occurrence Dataset
+#&gt;         https://doi.org/10.15468/ib5ypt accessed via GBIF.org on 2017-11-10..
+#&gt;         Accessed from R via rgbif (https://github.com/ropensci/rgbif) on
+#&gt;         2017-11-10
+#&gt;    Rights: To the extent possible under law, the publisher has waived all
+#&gt;         rights to these data and has dedicated them to the Public Domain (CC0
+#&gt;         1.0). Users may copy, modify, distribute and use the work, including
+#&gt;         for commercial purposes, without restriction.
+#&gt;
+#&gt; ... cutoff for brevity
 </code></pre>
 
-<ul>
-<li>Wi<b>e</b>sneria w/ 78 occurrences - from Catalogue of Life</li>
-<li>Wisneria w/ 4 occurrences - from The Interim Register of Marine and Nonmarine Genera</li>
-</ul>
+<p>Here, we get the overall citation as well as citations (and data rights) for each dataset.</p>
 
-<h2>The take away messages from this vignette</h2>
-
-<ul>
-<li>Make sure you are using the name you think you&#39;re using</li>
-<li>Realize that GBIF&#39;s backbone taxonomy is used for occurrence data</li>
-<li>Searching for occurrences by name matches against backbone names, 
-not other names (e.g., synonyms)</li>
-<li>GBIF may at some points in time have multiple version of the same name in their own backbone taxonomy - These can usually be separated by data provider (e.g., Catalogue of Life vs. International Plant Names Index)</li>
-<li>There are different ways to search for names - make sure are familiar 
-with the four different name search functions, all starting with 
-<code>name_</code></li>
-</ul>
+<p>Please do cite the data you use from GBIF!</p>
 
 </body>
 
