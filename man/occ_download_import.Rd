@@ -7,7 +7,7 @@
 \alias{as.download.download}
 \title{Import a downloaded file from GBIF.}
 \usage{
-occ_download_import(x = NULL, key = NULL, path = ".", ...)
+occ_download_import(x = NULL, key = NULL, path = ".", fill = TRUE, ...)
 
 as.download(path = ".", key = NULL)
 
@@ -24,6 +24,12 @@ as.download(path = ".", key = NULL)
 \item{path}{Path to unzip file to. Default: \code{"."} Writes to
 folder matching zip file name}
 
+\item{fill}{(logical) (default: \code{FALSE}). If \code{TRUE} then in case
+the rows have unequal length, blank fields are implicitly filled.
+passed on to \code{fill} parameter in \link[data.table:fread]{data.table::fread}. If you get
+problems with this function crashing it could be due to
+\code{data.table} failing, in which case try setting \code{fill=FALSE}}
+
 \item{...}{parameters passed on to \code{\link[data.table:fread]{data.table::fread()}}}
 }
 \value{
@@ -35,6 +41,9 @@ Import a downloaded file from GBIF.
 \details{
 You can provide either x as input, or both key and path. We use
 \code{\link[data.table:fread]{data.table::fread()}} internally to read data.
+}
+\note{
+see \link{downloads} for an overview of GBIF downloads methods
 }
 \examples{
 \dontrun{

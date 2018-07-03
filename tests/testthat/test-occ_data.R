@@ -1,6 +1,6 @@
 context("occ_data")
 
-key <- 3119195
+key <- 3118771
 
 test_that("returns the correct class", {
   skip_on_cran()
@@ -24,7 +24,7 @@ test_that("returns the correct class", {
   # occ_data doesn't have media slot
   expect_null(tt$media)
 
-  expect_equal(uu$data[1,1]$name, "Helianthus annuus")
+  expect_equal(uu$data[1,1]$name, "Encelia californica")
   expect_equal(uu$meta$limit, 20)
   expect_null(vv$limit)
 
@@ -112,7 +112,7 @@ test_that("looping works correctly", {
   it <- seq(from = 0, to = 500, by = 250)
   out <- list()
   for (i in seq_along(it)) {
-    occdata <- occ_data(taxonKey = 3119195, limit = 250, start = it[[i]])
+    occdata <- occ_data(taxonKey = 3118771, limit = 250, start = it[[i]])
     out[[i]] <- occdata$data
   }
 
@@ -254,19 +254,22 @@ test_that("geometry inputs work as expected", {
   badwkt1 <- "POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 a))"
   expect_error(
     occ_data(geometry = badwkt1),
-    "source type value could not be interpreted as target at 'a'"
+    "Invalid simple WKT"
+    # "source type value could not be interpreted as target at 'a'"
   )
 
   badwkt2 <- "POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 '10.1'))"
   expect_error(
     occ_data(geometry = badwkt2),
-    "source type value could not be interpreted as target at ''10.1''"
+    "Invalid simple WKT"
+    # "source type value could not be interpreted as target at ''10.1''"
   )
 
   badwkt3 <- "POLYGON((30.1 10.1, 10 20, 20 40, 40 40, 30.1 10.1)"
   expect_error(
     occ_data(geometry = badwkt3),
-    "Expected ')' in "
+    "Invalid simple WKT"
+    # "Expected ')' in "
   )
 
   badwkt4 <- "CIRCULARSTRING(1 5, 6 2, 7 3)"
