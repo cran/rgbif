@@ -20,10 +20,18 @@
 #'     \item{`jobs()`}{
 #'       Give number of jobs in the `queue`
 #'     }
+#'     \item{`next_()`}{
+#'       Get the next job in the `queue`. if no more jobs, returns
+#'       empty list
+#'     }
+#'     \item{`last_()`}{
+#'       Get the last job in the `queue`. if no more jobs, returns
+#'       empty list
+#'     }
 #'   }
 #' @format NULL
 #' @usage NULL
-#' @examples
+#' @examples \dontrun{
 #' x <- GbifQueue$new(
 #'   occ_download('taxonKey = 3119195', "year = 1976"),
 #'   occ_download('taxonKey = 3119195', "year = 2001"),
@@ -39,6 +47,19 @@
 #' x
 #' x$remove(x$reqs[[1]])
 #' x
+#' 
+#' # pre-prepared download request
+#' z <- occ_download_prep(
+#'   "basisOfRecord = HUMAN_OBSERVATION,OBSERVATION",
+#'   "hasCoordinate = true",
+#'   "hasGeospatialIssue = false",
+#'   "year = 1993",
+#'   user = "foo", pwd = "bar", email = "foo@bar.com"
+#' )
+#' out <- GbifQueue$new(.list = list(z))
+#' out
+#' out$reqs
+#' }
 
 GbifQueue <- R6::R6Class(
   'GbifQueue',
@@ -127,12 +148,13 @@ GbifQueue <- R6::R6Class(
 #' # res$status()
 #' 
 #' # prepared query
-#' res <- DownReq$new(occ_download_prep("basisOfRecord = LITERATURE"))
+#' res <- DownReq$new(occ_download_prep("basisOfRecord = LITERATURE", 
+#'   user = "foo", pwd = "bar", email = "foo@bar.com"))
 #' res
-#' res$run()
-#' res
-#' res$status()
-#' res$result
+#' # res$run()
+#' # res
+#' # res$status()
+#' # res$result
 #' }
 DownReq <- R6::R6Class(
   'DownReq',
