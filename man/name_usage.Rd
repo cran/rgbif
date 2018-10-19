@@ -76,16 +76,19 @@ parameter, where you could pass in multiple values and the function
 internally loops over each option making separate requests. This has been
 removed. You can still loop over many options for the \code{data} parameter,
 just use an \code{lapply} family function, or a for loop, etc.
+
+See \code{\link[=name_issues]{name_issues()}} for information on name usage issues related to the
+\code{issues} column in output from this function
 }
 \section{Repeat parameter inputs}{
 
 These parameters used to accept many inputs, but no longer do:
 
 \itemize{
- \item \strong{rank}
- \item \strong{name}
- \item \strong{langugae}
- \item \strong{datasetKey}
+\item \strong{rank}
+\item \strong{name}
+\item \strong{langugae}
+\item \strong{datasetKey}
 }
 
 see also \code{\link{many-values}}

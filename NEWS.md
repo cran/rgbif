@@ -1,3 +1,23 @@
+rgbif 1.1.0
+===========
+
+### NEW FEATURES
+
+* tests that make HTTP requests are now cached via the `vcr` package so do not require an internet connection (#306) (#327)
+* added name usage issues (similar to occurrence issues) data. in part fixes `name_usage()` problem, more work coming to allow users to use the name issues data like we allow for occurrence issues through `occ_issues()` (#324) 
+
+### MINOR IMPROVEMENTS
+
+* `map_fetch()` changes following changes in GBIF maps API: new parameters `taxonKey`, `datasetkey`, `country`, `publishingOrg`, `publishingCountry` and removed parameters `search` and `id`; note that this changes how queries work with this function (#319)
+* added note to `map_fetch()` docs that `style` parameter does not necessarily use the style you give it. not sure why (#302)
+* fixed messaging in `occ_download_queue()` to report an accurate number of jobs being processed; before we were just saying "kicking off first 3 requests" even if there were only 1 or 2 (#312)
+
+### BUG FIXES
+
+* fix to `occ_get()` when `verbatim=TRUE` (#318)
+* `elevation()` function now fails better. when the API key was invalid the function did not give an informative message; now it does (#322)
+
+
 rgbif 1.0.2
 ===========
 
