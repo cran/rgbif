@@ -1,8 +1,11 @@
-<!--
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{Downloads}
-%\VignetteEncoding{UTF-8}
--->
+---
+title: Downloading data from GBIF
+author: Scott Chamberlain
+vignette: >
+  %\VignetteIndexEntry{1_downloading}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+---
 
 
 

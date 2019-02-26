@@ -22,6 +22,25 @@
 #' @template occ
 #' @note see [downloads] for an overview of GBIF downloads methods
 #' 
+#' @section geometry:
+#' When using the geometry parameter, make sure that your well known text 
+#' (WKT) is formatted as GBIF expects it. They expect WKT to have a 
+#' counter-clockwise winding order. For example, the following is clockwise
+#' `POLYGON((-19.5 34.1, -25.3 68.1, 35.9 68.1, 27.8 34.1, -19.5 34.1))`,
+#' whereas they expect the other order:
+#' `POLYGON((-19.5 34.1, 27.8 34.1, 35.9 68.1, -25.3 68.1, -19.5 34.1))`
+#' 
+#' note that coordinate pairs are `longitude latitude`, longitude first, then
+#' latitude
+#' 
+#' you should not get any results if you supply WKT that has clockwise 
+#' winding order.
+#' 
+#' also note that [occ_search()]/[occ_data()] behave differently with 
+#' respect to WKT in that you can supply counter-clockwise WKT to those 
+#' functions but they treat it as an exclusion, so get all data not 
+#' inside the WKT area.
+#' 
 #' @section Methods:
 #' 
 #' - `occ_download_prep`: prepares a download request, but DOES NOT execute it.
@@ -180,7 +199,7 @@ occ_download <- function(..., body = NULL, type = "and", user = NULL,
   z <- occ_download_prep(..., body = body, type = type, user = user, 
     pwd = pwd, email = email, curlopts = curlopts)
   out <- rg_POST(z$url, req = z$req, user = z$user, pwd = z$pwd, curlopts)
-  structure(out, class = "occ_download", user = user, email = email)
+  structure(out, class = "occ_download", user = z$user, email = z$email)
 }
 
 #' @export
@@ -303,7 +322,8 @@ catch_err <- function(x) {
   if (length(x$content) > 0) {
     x$parse("UTF-8")
   } else {
-    x$http_status()$message
+    sthp <- x$status_http()
+    sprintf("%s - %s", sthp$status_code, sthp$message)
   }
 }
 

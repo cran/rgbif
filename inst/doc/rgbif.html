@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>About the package</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<p>Seach and retrieve data from the Global Biodiverity Information Facilty (GBIF)</p>
+
+<h2>About the package</h2>
+
+<p><code>rgbif</code> is an R package to search and retrieve data from the Global Biodiverity Information Facilty (GBIF). <code>rgbif</code> wraps R code around the <a href="https://www.gbif.org/developer/summary">GBIF API</a> to allow you to talk to GBIF from R.</p>
+
+<h2>Get rgbif</h2>
+
+<p>Install from CRAN</p>
+
+<pre><code class="r">install.packages(&quot;rgbif&quot;)
+</code></pre>
+
+<p>Or install the development version from GitHub</p>
+
+<pre><code class="r">devtools::install_github(&quot;ropensci/rgbif&quot;)
+</code></pre>
+
+<p>Load rgbif</p>
+
+<pre><code class="r">library(&quot;rgbif&quot;)
+</code></pre>
+
+<h2>Number of occurrences</h2>
+
+<p>Search by type of record, all observational in this case</p>
+
+<pre><code class="r">occ_count(basisOfRecord=&#39;OBSERVATION&#39;)
+#&gt; [1] 19756387
+</code></pre>
+
+<p>Records for <strong>Puma concolor</strong> with lat/long data (georeferened) only. Note that <code>hasCoordinate</code> in <code>occ_search()</code> is the same as <code>georeferenced</code> in <code>occ_count()</code>.</p>
+
+<pre><code class="r">occ_count(taxonKey=2435099, georeferenced=TRUE)
+#&gt; [1] 4628
+</code></pre>
+
+<p>All georeferenced records in GBIF</p>
+
+<pre><code class="r">occ_count(georeferenced=TRUE)
+#&gt; [1] 991539311
+</code></pre>
+
+<p>Records from Denmark</p>
+
+<pre><code class="r">denmark_code &lt;- isocodes[grep(&quot;Denmark&quot;, isocodes$name), &quot;code&quot;]
+occ_count(country=denmark_code)
+#&gt; [1] 29429637
+</code></pre>
+
+<p>Number of records in a particular dataset</p>
+
+<pre><code class="r">occ_count(datasetKey=&#39;9e7ea106-0bf8-4087-bb61-dfe4f29e0f17&#39;)
+#&gt; [1] 4591
+</code></pre>
+
+<p>All records from 2012</p>
+
+<pre><code class="r">occ_count(year=2012)
+#&gt; [1] 52829793
+</code></pre>
+
+<p>Records for a particular dataset, and only for preserved specimens</p>
+
+<pre><code class="r">occ_count(datasetKey=&#39;e707e6da-e143-445d-b41d-529c4a777e8b&#39;, basisOfRecord=&#39;OBSERVATION&#39;)
+#&gt; [1] 0
+</code></pre>
+
+<h2>Search for taxon names</h2>
+
+<p>Get possible values to be used in taxonomic rank arguments in functions</p>
+
+<pre><code class="r">taxrank()
+#&gt; [1] &quot;kingdom&quot;       &quot;phylum&quot;        &quot;class&quot;         &quot;order&quot;        
+#&gt; [5] &quot;family&quot;        &quot;genus&quot;         &quot;species&quot;       &quot;subspecies&quot;   
+#&gt; [9] &quot;infraspecific&quot;
+</code></pre>
+
+<p><code>name_lookup()</code> does full text search of name usages covering the scientific and vernacular name, the species description, distribution and the entire classification across all name usages of all or some checklists. Results are ordered by relevance as this search usually returns a lot of results.</p>
+
+<p>By default <code>name_lookup()</code> returns five slots of information: meta, data, facets, hierarchies, and names. hierarchies and names elements are named by their matching GBIF key in the <code>data.frame</code> in the data slot.</p>
+
+<pre><code class="r">out &lt;- name_lookup(query=&#39;mammalia&#39;)
+</code></pre>
+
+<pre><code class="r">names(out)
+#&gt; [1] &quot;meta&quot;        &quot;data&quot;        &quot;facets&quot;      &quot;hierarchies&quot; &quot;names&quot;
+</code></pre>
+
+<pre><code class="r">out$meta
+#&gt; # A tibble: 1 x 4
+#&gt;   offset limit endOfRecords count
+#&gt;    &lt;int&gt; &lt;int&gt; &lt;lgl&gt;        &lt;int&gt;
+#&gt; 1      0   100 FALSE         1044
+</code></pre>
+
+<pre><code class="r">head(out$data)
+#&gt; # A tibble: 6 x 25
+#&gt;      key scientificName datasetKey nubKey parentKey parent kingdom phylum
+#&gt;    &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;       &lt;int&gt;     &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; 
+#&gt; 1 1.35e8 Mammalia       7b3f4866-…    359 135080672 Chord… Animal… Chord…
+#&gt; 2 1.35e8 Mammalia       1ddab917-…    359 135215962 Chord… Animal… Chord…
+#&gt; 3 1.35e8 Mammalia       97b24147-…    359 135216923 Chord… Animal… Chord…
+#&gt; 4 1.35e8 Mammalia       f3a1e772-…    359 135229685 Chord… Animal… Chord…
+#&gt; 5 1.44e8 Mammalia       3c188f76-…    359 143969855 Chord… Animal… Chord…
+#&gt; 6 1.35e8 Mammalia       128fd844-…    359 135080507 Chord… Animal… Chord…
+#&gt; # … with 17 more variables: kingdomKey &lt;int&gt;, phylumKey &lt;int&gt;,
+#&gt; #   classKey &lt;int&gt;, canonicalName &lt;chr&gt;, authorship &lt;chr&gt;, nameType &lt;chr&gt;,
+#&gt; #   taxonomicStatus &lt;chr&gt;, rank &lt;chr&gt;, origin &lt;chr&gt;, numDescendants &lt;int&gt;,
+#&gt; #   numOccurrences &lt;int&gt;, habitats &lt;lgl&gt;, nomenclaturalStatus &lt;lgl&gt;,
+#&gt; #   threatStatuses &lt;lgl&gt;, synonym &lt;lgl&gt;, class &lt;chr&gt;, taxonID &lt;chr&gt;
+</code></pre>
+
+<pre><code class="r">out$facets
+#&gt; NULL
+</code></pre>
+
+<pre><code class="r">out$hierarchies[1:2]
+#&gt; $`135080673`
+#&gt;     rankkey     name
+#&gt; 1 135080671 Animalia
+#&gt; 2 135080672 Chordata
+#&gt; 
+#&gt; $`135215963`
+#&gt;     rankkey     name
+#&gt; 1 135215961 Animalia
+#&gt; 2 135215962 Chordata
+</code></pre>
+
+<pre><code class="r">out$names[2]
+#&gt; NULL
+</code></pre>
+
+<p>Search for a genus</p>
+
+<pre><code class="r">head(name_lookup(query=&#39;Cnaemidophorus&#39;, rank=&quot;genus&quot;, return=&quot;data&quot;))
+#&gt; # A tibble: 6 x 35
+#&gt;      key scientificName datasetKey nubKey parentKey parent phylum order
+#&gt;    &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;       &lt;int&gt;     &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;
+#&gt; 1 1.33e8 Cnaemidophorus 4cec8fef-… 1.86e6 133063901 Ptero… Arthr… Lepi…
+#&gt; 2 1.53e8 Cnaemidophorus 7ddf754f-… 1.86e6 153048732 Ptero… Arthr… Lepi…
+#&gt; 3 1.53e8 Cnaemidophorus d16563e0-… 1.86e6 152672840 Ptero… Arthr… Lepi…
+#&gt; 4 1.24e8 Cnaemidophorus fab88965-… 1.86e6 104446806 Ptero… Arthr… Lepi…
+#&gt; 5 1.53e8 Cnaemidophorus 4dd32523-… 1.86e6 152565575 Ptero… Arthr… Lepi…
+#&gt; 6 1.52e8 Cnaemidophorus 23905003-… 1.86e6 152121874 Ptero… Arthr… Lepi…
+#&gt; # … with 27 more variables: family &lt;chr&gt;, genus &lt;chr&gt;, phylumKey &lt;int&gt;,
+#&gt; #   classKey &lt;int&gt;, orderKey &lt;int&gt;, familyKey &lt;int&gt;, genusKey &lt;int&gt;,
+#&gt; #   canonicalName &lt;chr&gt;, authorship &lt;chr&gt;, nameType &lt;chr&gt;,
+#&gt; #   taxonomicStatus &lt;chr&gt;, rank &lt;chr&gt;, origin &lt;chr&gt;, numDescendants &lt;int&gt;,
+#&gt; #   numOccurrences &lt;int&gt;, habitats &lt;lgl&gt;, nomenclaturalStatus &lt;lgl&gt;,
+#&gt; #   threatStatuses &lt;lgl&gt;, synonym &lt;lgl&gt;, class &lt;chr&gt;, kingdom &lt;chr&gt;,
+#&gt; #   kingdomKey &lt;int&gt;, taxonID &lt;chr&gt;, publishedIn &lt;chr&gt;, extinct &lt;lgl&gt;,
+#&gt; #   accordingTo &lt;chr&gt;, constituentKey &lt;chr&gt;
+</code></pre>
+
+<p>Search for the class mammalia</p>
+
+<pre><code class="r">head(name_lookup(query=&#39;mammalia&#39;, return = &#39;data&#39;))
+#&gt; # A tibble: 6 x 25
+#&gt;      key scientificName datasetKey nubKey parentKey parent kingdom phylum
+#&gt;    &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;       &lt;int&gt;     &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; 
+#&gt; 1 1.35e8 Mammalia       7b3f4866-…    359 135080672 Chord… Animal… Chord…
+#&gt; 2 1.35e8 Mammalia       1ddab917-…    359 135215962 Chord… Animal… Chord…
+#&gt; 3 1.35e8 Mammalia       97b24147-…    359 135216923 Chord… Animal… Chord…
+#&gt; 4 1.35e8 Mammalia       f3a1e772-…    359 135229685 Chord… Animal… Chord…
+#&gt; 5 1.44e8 Mammalia       3c188f76-…    359 143969855 Chord… Animal… Chord…
+#&gt; 6 1.35e8 Mammalia       128fd844-…    359 135080507 Chord… Animal… Chord…
+#&gt; # … with 17 more variables: kingdomKey &lt;int&gt;, phylumKey &lt;int&gt;,
+#&gt; #   classKey &lt;int&gt;, canonicalName &lt;chr&gt;, authorship &lt;chr&gt;, nameType &lt;chr&gt;,
+#&gt; #   taxonomicStatus &lt;chr&gt;, rank &lt;chr&gt;, origin &lt;chr&gt;, numDescendants &lt;int&gt;,
+#&gt; #   numOccurrences &lt;int&gt;, habitats &lt;lgl&gt;, nomenclaturalStatus &lt;lgl&gt;,
+#&gt; #   threatStatuses &lt;lgl&gt;, synonym &lt;lgl&gt;, class &lt;chr&gt;, taxonID &lt;chr&gt;
+</code></pre>
+
+<p>Look up the species Helianthus annuus</p>
+
+<pre><code class="r">head(name_lookup(query = &#39;Helianthus annuus&#39;, rank=&quot;species&quot;, return = &#39;data&#39;))
+#&gt; # A tibble: 6 x 40
+#&gt;      key scientificName datasetKey nubKey parentKey parent kingdom phylum
+#&gt;    &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;       &lt;int&gt;     &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; 
+#&gt; 1 1.35e8 Helianthus an… 29d2d5a6-… 9.21e6 148402516 Aster… Plantae Trach…
+#&gt; 2 1.28e8 Helianthus an… 41c06f1a-… 9.21e6 146770884 Amara… Plantae &lt;NA&gt;  
+#&gt; 3 1.46e8 Helianthus an… 6a97172b-… 9.21e6 147653302 Helia… &lt;NA&gt;    &lt;NA&gt;  
+#&gt; 4 1.15e8 Helianthus an… ee2aac07-… 9.21e6 144238801 Helia… Plantae Trach…
+#&gt; 5 1.35e8 Helianthus an… f82a4f7f-… 9.21e6 152142298 Aster… Plantae Trach…
+#&gt; 6 1.35e8 Helianthus an… 278c9199-… 9.21e6 147652468 Aster… Plantae Trach…
+#&gt; # … with 32 more variables: order &lt;chr&gt;, family &lt;chr&gt;, species &lt;chr&gt;,
+#&gt; #   kingdomKey &lt;int&gt;, phylumKey &lt;int&gt;, classKey &lt;int&gt;, orderKey &lt;int&gt;,
+#&gt; #   familyKey &lt;int&gt;, speciesKey &lt;int&gt;, canonicalName &lt;chr&gt;,
+#&gt; #   nameType &lt;chr&gt;, taxonomicStatus &lt;chr&gt;, rank &lt;chr&gt;, origin &lt;chr&gt;,
+#&gt; #   numDescendants &lt;int&gt;, numOccurrences &lt;int&gt;, taxonID &lt;chr&gt;,
+#&gt; #   habitats &lt;chr&gt;, nomenclaturalStatus &lt;chr&gt;, threatStatuses &lt;chr&gt;,
+#&gt; #   synonym &lt;lgl&gt;, class &lt;chr&gt;, genus &lt;chr&gt;, genusKey &lt;int&gt;,
+#&gt; #   authorship &lt;chr&gt;, acceptedKey &lt;int&gt;, accepted &lt;chr&gt;,
+#&gt; #   publishedIn &lt;chr&gt;, accordingTo &lt;chr&gt;, constituentKey &lt;chr&gt;,
+#&gt; #   basionymKey &lt;int&gt;, basionym &lt;chr&gt;
+</code></pre>
+
+<p>The function <code>name_usage()</code> works with lots of different name endpoints in GBIF, listed at <a href="http://www.gbif.org/developer/species#nameUsages">http://www.gbif.org/developer/species#nameUsages</a>.</p>
+
+<pre><code class="r">name_usage(key=3119195, language=&quot;FRENCH&quot;, data=&#39;vernacularNames&#39;)
+#&gt; $meta
+#&gt; # A tibble: 1 x 3
+#&gt;   offset limit endOfRecords
+#&gt;    &lt;int&gt; &lt;int&gt; &lt;lgl&gt;       
+#&gt; 1      0   100 TRUE        
+#&gt; 
+#&gt; $data
+#&gt; # A tibble: 0 x 0
+</code></pre>
+
+<p>The function <code>name_backbone()</code> is used to search against the GBIF backbone taxonomy</p>
+
+<pre><code class="r">name_backbone(name=&#39;Helianthus&#39;, rank=&#39;genus&#39;, kingdom=&#39;plants&#39;)
+#&gt; $usageKey
+#&gt; [1] 3119134
+#&gt; 
+#&gt; $scientificName
+#&gt; [1] &quot;Helianthus L.&quot;
+#&gt; 
+#&gt; $canonicalName
+#&gt; [1] &quot;Helianthus&quot;
+#&gt; 
+#&gt; $rank
+#&gt; [1] &quot;GENUS&quot;
+#&gt; 
+#&gt; $status
+#&gt; [1] &quot;ACCEPTED&quot;
+#&gt; 
+#&gt; $confidence
+#&gt; [1] 97
+#&gt; 
+#&gt; $matchType
+#&gt; [1] &quot;EXACT&quot;
+#&gt; 
+#&gt; $kingdom
+#&gt; [1] &quot;Plantae&quot;
+#&gt; 
+#&gt; $phylum
+#&gt; [1] &quot;Tracheophyta&quot;
+#&gt; 
+#&gt; $order
+#&gt; [1] &quot;Asterales&quot;
+#&gt; 
+#&gt; $family
+#&gt; [1] &quot;Asteraceae&quot;
+#&gt; 
+#&gt; $genus
+#&gt; [1] &quot;Helianthus&quot;
+#&gt; 
+#&gt; $kingdomKey
+#&gt; [1] 6
+#&gt; 
+#&gt; $phylumKey
+#&gt; [1] 7707728
+#&gt; 
+#&gt; $classKey
+#&gt; [1] 220
+#&gt; 
+#&gt; $orderKey
+#&gt; [1] 414
+#&gt; 
+#&gt; $familyKey
+#&gt; [1] 3065
+#&gt; 
+#&gt; $genusKey
+#&gt; [1] 3119134
+#&gt; 
+#&gt; $synonym
+#&gt; [1] FALSE
+#&gt; 
+#&gt; $class
+#&gt; [1] &quot;Magnoliopsida&quot;
+</code></pre>
+
+<p>The function <code>name_suggest()</code> is optimized for speed, and gives back suggested names based on query parameters.</p>
+
+<pre><code class="r">head( name_suggest(q=&#39;Puma concolor&#39;) )
+#&gt; # A tibble: 6 x 3
+#&gt;       key canonicalName                rank      
+#&gt;     &lt;int&gt; &lt;chr&gt;                        &lt;chr&gt;     
+#&gt; 1 2435099 Puma concolor                SPECIES   
+#&gt; 2 6164622 Puma concolor puma           SUBSPECIES
+#&gt; 3 6164589 Puma concolor anthonyi       SUBSPECIES
+#&gt; 4 6164618 Puma concolor browni         SUBSPECIES
+#&gt; 5 8951716 Puma concolor borbensis      SUBSPECIES
+#&gt; 6 8860878 Puma concolor capricornensis SUBSPECIES
+</code></pre>
+
+<h2>Single occurrence records</h2>
+
+<p>Get data for a single occurrence. Note that data is returned as a list, with slots for metadata and data, or as a hierarchy, or just data.</p>
+
+<p>Just data</p>
+
+<pre><code class="r">occ_get(key=855998194, return=&#39;data&#39;)
+#&gt;         key                  scientificName decimalLatitude
+#&gt; 1 855998194 Sciurus vulgaris Linnaeus, 1758        58.40677
+#&gt;   decimalLongitude         issues
+#&gt; 1         12.04386 cdround,gass84
+</code></pre>
+
+<p>Just taxonomic hierarchy</p>
+
+<pre><code class="r">occ_get(key=855998194, return=&#39;hier&#39;)
+#&gt;               name     key    rank
+#&gt; 1         Animalia       1 kingdom
+#&gt; 2         Chordata      44  phylum
+#&gt; 3         Mammalia     359   class
+#&gt; 4         Rodentia    1459   order
+#&gt; 5        Sciuridae    9456  family
+#&gt; 6          Sciurus 2437489   genus
+#&gt; 7 Sciurus vulgaris 8211070 species
+</code></pre>
+
+<p>All data, or leave return parameter blank</p>
+
+<pre><code class="r">occ_get(key=855998194, return=&#39;all&#39;)
+#&gt; $hierarchy
+#&gt;               name     key    rank
+#&gt; 1         Animalia       1 kingdom
+#&gt; 2         Chordata      44  phylum
+#&gt; 3         Mammalia     359   class
+#&gt; 4         Rodentia    1459   order
+#&gt; 5        Sciuridae    9456  family
+#&gt; 6          Sciurus 2437489   genus
+#&gt; 7 Sciurus vulgaris 8211070 species
+#&gt; 
+#&gt; $media
+#&gt; list()
+#&gt; 
+#&gt; $data
+#&gt;         key                  scientificName decimalLatitude
+#&gt; 1 855998194 Sciurus vulgaris Linnaeus, 1758        58.40677
+#&gt;   decimalLongitude         issues
+#&gt; 1         12.04386 cdround,gass84
+</code></pre>
+
+<p>Get many occurrences. <code>occ_get</code> is vectorized</p>
+
+<pre><code class="r">occ_get(key=c(855998194, 1425976049, 240713150), return=&#39;data&#39;)
+#&gt;          key                  scientificName decimalLatitude
+#&gt; 1  855998194 Sciurus vulgaris Linnaeus, 1758        58.40677
+#&gt; 2 1425976049  Cygnus cygnus (Linnaeus, 1758)        58.26546
+#&gt; 3  240713150            Pelosina Brady, 1879       -77.56670
+#&gt;   decimalLongitude         issues
+#&gt; 1        12.043857 cdround,gass84
+#&gt; 2         7.651751 cdround,gass84
+#&gt; 3       163.583000         gass84
+</code></pre>
+
+<h2>Search for occurrences</h2>
+
+<p>By default <code>occ_search()</code> returns a <code>dplyr</code> like output summary in which the data printed expands based on how much data is returned, and the size of your window. You can search by scientific name:</p>
+
+<pre><code class="r">occ_search(scientificName = &quot;Ursus americanus&quot;, limit = 20)
+#&gt; Records found [12042] 
+#&gt; Records returned [20] 
+#&gt; No. unique hierarchies [1] 
+#&gt; No. media records [20] 
+#&gt; No. facets [0] 
+#&gt; Args [limit=20, offset=0, scientificName=Ursus americanus, fields=all] 
+#&gt; # A tibble: 20 x 74
+#&gt;       key scientificName decimalLatitude decimalLongitude issues datasetKey
+#&gt;     &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     
+#&gt;  1 1.99e9 Ursus america…            29.2            -81.8 cdrou… 50c9509d-…
+#&gt;  2 1.99e9 Ursus america…            45.3            -76.8 cdrou… 50c9509d-…
+#&gt;  3 1.99e9 Ursus america…            47.7           -122.  cdrou… 50c9509d-…
+#&gt;  4 1.99e9 Ursus america…            32.6           -109.  cdrou… 50c9509d-…
+#&gt;  5 1.99e9 Ursus america…            33.1            -91.9 cdrou… 50c9509d-…
+#&gt;  6 1.99e9 Ursus america…            27.7            -81.5 gass84 50c9509d-…
+#&gt;  7 1.99e9 Ursus america…            30.1           -103.  cdrou… 50c9509d-…
+#&gt;  8 1.99e9 Ursus america…            39.4           -120.  cdrou… 50c9509d-…
+#&gt;  9 1.99e9 Ursus america…            35.7            -76.6 cdrou… 50c9509d-…
+#&gt; 10 1.99e9 Ursus america…            33.1            -91.9 cdrou… 50c9509d-…
+#&gt; 11 1.99e9 Ursus america…            45.5            -93.1 cdrou… 50c9509d-…
+#&gt; 12 1.99e9 Ursus america…            45.4            -93.1 cdrou… 50c9509d-…
+#&gt; 13 1.99e9 Ursus america…            31.9            -94.7 cdrou… 50c9509d-…
+#&gt; 14 1.99e9 Ursus america…            45.4            -93.2 cdrou… 50c9509d-…
+#&gt; 15 1.99e9 Ursus america…            45.4            -93.2 cdrou… 50c9509d-…
+#&gt; 16 1.99e9 Ursus america…            44.9            -62.7 cdrou… 50c9509d-…
+#&gt; 17 1.99e9 Ursus america…            40.9           -121.  gass84 50c9509d-…
+#&gt; 18 1.99e9 Ursus america…            39.0           -120.  cdrou… 50c9509d-…
+#&gt; 19 1.99e9 Ursus america…            38.9           -120.  cdrou… 50c9509d-…
+#&gt; 20 1.99e9 Ursus america…            35.6            -82.9 cdrou… 50c9509d-…
+#&gt; # … with 68 more variables: publishingOrgKey &lt;chr&gt;, networkKeys &lt;chr&gt;,
+#&gt; #   installationKey &lt;chr&gt;, publishingCountry &lt;chr&gt;, protocol &lt;chr&gt;,
+#&gt; #   lastCrawled &lt;chr&gt;, lastParsed &lt;chr&gt;, crawlId &lt;int&gt;, extensions &lt;chr&gt;,
+#&gt; #   basisOfRecord &lt;chr&gt;, taxonKey &lt;int&gt;, kingdomKey &lt;int&gt;,
+#&gt; #   phylumKey &lt;int&gt;, classKey &lt;int&gt;, orderKey &lt;int&gt;, familyKey &lt;int&gt;,
+#&gt; #   genusKey &lt;int&gt;, speciesKey &lt;int&gt;, acceptedTaxonKey &lt;int&gt;,
+#&gt; #   acceptedScientificName &lt;chr&gt;, kingdom &lt;chr&gt;, phylum &lt;chr&gt;,
+#&gt; #   order &lt;chr&gt;, family &lt;chr&gt;, genus &lt;chr&gt;, species &lt;chr&gt;,
+#&gt; #   genericName &lt;chr&gt;, specificEpithet &lt;chr&gt;, taxonRank &lt;chr&gt;,
+#&gt; #   taxonomicStatus &lt;chr&gt;, dateIdentified &lt;chr&gt;, stateProvince &lt;chr&gt;,
+#&gt; #   year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, eventDate &lt;chr&gt;, modified &lt;chr&gt;,
+#&gt; #   lastInterpreted &lt;chr&gt;, references &lt;chr&gt;, license &lt;chr&gt;,
+#&gt; #   identifiers &lt;chr&gt;, facts &lt;chr&gt;, relations &lt;chr&gt;, geodeticDatum &lt;chr&gt;,
+#&gt; #   class &lt;chr&gt;, countryCode &lt;chr&gt;, country &lt;chr&gt;, rightsHolder &lt;chr&gt;,
+#&gt; #   identifier &lt;chr&gt;, verbatimEventDate &lt;chr&gt;, datasetName &lt;chr&gt;,
+#&gt; #   gbifID &lt;chr&gt;, verbatimLocality &lt;chr&gt;, collectionCode &lt;chr&gt;,
+#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, catalogNumber &lt;chr&gt;,
+#&gt; #   recordedBy &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
+#&gt; #   institutionCode &lt;chr&gt;, rights &lt;chr&gt;, eventTime &lt;chr&gt;,
+#&gt; #   identificationID &lt;chr&gt;, name &lt;chr&gt;,
+#&gt; #   coordinateUncertaintyInMeters &lt;dbl&gt;, occurrenceRemarks &lt;chr&gt;,
+#&gt; #   infraspecificEpithet &lt;chr&gt;, informationWithheld &lt;chr&gt;
+</code></pre>
+
+<p>Or to be more precise, you can search for names first, make sure you have the right name, then pass the GBIF key to the <code>occ_search()</code> function:</p>
+
+<pre><code class="r">key &lt;- name_suggest(q=&#39;Helianthus annuus&#39;, rank=&#39;species&#39;)$key[1]
+occ_search(taxonKey=key, limit=20)
+#&gt; Records found [43757] 
+#&gt; Records returned [20] 
+#&gt; No. unique hierarchies [1] 
+#&gt; No. media records [16] 
+#&gt; No. facets [0] 
+#&gt; Args [limit=20, offset=0, taxonKey=9206251, fields=all] 
+#&gt; # A tibble: 20 x 91
+#&gt;       key scientificName decimalLatitude decimalLongitude issues datasetKey
+#&gt;     &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     
+#&gt;  1 1.99e9 Helianthus an…            34.0           -117.  cdrou… 50c9509d-…
+#&gt;  2 1.99e9 Helianthus an…            33.4           -118.  cdrou… 50c9509d-…
+#&gt;  3 1.99e9 Helianthus an…            33.8           -118.  cdrou… 50c9509d-…
+#&gt;  4 1.99e9 Helianthus an…            53.9             10.9 cdrou… 6ac3f774-…
+#&gt;  5 1.99e9 Helianthus an…            27.7            -97.3 cdrou… 50c9509d-…
+#&gt;  6 1.99e9 Helianthus an…            52.6             10.1 cdrou… 6ac3f774-…
+#&gt;  7 1.99e9 Helianthus an…            26.2            -98.2 cdrou… 50c9509d-…
+#&gt;  8 2.01e9 Helianthus an…            31.5            -97.1 cdrou… 50c9509d-…
+#&gt;  9 1.99e9 Helianthus an…            29.8            -95.2 cdrou… 50c9509d-…
+#&gt; 10 2.01e9 Helianthus an…            31.6           -106.  cdrou… 50c9509d-…
+#&gt; 11 2.01e9 Helianthus an…            27.5            -99.5 cdrou… 50c9509d-…
+#&gt; 12 1.95e9 Helianthus an…           -37.8            175.  gass84 50c9509d-…
+#&gt; 13 1.82e9 Helianthus an…            59.8             17.5 gass84 38b4c89f-…
+#&gt; 14 1.95e9 Helianthus an…           -37.8            175.  gass84 50c9509d-…
+#&gt; 15 1.82e9 Helianthus an…            56.6             16.4 cdrou… 38b4c89f-…
+#&gt; 16 1.84e9 Helianthus an…            34.1           -116.  gass84 50c9509d-…
+#&gt; 17 1.82e9 Helianthus an…            56.6             16.6 cdrou… 38b4c89f-…
+#&gt; 18 1.81e9 Helianthus an…            25.7           -100.  cdrou… 50c9509d-…
+#&gt; 19 1.81e9 Helianthus an…            25.6           -100.  cdrou… 50c9509d-…
+#&gt; 20 1.84e9 Helianthus an…            33.9           -117.  cdrou… 50c9509d-…
+#&gt; # … with 85 more variables: publishingOrgKey &lt;chr&gt;, networkKeys &lt;chr&gt;,
+#&gt; #   installationKey &lt;chr&gt;, publishingCountry &lt;chr&gt;, protocol &lt;chr&gt;,
+#&gt; #   lastCrawled &lt;chr&gt;, lastParsed &lt;chr&gt;, crawlId &lt;int&gt;, extensions &lt;chr&gt;,
+#&gt; #   basisOfRecord &lt;chr&gt;, taxonKey &lt;int&gt;, kingdomKey &lt;int&gt;,
+#&gt; #   phylumKey &lt;int&gt;, classKey &lt;int&gt;, orderKey &lt;int&gt;, familyKey &lt;int&gt;,
+#&gt; #   genusKey &lt;int&gt;, speciesKey &lt;int&gt;, acceptedTaxonKey &lt;int&gt;,
+#&gt; #   acceptedScientificName &lt;chr&gt;, kingdom &lt;chr&gt;, phylum &lt;chr&gt;,
+#&gt; #   order &lt;chr&gt;, family &lt;chr&gt;, genus &lt;chr&gt;, species &lt;chr&gt;,
+#&gt; #   genericName &lt;chr&gt;, specificEpithet &lt;chr&gt;, taxonRank &lt;chr&gt;,
+#&gt; #   taxonomicStatus &lt;chr&gt;, dateIdentified &lt;chr&gt;, stateProvince &lt;chr&gt;,
+#&gt; #   year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, eventDate &lt;chr&gt;, modified &lt;chr&gt;,
+#&gt; #   lastInterpreted &lt;chr&gt;, references &lt;chr&gt;, license &lt;chr&gt;,
+#&gt; #   identifiers &lt;chr&gt;, facts &lt;chr&gt;, relations &lt;chr&gt;, geodeticDatum &lt;chr&gt;,
+#&gt; #   class &lt;chr&gt;, countryCode &lt;chr&gt;, country &lt;chr&gt;, rightsHolder &lt;chr&gt;,
+#&gt; #   identifier &lt;chr&gt;, verbatimEventDate &lt;chr&gt;, datasetName &lt;chr&gt;,
+#&gt; #   gbifID &lt;chr&gt;, verbatimLocality &lt;chr&gt;, collectionCode &lt;chr&gt;,
+#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, catalogNumber &lt;chr&gt;,
+#&gt; #   recordedBy &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
+#&gt; #   institutionCode &lt;chr&gt;, rights &lt;chr&gt;, eventTime &lt;chr&gt;,
+#&gt; #   identificationID &lt;chr&gt;, name &lt;chr&gt;,
+#&gt; #   coordinateUncertaintyInMeters &lt;dbl&gt;, occurrenceRemarks &lt;chr&gt;,
+#&gt; #   locality &lt;chr&gt;, individualCount &lt;int&gt;, continent &lt;chr&gt;, county &lt;chr&gt;,
+#&gt; #   municipality &lt;chr&gt;, identificationVerificationStatus &lt;chr&gt;,
+#&gt; #   language &lt;chr&gt;, type &lt;chr&gt;, occurrenceStatus &lt;chr&gt;,
+#&gt; #   vernacularName &lt;chr&gt;, taxonConceptID &lt;chr&gt;, informationWithheld &lt;chr&gt;,
+#&gt; #   endDayOfYear &lt;chr&gt;, startDayOfYear &lt;chr&gt;, datasetID &lt;chr&gt;,
+#&gt; #   accessRights &lt;chr&gt;, higherClassification &lt;chr&gt;,
+#&gt; #   identificationRemarks &lt;chr&gt;, habitat &lt;chr&gt;
+</code></pre>
+
+<p>Like many functions in <code>rgbif</code>, you can choose what to return with the <code>return</code> parameter, here, just returning the metadata:</p>
+
+<pre><code class="r">occ_search(taxonKey=key, return=&#39;meta&#39;)
+#&gt; # A tibble: 1 x 4
+#&gt;   offset limit endOfRecords count
+#&gt; *  &lt;int&gt; &lt;int&gt; &lt;lgl&gt;        &lt;int&gt;
+#&gt; 1    300   200 FALSE        43757
+</code></pre>
+
+<p>You can choose what fields to return. This isn&#39;t passed on to the API query to GBIF as they don&#39;t allow that, but we filter out the columns before we give the data back to you.</p>
+
+<pre><code class="r">occ_search(scientificName = &quot;Ursus americanus&quot;, fields=c(&#39;name&#39;,&#39;basisOfRecord&#39;,&#39;protocol&#39;), limit = 20)
+#&gt; Records found [12042] 
+#&gt; Records returned [20] 
+#&gt; No. unique hierarchies [1] 
+#&gt; No. media records [20] 
+#&gt; No. facets [0] 
+#&gt; Args [limit=20, offset=0, scientificName=Ursus americanus,
+#&gt;      fields=name,basisOfRecord,protocol] 
+#&gt; # A tibble: 20 x 2
+#&gt;    protocol    basisOfRecord    
+#&gt;    &lt;chr&gt;       &lt;chr&gt;            
+#&gt;  1 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  2 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  3 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  4 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  5 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  6 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  7 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  8 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt;  9 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 10 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 11 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 12 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 13 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 14 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 15 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 16 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 17 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 18 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 19 DWC_ARCHIVE HUMAN_OBSERVATION
+#&gt; 20 DWC_ARCHIVE HUMAN_OBSERVATION
+</code></pre>
+
+<p>Most parameters are vectorized, so you can pass in more than one value:</p>
+
+<pre><code class="r">splist &lt;- c(&#39;Cyanocitta stelleri&#39;, &#39;Junco hyemalis&#39;, &#39;Aix sponsa&#39;)
+keys &lt;- sapply(splist, function(x) name_suggest(x)$key[1], USE.NAMES=FALSE)
+occ_search(taxonKey=keys, limit=5)
+#&gt; Occ. found [2482598 (709564), 9362842 (3822355), 2498387 (1248740)] 
+#&gt; Occ. returned [2482598 (5), 9362842 (5), 2498387 (5)] 
+#&gt; No. unique hierarchies [2482598 (1), 9362842 (1), 2498387 (1)] 
+#&gt; No. media records [2482598 (5), 9362842 (5), 2498387 (5)] 
+#&gt; No. facets [2482598 (0), 9362842 (0), 2498387 (0)] 
+#&gt; Args [limit=5, offset=0, taxonKey=2482598,9362842,2498387, fields=all] 
+#&gt; 3 requests; First 10 rows of data from 2482598
+#&gt; 
+#&gt; # A tibble: 5 x 71
+#&gt;      key scientificName decimalLatitude decimalLongitude issues datasetKey
+#&gt;    &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     
+#&gt; 1 1.99e9 Cyanocitta st…            16.7            -92.7 cdrou… 50c9509d-…
+#&gt; 2 1.99e9 Cyanocitta st…            32.9           -106.  cdrou… 50c9509d-…
+#&gt; 3 1.99e9 Cyanocitta st…            32.9           -106.  cdrou… 50c9509d-…
+#&gt; 4 1.99e9 Cyanocitta st…            32.9           -106.  cdrou… 50c9509d-…
+#&gt; 5 1.99e9 Cyanocitta st…            32.9           -106.  cdrou… 50c9509d-…
+#&gt; # … with 65 more variables: publishingOrgKey &lt;chr&gt;, networkKeys &lt;chr&gt;,
+#&gt; #   installationKey &lt;chr&gt;, publishingCountry &lt;chr&gt;, protocol &lt;chr&gt;,
+#&gt; #   lastCrawled &lt;chr&gt;, lastParsed &lt;chr&gt;, crawlId &lt;int&gt;, extensions &lt;chr&gt;,
+#&gt; #   basisOfRecord &lt;chr&gt;, taxonKey &lt;int&gt;, kingdomKey &lt;int&gt;,
+#&gt; #   phylumKey &lt;int&gt;, classKey &lt;int&gt;, orderKey &lt;int&gt;, familyKey &lt;int&gt;,
+#&gt; #   genusKey &lt;int&gt;, speciesKey &lt;int&gt;, acceptedTaxonKey &lt;int&gt;,
+#&gt; #   acceptedScientificName &lt;chr&gt;, kingdom &lt;chr&gt;, phylum &lt;chr&gt;,
+#&gt; #   order &lt;chr&gt;, family &lt;chr&gt;, genus &lt;chr&gt;, species &lt;chr&gt;,
+#&gt; #   genericName &lt;chr&gt;, specificEpithet &lt;chr&gt;, taxonRank &lt;chr&gt;,
+#&gt; #   taxonomicStatus &lt;chr&gt;, dateIdentified &lt;chr&gt;,
+#&gt; #   coordinateUncertaintyInMeters &lt;dbl&gt;, stateProvince &lt;chr&gt;, year &lt;int&gt;,
+#&gt; #   month &lt;int&gt;, day &lt;int&gt;, eventDate &lt;chr&gt;, modified &lt;chr&gt;,
+#&gt; #   lastInterpreted &lt;chr&gt;, references &lt;chr&gt;, license &lt;chr&gt;,
+#&gt; #   identifiers &lt;chr&gt;, facts &lt;chr&gt;, relations &lt;chr&gt;, geodeticDatum &lt;chr&gt;,
+#&gt; #   class &lt;chr&gt;, countryCode &lt;chr&gt;, country &lt;chr&gt;, rightsHolder &lt;chr&gt;,
+#&gt; #   identifier &lt;chr&gt;, verbatimEventDate &lt;chr&gt;, datasetName &lt;chr&gt;,
+#&gt; #   gbifID &lt;chr&gt;, verbatimLocality &lt;chr&gt;, collectionCode &lt;chr&gt;,
+#&gt; #   occurrenceID &lt;chr&gt;, taxonID &lt;chr&gt;, catalogNumber &lt;chr&gt;,
+#&gt; #   recordedBy &lt;chr&gt;, http...unknown.org.occurrenceDetails &lt;chr&gt;,
+#&gt; #   institutionCode &lt;chr&gt;, rights &lt;chr&gt;, eventTime &lt;chr&gt;,
+#&gt; #   identificationID &lt;chr&gt;, name &lt;chr&gt;
+</code></pre>
+
+<hr/>
+
+<h2>Maps</h2>
+
+<p>Using thet GBIF map web tile service, making a raster and visualizing it.</p>
+
+<pre><code class="r">x &lt;- map_fetch(taxonKey = 2480498, year = 2000:2017)
+library(raster)
+plot(x)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk gbifmap1"/></p>
+
+</body>
+
+</html>
