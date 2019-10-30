@@ -1,12 +1,13 @@
----
-title: Cleaning data using GBIF issues
-author: Scott Chamberlain
-vignette: >
-  %\VignetteIndexEntry{cleaning}
-  %\VignetteEngine{knitr::knitr}
-  %\VignetteEncoding{UTF-8}
----
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Cleaning data using GBIF issues}
+%\VignetteEncoding{UTF-8}
+-->
 
+
+
+Cleaning data using GBIF issues
+======
 
 `rgbif` now has the ability to clean data retrieved from GBIF based on GBIF issues. These issues are returned in data retrieved from GBIF, e.g., through the `occ_search()` function. Inspired by `magrittr`, we've setup a workflow for cleaning data based on using the operator `%>%`. You don't have to use it, but as we show below, it can make the process quite easy.
 
