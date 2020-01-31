@@ -51,20 +51,24 @@ with new versions.
 \examples{
 \dontrun{
 # passing occ_download() requests via ...
-out <- occ_download_queue(
-  occ_download('taxonKey = 3119195', "year = 1976"),
-  occ_download('taxonKey = 3119195', "year = 2001"),
-  occ_download('taxonKey = 3119195', "year = 2001", "month <= 8"),
-  occ_download('taxonKey = 5229208', "year = 2011"),
-  occ_download('taxonKey = 2480946', "year = 2015"),
-  occ_download("country = NZ", "year = 1999", "month = 3"),
-  occ_download("catalogNumber = Bird.27847588", "year = 1998", "month = 2")
+out <- occ_download_prep(
+  occ_download(pred('taxonKey', 3119195), pred("year", 1976)),
+  occ_download(pred('taxonKey', 3119195), pred("year", 2001)),
+  occ_download(pred('taxonKey', 3119195), pred("year", 2001),
+    pred("month", 8, "<=")),
+  occ_download(pred('taxonKey', 5229208), pred("year", 2011)),
+  occ_download(pred('taxonKey', 2480946), pred("year", 2015)),
+  occ_download(pred("country", "NZ"), pred("year", 1999),
+    pred("month", 3)),
+  occ_download(pred("catalogNumber", "Bird.27847588"),
+    pred("year", 1998), pred("month", 2))
 )
 
 # supports <= 3 requests too
 out <- occ_download_queue(
-  occ_download("country = NZ", "year = 1999", "month = 3"),
-  occ_download("catalogNumber = Bird.27847588", "year = 1998", "month = 2")
+  occ_download(pred("country", "NZ"), pred("year", 1999), pred("month", 3)),
+  occ_download(pred("catalogNumber", "Bird.27847588"), pred("year", 1998),
+    pred("month", 2))
 )
 
 # using pre-prepared requests via .list
@@ -72,11 +76,11 @@ keys <- c(7905507, 5384395, 8911082)
 queries <- list()
 for (i in seq_along(keys)) {
   queries[[i]] <- occ_download_prep(
-    paste0("taxonKey = ", keys[i]),
-    "basisOfRecord = HUMAN_OBSERVATION,OBSERVATION",
-    "hasCoordinate = true",
-    "hasGeospatialIssue = false",
-    "year = 1993"
+    pred("taxonKey", keys[i]),
+    pred_multi("basisOfRecord", c("HUMAN_OBSERVATION","OBSERVATION"), "in"),
+    pred("hasCoordinate", TRUE),
+    pred("hasGeospatialIssue", FALSE),
+    pred("year", 1993)
   )
 }
 out <- occ_download_queue(.list = queries)
@@ -84,18 +88,31 @@ out
 
 # another pre-prepared example
 yrs <- 1930:1934
-length(yrs)
 queries <- list()
 for (i in seq_along(yrs)) {
   queries[[i]] <- occ_download_prep(
-    "taxonKey = 2877951",
-    "basisOfRecord = HUMAN_OBSERVATION,OBSERVATION",
-    "hasCoordinate = true",
-    "hasGeospatialIssue = false",
-    paste0("year = ", yrs[i])
+    pred("taxonKey", 2877951),
+    pred_multi("basisOfRecord", c("HUMAN_OBSERVATION","OBSERVATION"), "in"),
+    pred("hasCoordinate", TRUE),
+    pred("hasGeospatialIssue", FALSE),
+    pred("year", yrs[i])
   )
 }
 out <- occ_download_queue(.list = queries)
 out
 }
 }
+\seealso{
+Other downloads: 
+\code{\link{download_predicate_dsl}},
+\code{\link{occ_download_cancel}()},
+\code{\link{occ_download_dataset_activity}()},
+\code{\link{occ_download_datasets}()},
+\code{\link{occ_download_get}()},
+\code{\link{occ_download_import}()},
+\code{\link{occ_download_list}()},
+\code{\link{occ_download_meta}()},
+\code{\link{occ_download_wait}()},
+\code{\link{occ_download}()}
+}
+\concept{downloads}

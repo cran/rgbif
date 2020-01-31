@@ -4,8 +4,7 @@
 \alias{occ_download_get}
 \title{Get a download from GBIF.}
 \usage{
-occ_download_get(key, path = ".", overwrite = FALSE,
-  curlopts = list())
+occ_download_get(key, path = ".", overwrite = FALSE, curlopts = list())
 }
 \arguments{
 \item{key}{A key generated from a request, like that from \code{occ_download}}
@@ -40,3 +39,17 @@ occ_download_get("0000066-140928181241064")
 occ_download_get("0003983-140910143529206", overwrite = TRUE)
 }
 }
+\seealso{
+Other downloads: 
+\code{\link{download_predicate_dsl}},
+\code{\link{occ_download_cancel}()},
+\code{\link{occ_download_dataset_activity}()},
+\code{\link{occ_download_datasets}()},
+\code{\link{occ_download_import}()},
+\code{\link{occ_download_list}()},
+\code{\link{occ_download_meta}()},
+\code{\link{occ_download_queue}()},
+\code{\link{occ_download_wait}()},
+\code{\link{occ_download}()}
+}
+\concept{downloads}

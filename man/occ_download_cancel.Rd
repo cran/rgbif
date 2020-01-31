@@ -7,8 +7,13 @@
 \usage{
 occ_download_cancel(key, user = NULL, pwd = NULL, curlopts = list())
 
-occ_download_cancel_staged(user = NULL, pwd = NULL, limit = 20,
-  start = 0, curlopts = list())
+occ_download_cancel_staged(
+  user = NULL,
+  pwd = NULL,
+  limit = 20,
+  start = 0,
+  curlopts = list()
+)
 }
 \arguments{
 \item{key}{(character) A key generated from a request, like that from
@@ -52,3 +57,17 @@ see \link{downloads} for an overview of GBIF downloads methods
 # occ_download_cancel_staged()
 }
 }
+\seealso{
+Other downloads: 
+\code{\link{download_predicate_dsl}},
+\code{\link{occ_download_dataset_activity}()},
+\code{\link{occ_download_datasets}()},
+\code{\link{occ_download_get}()},
+\code{\link{occ_download_import}()},
+\code{\link{occ_download_list}()},
+\code{\link{occ_download_meta}()},
+\code{\link{occ_download_queue}()},
+\code{\link{occ_download_wait}()},
+\code{\link{occ_download}()}
+}
+\concept{downloads}
