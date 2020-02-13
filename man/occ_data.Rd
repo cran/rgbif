@@ -53,7 +53,6 @@ occ_data(
   locality = NULL,
   limit = 500,
   start = 0,
-  spellCheck = NULL,
   skip_validate = TRUE,
   curlopts = list()
 )
@@ -222,18 +221,12 @@ Note that there is a hard maximum of 200,000, which is calculated as the
 page through results. Note that we do the paging internally for you, but
 you can manually set the \code{start} parameter}
 
-\item{spellCheck}{(logical) If \code{TRUE} ask GBIF to check your spelling of
-the value passed to the \code{search} parameter. IMPORTANT: This only checks
-the input to the \code{search} parameter, and no others. Default: \code{FALSE}}
-
 \item{skip_validate}{(logical) whether to skip \code{wicket::wkt_validate}
 call or not. passed down to \code{\link[=check_wkt]{check_wkt()}}. Default: \code{TRUE}}
 
 \item{curlopts}{list of named curl options passed on to
 \code{\link[crul]{HttpClient}}. see \code{\link[curl]{curl_options}}
 for curl options}
-
-\item{...}{additional facet parameters}
 }
 \value{
 An object of class \code{gbif_data}, which is a S3 class list, with
@@ -283,7 +276,7 @@ same we just return one for you.
 decimallatitude, and decimallongitude. Set parameter \code{minimal=FALSE} if you want more data.
 
 \strong{Nerds}: You can pass parameters not defined in this function into the call to
-the GBIF API to control things about the call itself using \code{...}. See an example below
+the GBIF API to control things about the call itself using \code{curlopts}. See an example below
 that passes in the \code{verbose} function to get details on the http call.
 
 \strong{Scientific names vs. taxon keys}: In the previous GBIF API and the version of rgbif that
@@ -664,14 +657,6 @@ occ_data(taxonKey=key, hasGeospatialIssue=TRUE, limit=20)
 
 # Search using a query string
 occ_data(search="kingfisher", limit=20)
-## spell check - only works with the `search` parameter
-### spelled correctly - same result as above call
-occ_data(search = "kingfisher", limit=20, spellCheck = TRUE)
-### spelled incorrectly - stops with suggested spelling
-# occ_data(search = "kajsdkla", limit=20, spellCheck = TRUE)
-### spelled incorrectly - stops with many suggested spellings
-###   and number of results for each
-# occ_data(search = "helir", limit=20, spellCheck = TRUE)
 
 # search on repatriated - doesn't work right now
 # occ_data(repatriated = "")
