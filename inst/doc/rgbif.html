@@ -12,7 +12,7 @@
 
 <meta name="author" content="Scott Chamberlain" />
 
-<meta name="date" content="2020-03-09" />
+<meta name="date" content="2020-05-28" />
 
 <title>Introduction to rgbif</title>
 
@@ -302,7 +302,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to rgbif</h1>
 <h4 class="author">Scott Chamberlain</h4>
-<h4 class="date">2020-03-09</h4>
+<h4 class="date">2020-05-28</h4>
 
 
 
@@ -316,7 +316,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>Install from CRAN</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;rgbif&quot;</span>)</span></code></pre></div>
 <p>Or install the development version from GitHub</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;ropensci/rgbif&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>remotes<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;ropensci/rgbif&quot;</span>)</span></code></pre></div>
 <p>Load rgbif</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(<span class="st">&quot;rgbif&quot;</span>)</span></code></pre></div>
 </div>
@@ -378,6 +378,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="search-for-occurrences" class="section level2">
 <h2>Search for occurrences</h2>
+<p>Note: The maximum number of records you can get with <code>occ_search()</code> and <code>occ_data()</code> is 100,000. See <a href="https://www.gbif.org/developer/occurrence" class="uri">https://www.gbif.org/developer/occurrence</a></p>
 <p>By default <code>occ_search()</code> returns a <code>dplyr</code> like output summary in which the data printed expands based on how much data is returned, and the size of your window. You can search by scientific name:</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="kw">occ_search</span>(<span class="dt">scientificName =</span> <span class="st">&quot;Ursus americanus&quot;</span>, <span class="dt">limit =</span> <span class="dv">20</span>)</span></code></pre></div>
 <p>Or to be more precise, you can search for names first, make sure you have the right name, then pass the GBIF key to the <code>occ_search()</code> function:</p>

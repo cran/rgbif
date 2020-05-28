@@ -19,6 +19,8 @@ occ_search(
   geom_size = 40,
   geom_n = 10,
   recordedBy = NULL,
+  recordedByID = NULL,
+  identifiedByID = NULL,
   basisOfRecord = NULL,
   datasetKey = NULL,
   eventDate = NULL,
@@ -109,6 +111,12 @@ would be queried as http://bit.ly/1BzNwDq See also the section \strong{WKT} belo
 See Details.}
 
 \item{recordedBy}{The person who recorded the occurrence.}
+
+\item{recordedByID}{(character) Identifier (e.g. ORCID) for the person who
+recorded the occurrence}
+
+\item{identifiedByID}{(character) Identifier (e.g. ORCID) for the person who
+provided the taxonomic identification of the occurrence.}
 
 \item{basisOfRecord}{Basis of record, as defined in our BasisOfRecord enum here
 \url{http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html}
@@ -220,8 +228,8 @@ locations occur}
 \item{limit}{Number of records to return. Default: 500. Note that the per
 request maximum is 300, but since we set it at 500 for the function, we
 do two requests to get you the 500 records (if there are that many).
-Note that there is a hard maximum of 200,000, which is calculated as the
-\code{limit+start}, so \code{start=199,000} and \code{limit=2000} won't work}
+Note that there is a hard maximum of 100,000, which is calculated as the
+\code{limit+start}, so \code{start=99,000} and \code{limit=2000} won't work}
 
 \item{start}{Record number to start at. Use in combination with limit to
 page through results. Note that we do the paging internally for you, but
@@ -473,6 +481,10 @@ results from \code{\link{occ_count}}. For equivalent outcomes, in this function
 use \code{hasCoordinate=TRUE}, and \code{hasGeospatialIssue=FALSE} to have the
 same outcome using \code{\link{occ_count}} with \code{isGeoreferenced=TRUE}
 }
+\note{
+Maximum number of records you can get with this function is 100,000.
+See https://www.gbif.org/developer/occurrence
+}
 \examples{
 \dontrun{
 # Search by species name, using \code{\link{name_backbone}} first to get key
@@ -541,6 +553,12 @@ occ_search(recordedBy="smith", limit=20)
 
 # Many collector names
 occ_search(recordedBy=c("smith","BJ Stacey"), limit=20)
+
+# recordedByID
+occ_search(recordedByID="https://orcid.org/0000-0003-1691-239X", limit=20)
+
+# identifiedByID
+occ_search(identifiedByID="https://orcid.org/0000-0003-4710-2648", limit=20)
 
 # Pass in curl options for extra fun
 occ_search(taxonKey=2433407, limit=20, return='hier',
