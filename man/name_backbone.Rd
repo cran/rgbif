@@ -2,6 +2,7 @@
 % Please edit documentation in R/name_backbone.r
 \name{name_backbone}
 \alias{name_backbone}
+\alias{name_backbone_verbose}
 \title{Lookup names in the GBIF backbone taxonomy.}
 \usage{
 name_backbone(
@@ -14,7 +15,22 @@ name_backbone(
   family = NULL,
   genus = NULL,
   strict = FALSE,
-  verbose = FALSE,
+  verbose = NULL,
+  start = NULL,
+  limit = 100,
+  curlopts = list()
+)
+
+name_backbone_verbose(
+  name,
+  rank = NULL,
+  kingdom = NULL,
+  phylum = NULL,
+  class = NULL,
+  order = NULL,
+  family = NULL,
+  genus = NULL,
+  strict = FALSE,
   start = NULL,
   limit = 100,
   curlopts = list()
@@ -53,8 +69,7 @@ match against this if no direct match is found for the name alone.
 \item{strict}{(logical) If \code{TRUE} it (fuzzy) matches only the given name,
 but never a taxon in the upper classification (optional)}
 
-\item{verbose}{(logical) If \code{TRUE} show alternative matches considered which
-had been rejected.}
+\item{verbose}{(logical) Defunct. See function \code{name_backbone_verbose()}}
 
 \item{start}{Record number to start at. Default: 0. Use in combination
 with \code{limit} to page through results.}
@@ -66,17 +81,17 @@ with \code{limit} to page through results.}
 for curl options}
 }
 \value{
-A data.frame for a single taxon with many columns (default,
-\code{verbose=FALSE}) or a list of length two, first data.frame for the
-suggested taxon match, and a data.frame with alternative name suggestions
-resulting from fuzzy matching (with \code{verbose=TRUE}).
+For \code{name_backbone}, a data.frame for a single taxon with many
+columns. For \code{name_backbone_verbose} a list of length two (\code{data} and
+\code{alternatives}), first data.frame for the suggested taxon match, and a
+data.frame with alternative name suggestions resulting from fuzzy matching
 }
 \description{
 Lookup names in the GBIF backbone taxonomy.
 }
 \details{
-If you don't get a match, GBIF gives back a data.frame with columns \code{synonym}
-, \code{confidence}, and \code{matchType='NONE'}.
+If you don't get a match, GBIF gives back a data.frame with columns
+\code{synonym}, \code{confidence}, and \code{matchType='NONE'}.
 }
 \examples{
 \dontrun{
@@ -85,11 +100,10 @@ name_backbone(name='Helianthus', rank='genus', kingdom='plants')
 name_backbone(name='Poa', rank='genus', family='Poaceae')
 
 # Verbose - gives back alternatives
-name_backbone(name='Helianthus annuus', kingdom='plants', verbose=TRUE)
-
-# Strictness
-name_backbone(name='Poa', kingdom='plants', verbose=TRUE, strict=FALSE)
-name_backbone(name='Helianthus annuus', kingdom='plants', verbose=TRUE,
+## Strictness
+name_backbone_verbose(name='Poa', kingdom='plants',
+  strict=FALSE)
+name_backbone_verbose(name='Helianthus annuus', kingdom='plants',
   strict=TRUE)
 
 # Non-existent name - returns list of lenght 3 stating no match
@@ -101,5 +115,5 @@ name_backbone(name='Oenante', curlopts = list(verbose=TRUE))
 }
 }
 \references{
-\url{http://www.gbif.org/developer/species#searching}
+\url{https://www.gbif.org/developer/species#searching}
 }

@@ -331,6 +331,7 @@ is_null_or_na <- function(x) {
 # - NA
 # while detecting environments and passing on them
 rgbif_compact <- function(l) Filter(Negate(is_null_or_na), l)
+rc <- rgbif_compact
 
 compact_null <- function(l){
   tmp <- rgbif_compact(l)
@@ -381,7 +382,22 @@ gbif_GET_content <- function(url, args, curlopts = list()) {
 # other helpers --------------------
 cn <- function(x) if (length(x) == 0) NULL else x
 
-gbif_base <- function() 'https://api.gbif.org/v1'
+# gbif_base <- function() 'https://api.gbif.org/v1'
+gbif_allowed_urls <- c(
+  "https://api.gbif.org/v1",
+  "https://api.gbif-uat.org/v1"
+)
+gbif_base <- function() {
+  x <- Sys.getenv("RGBIF_BASE_URL", "")
+  if (identical(x, "")) {
+    x <- gbif_allowed_urls[1]
+  }
+  if (!x %in% gbif_allowed_urls) {
+    stop("the RGBIF_BASE_URL environment variable must be in set:\n",
+      paste0(gbif_allowed_urls, collapse = "  \n"))
+  }
+  return(x)
+}
 
 as_log <- function(x){
   stopifnot(is.logical(x) || is.null(x))
@@ -672,3 +688,16 @@ asl <- function(z) {
 last <- function(x) x[length(x)]
 
 mssg <- function(v, ...) if (v) message(...)
+
+rgbif_ck <- conditionz::ConditionKeeper$new(times = 1, condition = "warning")
+pchk <- function(from, fun, pkg_version = "v3.0.0") {
+  assert(deparse(substitute(from)), "character")
+  assert(pkg_version, "character")
+  param_mssg <- "`%s` param in `%s` function is defunct as of rgbif %s, and is ignored"
+  parms_help <- "\nSee `?rgbif` for more information."
+  once_per <- "\nThis warning will be thrown once per R session."
+  mssg <- c(sprintf(param_mssg, deparse(substitute(from)), fun, pkg_version),
+    parms_help, once_per)
+  if (!is.null(from))
+    rgbif_ck$handle_conditions(warning(mssg))
+}

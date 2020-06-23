@@ -7,7 +7,14 @@
 \alias{as.download.download}
 \title{Import a downloaded file from GBIF.}
 \usage{
-occ_download_import(x = NULL, key = NULL, path = ".", fill = FALSE, ...)
+occ_download_import(
+  x = NULL,
+  key = NULL,
+  path = ".",
+  fill = FALSE,
+  encoding = "UTF-8",
+  ...
+)
 
 as.download(path = ".", key = NULL)
 
@@ -27,6 +34,10 @@ folder matching zip file name}
 \item{fill}{(logical) (default: \code{FALSE}). If \code{TRUE} then in case
 the rows have unequal length, blank fields are implicitly filled.
 passed on to \code{fill} parameter in \link[data.table:fread]{data.table::fread}.}
+
+\item{encoding}{(character) encoding to read in data; passed to
+\code{\link[data.table:fread]{data.table::fread()}}. default: "UTF-8". other allowed options:
+"Latin-1" and "unknown". see \code{?data.table::fread} docs}
 
 \item{...}{parameters passed on to \code{\link[data.table:fread]{data.table::fread()}}}
 }
@@ -81,6 +92,7 @@ occ_download_get(key="0000066-140928181241064", overwrite = TRUE) \%>\%
 \seealso{
 Other downloads: 
 \code{\link{download_predicate_dsl}},
+\code{\link{occ_download_cached}()},
 \code{\link{occ_download_cancel}()},
 \code{\link{occ_download_dataset_activity}()},
 \code{\link{occ_download_datasets}()},
