@@ -77,7 +77,6 @@ install.packages('rgbif')
 
 <a href="https://vimeo.com/127119010"><img src="man/figures/README-screencast.png" width="400"></a>
 
-
 ## Meta
 
 * Please [report any issues or bugs](https://github.com/ropensci/rgbif/issues).
