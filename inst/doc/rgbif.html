@@ -12,7 +12,7 @@
 
 <meta name="author" content="Scott Chamberlain" />
 
-<meta name="date" content="2020-07-22" />
+<meta name="date" content="2020-09-08" />
 
 <title>Introduction to rgbif</title>
 
@@ -318,7 +318,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to rgbif</h1>
 <h4 class="author">Scott Chamberlain</h4>
-<h4 class="date">2020-07-22</h4>
+<h4 class="date">2020-09-08</h4>
 
 
 
@@ -376,7 +376,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>Look up the species Helianthus annuus</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>m &lt;-<span class="st"> </span><span class="kw">name_lookup</span>(<span class="dt">query =</span> <span class="st">&#39;Helianthus annuus&#39;</span>, <span class="dt">rank=</span><span class="st">&quot;species&quot;</span>)</span>
 <span id="cb21-2"><a href="#cb21-2"></a>m<span class="op">$</span>data</span></code></pre></div>
-<p>The function <code>name_usage()</code> works with lots of different name endpoints in GBIF, listed at <a href="http://www.gbif.org/developer/species#nameUsages">http://www.gbif.org/developer/species#nameUsages</a>.</p>
+<p>The function <code>name_usage()</code> works with lots of different name endpoints in GBIF, listed at <a href="https://www.gbif.org/developer/species#nameUsages" class="uri">https://www.gbif.org/developer/species#nameUsages</a></p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">name_usage</span>(<span class="dt">key=</span><span class="dv">3119195</span>, <span class="dt">language=</span><span class="st">&quot;FRENCH&quot;</span>, <span class="dt">data=</span><span class="st">&#39;vernacularNames&#39;</span>)</span></code></pre></div>
 <p>The function <code>name_backbone()</code> is used to search against the GBIF backbone taxonomy</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">name_backbone</span>(<span class="dt">name=</span><span class="st">&#39;Helianthus&#39;</span>, <span class="dt">rank=</span><span class="st">&#39;genus&#39;</span>, <span class="dt">kingdom=</span><span class="st">&#39;plants&#39;</span>)</span></code></pre></div>

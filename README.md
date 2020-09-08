@@ -8,7 +8,7 @@
 [![cran checks](https://cranchecks.info/badges/worst/rgbif)](https://cranchecks.info/pkgs/rgbif)
 [![R-CMD-check](https://github.com/ropensci/rgbif/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/rgbif/actions/)
 [![codecov.io](https://codecov.io/github/ropensci/rgbif/coverage.svg?branch=master)](https://codecov.io/github/ropensci/rgbif?branch=master)
-[![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/rgbif)](https://github.com/metacran/cranlogs.app)
+[![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/rgbif)](https://github.com/r-hub/cranlogs.app)
 [![cran version](https://www.r-pkg.org/badges/version/rgbif)](https://cran.r-project.org/package=rgbif)
 [![DOI](https://zenodo.org/badge/2273724.svg)](https://zenodo.org/badge/latestdoi/2273724)
 
@@ -44,6 +44,8 @@ Or, install development version
 ```r
 install.packages("remotes")
 remotes::install_github("ropensci/rgbif")
+# OR
+install.packages("rgbif", repos="https://dev.ropensci.org")
 ```
 
 
@@ -77,13 +79,13 @@ install.packages('rgbif')
 
 <a href="https://vimeo.com/127119010"><img src="man/figures/README-screencast.png" width="400"></a>
 
+
 ## Meta
 
 * Please [report any issues or bugs](https://github.com/ropensci/rgbif/issues).
 * License: MIT
 * Get citation information for `rgbif` in R doing `citation(package = 'rgbif')`
-* Please note that this project is released with a [Contributor Code of Conduct][coc].
-By participating in this project you agree to abide by its terms.
+* Please note that this package is released with a [Contributor Code of Conduct](https://ropensci.org/code-of-conduct/). By contributing to this project, you agree to abide by its terms.
 
 - - -
 
@@ -98,4 +100,3 @@ This package is part of [spocc](https://github.com/ropensci/spocc), along with s
 [GBIF]: https://www.gbif.org/
 [pygbif]: https://github.com/sckott/pygbif
 [gbifrb]: https://github.com/sckott/gbifrb
-[coc]: https://github.com/ropensci/rgbif/blob/master/.github/CODE_OF_CONDUCT.md

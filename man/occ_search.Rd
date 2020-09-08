@@ -77,7 +77,7 @@ taxa are included in the search.}
 
 \item{country}{The 2-letter country code (as per ISO-3166-1) of the country in
 which the occurrence was recorded. See here
-\url{http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}}
+https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}
 
 \item{publishingCountry}{The 2-letter country code (as per ISO-3166-1) of the
 country in which the occurrence was recorded.}
@@ -88,7 +88,7 @@ all records (\code{FALSE}, default).}
 \item{typeStatus}{Type status of the specimen. One of many options. See \code{?typestatus}}
 
 \item{recordNumber}{Number recorded by collector of the data, different from GBIF record
-number. See \url{http://rs.tdwg.org/dwc/terms/#recordNumber} for more info}
+number. See http://rs.tdwg.org/dwc/terms/#recordNumber for more info}
 
 \item{lastInterpreted}{Date the record was last modified in GBIF, in ISO 8601 format:
 yyyy, yyyy-MM, yyyy-MM-dd, or MM-dd.  Supports range queries, smaller,larger (e.g.,
@@ -119,7 +119,7 @@ recorded the occurrence}
 provided the taxonomic identification of the occurrence.}
 
 \item{basisOfRecord}{Basis of record, as defined in our BasisOfRecord enum here
-\url{http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html}
+https://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html
 Acceptable values are:
 \itemize{
 \item FOSSIL_SPECIMEN An occurrence record describing a fossilized specimen.
@@ -402,7 +402,7 @@ the vector - thus range queries have to differ. The following parameters support
 }
 
 \strong{Issue}: The options for the issue parameter (from
-http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/OccurrenceIssue.html):
+https://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/OccurrenceIssue.html):
 \itemize{
 \item BASIS_OF_RECORD_INVALID The given basis of record is impossible to interpret or seriously
 different from the recommended vocabulary.
@@ -899,7 +899,7 @@ occ_search(scientificName = 'Ursus americanus', limit = 0)$meta
 }
 }
 \references{
-\url{http://www.gbif.org/developer/occurrence#search}
+https://www.gbif.org/developer/occurrence#search
 }
 \seealso{
 \code{\link[=downloads]{downloads()}}, \code{\link[=occ_data]{occ_data()}}, \code{\link[=occ_facet]{occ_facet()}}

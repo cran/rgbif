@@ -71,7 +71,7 @@ taxa are included in the search.}
 
 \item{country}{The 2-letter country code (as per ISO-3166-1) of the country in
 which the occurrence was recorded. See here
-\url{http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}}
+https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2}
 
 \item{publishingCountry}{The 2-letter country code (as per ISO-3166-1) of the
 country in which the occurrence was recorded.}
@@ -82,7 +82,7 @@ all records (\code{FALSE}, default).}
 \item{typeStatus}{Type status of the specimen. One of many options. See \code{?typestatus}}
 
 \item{recordNumber}{Number recorded by collector of the data, different from GBIF record
-number. See \url{http://rs.tdwg.org/dwc/terms/#recordNumber} for more info}
+number. See http://rs.tdwg.org/dwc/terms/#recordNumber for more info}
 
 \item{lastInterpreted}{Date the record was last modified in GBIF, in ISO 8601 format:
 yyyy, yyyy-MM, yyyy-MM-dd, or MM-dd.  Supports range queries, smaller,larger (e.g.,
@@ -113,7 +113,7 @@ recorded the occurrence}
 provided the taxonomic identification of the occurrence.}
 
 \item{basisOfRecord}{Basis of record, as defined in our BasisOfRecord enum here
-\url{http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html}
+https://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html
 Acceptable values are:
 \itemize{
 \item FOSSIL_SPECIMEN An occurrence record describing a fossilized specimen.
@@ -364,7 +364,7 @@ the vector - thus range queries have to differ. The following parameters support
 }
 
 \strong{Issue}: The options for the issue parameter (from
-http://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/OccurrenceIssue.html):
+https://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/OccurrenceIssue.html):
 \itemize{
 \item BASIS_OF_RECORD_INVALID The given basis of record is impossible to interpret or seriously
 different from the recommended vocabulary.
@@ -441,11 +441,29 @@ use \code{hasCoordinate=TRUE}, and \code{hasGeospatialIssue=FALSE} to have the
 same outcome using \code{\link{occ_count}} with \code{isGeoreferenced=TRUE}
 
 This does nearly the same thing as \code{\link[=occ_search]{occ_search()}}, but
-is a bit simplified for speed, and is for the most common use case where
+is simplified for speed, and is for the most common use case where
 user just wants occurrence data, and not other information like taxon
 hierarchies and media (e.g., images). Alot of time in \code{\link[=occ_search]{occ_search()}}
 is used parsing data to be more useable downstream. We do less of that
 in this function.
+
+There are a number of data fields GBIF returns that we drop to speed up
+processing time within R. These fields take extra time to process
+because they are deeply nested and so take extra time to check if
+they are empty or not, and if not, figure out how to parse them
+into a data.frame. The fields are:
+\itemize{
+\item \code{gadm}
+\item \code{media}
+\item \code{facts}
+\item \code{relations}
+\item \code{extensions}
+\item \code{identifiers}
+\item \code{recordedByIDs}
+\item \code{identifiedByIDs}
+}
+
+To get these fields use \code{\link[=occ_search]{occ_search()}} instead.
 }
 \note{
 Maximum number of records you can get with this function is 100,000.
@@ -820,7 +838,7 @@ res \%>\% occ_issues(-cudc, mutate = "split_expand")
 }
 }
 \references{
-\url{http://www.gbif.org/developer/occurrence#search}
+https://www.gbif.org/developer/occurrence#search
 }
 \seealso{
 \code{\link[=downloads]{downloads()}}, \code{\link[=occ_search]{occ_search()}}
