@@ -205,11 +205,12 @@ convert2df <- function(x){
   }
 }
 
-rbind_rows <- function(x) {
-  tmp <- unname(do.call("rbind.data.frame", x))
-  tmp <- data.frame(.id = row.names(tmp), V1 = tmp, stringsAsFactors = FALSE)
+rbind_rows <- function(x, by) {
+  tmp <- data.frame(names(x), count = unname(unlist(x)),
+    stringsAsFactors = FALSE)
   row.names(tmp) <- NULL
-  tmp
+  names(tmp)[1] <- by
+  return(tmp)
 }
 
 #' Custom ggplot2 theme
@@ -696,3 +697,5 @@ fail_with <- function(default = NULL, f, quiet = FALSE) {
   f <- match.fun(f)
   function(...) tryDefault(f(...), default, quiet = quiet)
 }
+
+cat_n <- function(..., sep = "") cat(..., "\n", sep = sep)

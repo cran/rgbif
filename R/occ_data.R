@@ -6,7 +6,8 @@
 #' @template occ
 #' @template occ_data_egs
 #' @seealso [downloads()], [occ_search()]
-#' @details This does nearly the same thing as [occ_search()], but
+#' @section occ_data vs. occ_search:
+#' This does nearly the same thing as [occ_search()], but
 #' is simplified for speed, and is for the most common use case where
 #' user just wants occurrence data, and not other information like taxon
 #' hierarchies and media (e.g., images). Alot of time in [occ_search()]
@@ -76,7 +77,7 @@ occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
     args <- rgbif_compact(
       list(hasCoordinate = hasCoordinate,
         lastInterpreted = lastInterpreted,
-        basisOfRecord = basisOfRecord, decimalLatitude = decimalLatitude,
+        decimalLatitude = decimalLatitude,
         decimalLongitude = decimalLongitude,
         hasGeospatialIssue = hasGeospatialIssue,
         q = search, repatriated = repatriated, elevation = elevation,
@@ -99,7 +100,8 @@ occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
       convmany(classKey), convmany(orderKey), convmany(familyKey),
       convmany(genusKey), convmany(establishmentMeans), convmany(protocol),
       convmany(license), convmany(organismId), convmany(publishingOrg),
-      convmany(stateProvince), convmany(waterBody), convmany(locality)
+      convmany(stateProvince), convmany(waterBody), convmany(locality),
+      convmany(basisOfRecord)
     )
     argscoll <<- args
 
@@ -164,7 +166,7 @@ occ_data <- function(taxonKey=NULL, scientificName=NULL, country=NULL,
     establishmentMeans=establishmentMeans,protocol=protocol, license=license,
     organismId=organismId,publishingOrg=publishingOrg,
     stateProvince=stateProvince,waterBody=waterBody, locality=locality,
-    limit=limit
+    limit=limit, basisOfRecord=basisOfRecord
   )
   if (!any(sapply(params, length) > 0)) {
     stop(sprintf("At least one of the parmaters must have a value:\n%s",
