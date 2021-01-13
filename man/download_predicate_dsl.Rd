@@ -26,7 +26,7 @@ pred_lt(key, value)
 
 pred_lte(key, value)
 
-pred_not(key, value)
+pred_not(...)
 
 pred_like(key, value)
 
@@ -68,7 +68,6 @@ The following functions take one key and one value:
 \item \code{pred_lte}: lessThanOrEquals
 \item \code{pred_gt}: greaterThan
 \item \code{pred_gte}: greaterThanOrEquals
-\item \code{pred_not}: not
 \item \code{pred_like}: like
 }
 
@@ -89,6 +88,12 @@ separating them by either "and" or "or":
 \itemize{
 \item \code{pred_and}: and
 \item \code{pred_or}: or
+}
+
+The not predicate accepts one predicate; that is, this negates whatever
+predicate is passed in, e.g., not the taxonKey of 12345:
+\itemize{
+\item \code{pred_not}: not
 }
 
 The following function is special in that it accepts a single key
@@ -185,7 +190,7 @@ pred_or(pred_lte("year", 1989), pred("year", 2000))
 pred_and(pred_lte("year", 1989), pred("year", 2000))
 pred_in("taxonKey", c(2977832, 2977901, 2977966, 2977835))
 pred_in("basisOfRecord", c("MACHINE_OBSERVATION", "HUMAN_OBSERVATION"))
-pred_not("catalogNumber", "cat1")
+pred_not(pred("taxonKey", 729))
 pred_like("catalogNumber", "PAPS5-560\%")
 pred_notnull("issue")
 pred("basisOfRecord", "LITERATURE")
