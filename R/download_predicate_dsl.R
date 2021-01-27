@@ -91,7 +91,9 @@
 #'
 #' Acceptable arguments to the `key` parameter are (with the version of
 #' the key in parens that must be sent if you pass the query via the `body`
-#' parameter; see below for examples):
+#' parameter; see below for examples). Open an issue in the GitHub
+#' repository for this package if you know of a key that should
+#' be supported that is not yet.
 #'
 #' - taxonKey (TAXON_KEY)
 #' - scientificName (SCIENTIFIC_NAME)
@@ -120,6 +122,7 @@
 #' - mediatype (MEDIA_TYPE)
 #' - recordedBy (RECORDED_BY)
 #' - establishmentMeans (ESTABLISHMENT_MEANS)
+#' - coordinateUncertaintyInMeters (COORDINATE_UNCERTAINTY_IN_METERS)
 #'
 #' @references Download predicates docs:
 #' <https://www.gbif.org/developer/occurrence#predicates>
@@ -202,7 +205,14 @@ print.occ_predicate <- function(x, ...) {
 print.occ_predicate_list <- function(x, ...) {
   cat("<<gbif download - predicate list>>", sep = "\n")
   cat(paste0("  type: ", attr(x, "type")), sep = "\n")
-  for (i in x) cat("  ", pred_cat(i), "\n", sep = "")
+  for (i in x) {
+    if (attr(i, "type") %||% "" == "not") {
+      cat("  > type: not", "\n", sep = "")
+      cat("    ", pred_cat(i[[1]]), "\n", sep = "")
+    } else {
+      cat("  ", pred_cat(i), "\n", sep = "")
+    }
+  }
 }
 
 # helpers
@@ -231,7 +241,10 @@ preds_factory <- function(type) {
     if (!type %in% c("or", "in", "and"))
       stop("'type' must be one of: or, in", call. = FALSE)
     if (length(pp) == 0) stop("nothing passed`", call. = FALSE)
-    if (!all(vapply(pp, class, "") == "occ_predicate"))
+    if (!length(pp) > 1) {
+      stop("must pass more than 1 predicate to pred_or/pred_and")
+    }
+    if (!all(vapply(pp, class, "") %in% c("occ_predicate", "occ_predicate_list")))
       stop("1 or more inputs is not of class 'occ_predicate'; see docs")
     structure(pp, class = "occ_predicate_list", type = unbox(type))
   }
@@ -257,16 +270,19 @@ key_lkup <- list(taxonKey='TAXON_KEY', scientificName='SCIENTIFIC_NAME',
     decimalLongitude='DECIMAL_LONGITUDE', elevation='ELEVATION', depth='DEPTH',
     institutionCode='INSTITUTION_CODE', collectionCode='COLLECTION_CODE',
     issue='ISSUE', mediatype='MEDIA_TYPE', recordedBy='RECORDED_BY',
-    establishmentMeans='ESTABLISHMENT_MEANS')
+    establishmentMeans='ESTABLISHMENT_MEANS',
+    coordinateUncertaintyInMeters='COORDINATE_UNCERTAINTY_IN_METERS')
 
 parse_pred <- function(key, value, type = "and") {
   assert(key, "character")
   assert(type, "character")
 
+  ogkey <- key
   key <- key_lkup[[key]]
   if (is.null(key))
-    stop("'key' not in acceptable set of keys; see ?occ_download",
-      call.=FALSE)
+    stop(
+      sprintf("'%s' not in acceptable set of keys; see ?download_predicate_dsl",
+        ogkey), call.=FALSE)
 
   if (!any(operators_regex %in% type))
     stop("'type' not in acceptable set of types; see param def. 'type'",
@@ -297,11 +313,10 @@ pred_cat <- function(x) {
     cat("type: or", sep = "\n")
     for (i in seq_along(x$predicates)) {
       z <- x$predicates[[i]]
-      cat(sprintf("  > type: %s, key: %s, value(s): %s",
-        z$type, z$key, z$value), sep = "\n")
+      cat(sprintf_key_val(z, "  >"), sep = "\n")
     }
   } else if ("parameter" %in% names(x)) {
-    sprintf("> type: %s, parameter: %s", x$type, x$parameter)
+    sprintf_not_null(x, ">")
   } else {
     gg <- if ("geometry" %in% names(x)) {
       x$geometry
@@ -309,12 +324,15 @@ pred_cat <- function(x) {
       zz <- x$value %||% x$values
       if (!is.null(zz)) paste(zz, collapse = ",") else zz
     }
-    sprintf(
-      "> type: %s, key: %s, value(s): %s",
-      x$type,
-      if ("geometry" %in% names(x)) "geometry" else x$key,
-      sub_str(gg, 60)
+    sprintf_key_val(
+      list(
+        type = x$type,
+        key = if ("geometry" %in% names(x)) "geometry" else x$key,
+        value = sub_str(gg, 60)
+      ),
+      ">"
     )
+
   }
 }
 sub_str <- function(str, max = 100) {
