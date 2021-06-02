@@ -40,6 +40,16 @@ test_that("pred", {
   ccf <- pred("hasCoordinate", FALSE)
   expect_equal(unclass(cct$value), "true")
   expect_equal(unclass(ccf$value), "false")
+
+  # stateProvince works
+  dsp <- pred("stateProvince", "Texas")
+  expect_equal(unclass(dsp$value), "Texas")
+  expect_equal(unclass(dsp$key), "STATE_PROVINCE")
+
+  # occurrenceStatus works
+  ocs <- pred("occurrenceStatus", "present")
+  expect_equal(unclass(ocs$value), "present")
+  expect_equal(unclass(ocs$key), "OCCURRENCE_STATUS")
 })
 test_that("pred fails well", {
   expect_error(pred(), "argument \"key\" is missing")
