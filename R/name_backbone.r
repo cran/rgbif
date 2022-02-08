@@ -27,12 +27,15 @@
 #' (optional)
 #' @param strict (logical) If `TRUE` it (fuzzy) matches only the given name,
 #' but never a taxon in the upper classification (optional)
-#' @param verbose (logical) Defunct. See function `name_backbone_verbose()`
+#' @param verbose (logical) should the function give back more (less reliable) 
+#' results. See function `name_backbone_verbose()`
 #'
 #' @return For `name_backbone`, a data.frame for a single taxon with many
-#' columns. For `name_backbone_verbose` a list of length two (`data` and
-#' `alternatives`), first data.frame for the suggested taxon match, and a
-#' data.frame with alternative name suggestions resulting from fuzzy matching
+#' columns. For `name_backbone_verbose`, a larger number of results in a 
+#' data.frame the results of resulting from fuzzy matching. 
+#' You will also get back your input name, rank, kingdom, phylum ect. as 
+#' columns input_name, input_rank, input_kingdom ect. so you can check the 
+#' results. 
 #'
 #' @details
 #' If you don't get a match, GBIF gives back a data.frame with columns
@@ -60,26 +63,42 @@
 #' name_backbone(name='Oenante', curlopts = list(verbose=TRUE))
 #' }
 name_backbone <- function(name, rank=NULL, kingdom=NULL, phylum=NULL,
-  class=NULL, order=NULL, family=NULL, genus=NULL, strict=FALSE, verbose=NULL,
+  class=NULL, order=NULL, family=NULL, genus=NULL, strict=FALSE, verbose=FALSE,
   start=NULL, limit=100, curlopts = list()) {
 
-  pchk(verbose, "name_backbone")
+  # pchk(verbose, "name_backbone")
   url <- paste0(gbif_base(), '/species/match')
   args <- rgbif_compact(
     list(name=name, rank=rank, kingdom=kingdom, phylum=phylum,
          class=class, order=order, family=family, genus=genus,
-         strict=as_log(strict), offset=start, limit=limit))
+         strict=as_log(strict), verbose = verbose, offset=start, limit=limit))
   tt <- gbif_GET(url, args, FALSE, curlopts)
-  out <- tibble::as_tibble(tt[!names(tt) %in% c("alternatives", "note")])
+    input_args_clean <- args[!names(args) %in% c("strict","verbose","start","limit","curlopts")]
+    input_args_clean <- stats::setNames(input_args_clean,paste0("verbatim_",names(input_args_clean)))
+    tt <- c(tt,input_args_clean)
+  if(verbose) {
+    alternatives <- tt[["alternatives"]]
+    alternatives <- lapply(alternatives,function(x) c(x,input_args_clean))
+    alternatives <- bind_rows(lapply(alternatives,tibble::as_tibble))
+    accepted <- tibble::as_tibble(tt)
+    out <- bind_rows(list(accepted,alternatives))
+    out <- out[!colnames(out) %in% c("alternatives", "note")]
+  } else {
+    out <- tibble::as_tibble(tt[!names(tt) %in% c("alternatives", "note")])
+  }
+  col_idx <- grep("verbatim_", names(out))
+  ordering <- c((1:ncol(out))[-col_idx],col_idx)
+  out <- unique(out[, ordering])
   structure(out, args = args, note = tt$note, type = "single")
 }
+  
 
 #' @export
 #' @rdname name_backbone
 name_backbone_verbose <- function(name, rank=NULL, kingdom=NULL, phylum=NULL,
-  class=NULL, order=NULL, family=NULL, genus=NULL, strict=FALSE,
-  start=NULL, limit=100, curlopts = list()) {
-
+                                  class=NULL, order=NULL, family=NULL, genus=NULL, strict=FALSE,
+                                  start=NULL, limit=100, curlopts = list()) {
+  
   url <- paste0(gbif_base(), '/species/match')
   args <- rgbif_compact(
     list(name=name, rank=rank, kingdom=kingdom, phylum=phylum,
@@ -97,3 +116,5 @@ name_backbone_verbose <- function(name, rank=NULL, kingdom=NULL, phylum=NULL,
   out <- list(data = dat, alternatives = alt)
   structure(out, args = args, note = tt$note, type = "single")
 }
+
+
