@@ -119,6 +119,7 @@ name_backbone_checklist <- function(
     matched_names <- bind_rows(list(matched_names,alternatives))
   }
   # post processing matched names
+  matched_names$verbatim_index <- as.numeric(matched_names$verbatim_index)
   matched_names <- matched_names[order(matched_names$verbatim_index),]
   matched_names <- matched_names[!names(matched_names) %in% c("alternatives", "note")]
   col_idx <- grep("verbatim_", names(matched_names))
@@ -186,6 +187,7 @@ make_async_urls <- function(x,verbose=FALSE) {
   queries <- lapply(x,function(x) paste0(names(x),"=",x,collapse="&"))
   urls <- paste0(url_base,"?",queries)
   if(verbose) urls <- paste0(urls,"&verbose=true")
+  urls <- sapply(urls,utils::URLencode)
   urls
 }
 

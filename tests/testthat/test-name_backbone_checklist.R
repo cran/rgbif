@@ -13,7 +13,9 @@ test_that("name_backbone_checklist good data", {
       "Ceylonosticta alwisi (Priyadarshana & Wijewardhane, 2016)", # newly discovered insect 
       "Puma concuolor (Linnaeus, 1771)", # a mis-spelled big cat
       "Fake species (John Waller 2021)", # a fake species
-      "Calopteryx" # Just a Genus   
+      "Calopteryx", # Just a Genus,
+      "Hymenochaete fuliginosa (Fr.) Lév.", # name with special character
+      "Aleurodiscus amorphus (Pers.) J. Schröt." # name with special character
     ), description = c(
       "missing",
       "a plant",
@@ -22,7 +24,9 @@ test_that("name_backbone_checklist good data", {
       "newly discovered insect",
       "a mis-spelled big cat",
       "a fake species",
-      "just a GENUS"
+      "just a GENUS",
+      "special character",
+      "special character"
     ), 
     kingdom = c(
       "missing",
@@ -32,7 +36,9 @@ test_that("name_backbone_checklist good data", {
       "Animalia",
       "Animalia",
       "Johnlia",
-      "Animalia"
+      "Animalia",
+      "Fungi",
+      "Fungi"
     ), Canonical_Name = c(
       "not known",
       "Cirsium arvense", 
@@ -41,7 +47,9 @@ test_that("name_backbone_checklist good data", {
       "Ceylonosticta alwisi", 
       "Puma concuolor", 
       "Fake species",
-      "Calopteryx"
+      "Calopteryx",
+      "Hymenochaete fuliginosa",
+      "Aleurodiscus amorphus"
     ), scientificName = c(
       NA,
       "Cirsium arvense (L.) Scop.", # a plant
@@ -50,7 +58,9 @@ test_that("name_backbone_checklist good data", {
       "Ceylonosticta alwisi (Priyadarshana & Wijewardhane, 2016)", # newly discovered insect 
       "Puma concuolor (Linnaeus, 1771)", # a mis-spelled big cat
       "Fake species (John Waller 2021)", # a fake species
-      "Calopteryx" # Just a Genus   
+      "Calopteryx", # Just a Genus   
+      "Hymenochaete fuliginosa (Fr.) Lév.", # name with special character
+      "Aleurodiscus amorphus (Pers.) J. Schröt." # name with special character
     ))
 
   # vcr does not seem to work with async requests  
@@ -76,14 +86,18 @@ test_that("name_backbone_checklist good data", {
   expect_is(tt, "data.frame")
   expect_is(tt$usageKey, "integer")
   expect_is(tt$verbatim_name, "character")
-  expect_equal(nrow(tt), 8)
+  expect_equal(nrow(tt), 10)
   expect_true(all(tt$status == "ACCEPTED" | is.na(tt$status)))
+  expect_true(is.numeric(tt$verbatim_index))
+  expect_true(!is.unsorted(tt$verbatim_index))
   
   expect_is(vv, "tbl")
   expect_is(vv, "tbl_df")
   expect_is(vv, "data.frame")
   expect_is(vv$usageKey, "integer")
   expect_true(nrow(vv) > nrow(tt))
+  expect_true(is.numeric(vv$verbatim_index))
+  expect_true(!is.unsorted(vv$verbatim_index))
   
   # vector
   expect_is(ttt, "tbl")
@@ -91,14 +105,18 @@ test_that("name_backbone_checklist good data", {
   expect_is(ttt, "data.frame")
   expect_is(ttt$usageKey, "integer")
   expect_is(ttt$verbatim_name, "character")
-  expect_equal(nrow(ttt), 8)
+  expect_equal(nrow(ttt), 10)
   expect_true(all(ttt$status == "ACCEPTED" | is.na(ttt$status)))
+  expect_true(is.numeric(ttt$verbatim_index))
+  expect_true(!is.unsorted(ttt$verbatim_index))
   
   expect_is(vvv, "tbl")
   expect_is(vvv, "tbl_df")
   expect_is(vvv, "data.frame")
   expect_is(vvv$usageKey, "integer")
   expect_true(nrow(vvv) > nrow(ttt))
+  expect_true(is.numeric(vvv$verbatim_index))
+  expect_true(!is.unsorted(vvv$verbatim_index))
   
   # one column data.frame
   expect_is(tttt, "tbl")
@@ -106,9 +124,11 @@ test_that("name_backbone_checklist good data", {
   expect_is(tttt, "data.frame")
   expect_is(tttt$usageKey, "integer")
   expect_is(tttt$verbatim_name, "character")
-  expect_equal(nrow(tttt), 8)
+  expect_equal(nrow(tttt), 10)
   expect_true(all(tttt$status == "ACCEPTED" | is.na(tttt$status)))
-  
+  expect_true(is.numeric(tttt$verbatim_index))
+  expect_true(!is.unsorted(tttt$verbatim_index))
+
   expect_is(vvvv, "tbl")
   expect_is(vvvv, "tbl_df")
   expect_is(vvvv, "data.frame")
@@ -121,14 +141,18 @@ test_that("name_backbone_checklist good data", {
   expect_is(ttttt, "data.frame")
   expect_is(ttttt$usageKey, "integer")
   expect_is(ttttt$verbatim_name, "character")
-  expect_equal(nrow(ttttt), 8)
+  expect_equal(nrow(ttttt), 10)
   expect_true(all(ttttt$status == "ACCEPTED" | is.na(ttttt$status)))
+  expect_true(is.numeric(ttttt$verbatim_index))
+  expect_true(!is.unsorted(ttttt$verbatim_index))
   
   expect_is(vvvvv, "tbl")
   expect_is(vvvvv, "tbl_df")
   expect_is(vvvvv, "data.frame")
   expect_is(vvvvv$usageKey, "integer")
   expect_true(nrow(vvvvv) > nrow(ttttt))
+  expect_true(is.numeric(vvvvv$verbatim_index))
+  expect_true(!is.unsorted(vvvvv$verbatim_index))
   
   # aliased name multiple columns
   expect_is(tttttt, "tbl")
@@ -136,14 +160,19 @@ test_that("name_backbone_checklist good data", {
   expect_is(tttttt, "data.frame")
   expect_is(tttttt$usageKey, "integer")
   expect_is(tttttt$verbatim_name, "character")
-  expect_equal(nrow(tttttt), 8)
+  expect_equal(nrow(tttttt), 10)
   expect_true(all(tttttt$status == "ACCEPTED" | is.na(tttttt$status)))
+  expect_true(is.numeric(tttttt$verbatim_index))
+  expect_true(!is.unsorted(tttttt$verbatim_index))
   
   expect_is(vvvvvv, "tbl")
   expect_is(vvvvvv, "tbl_df")
   expect_is(vvvvvv, "data.frame")
   expect_is(vvvvvv$usageKey, "integer")
   expect_true(nrow(vvvvvv) > nrow(tttttt))
+  expect_true(is.numeric(vvvvvv$verbatim_index))
+  expect_true(!is.unsorted(vvvvvv$verbatim_index))
+  
   })
   
 test_that("name_backbone_checklist bad or weird data", {
