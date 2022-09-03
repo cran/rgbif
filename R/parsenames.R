@@ -23,6 +23,7 @@
 #' #          'Vanessa atalanta (Linnaeus, 1758)'), curlopts=list(verbose=TRUE))
 #' }
 parsenames <- function(scientificname, curlopts = list()) {
+  .Deprecated(msg="rgbif::parsenames() is deprecated since rgbif 3.7.3, use rgbif::name_parse() instead.")
   url <- paste0(gbif_base(), "/parser/name")
   cli <- crul::HttpClient$new(url = url, headers = c(
     rgbif_ual,

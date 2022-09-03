@@ -8,7 +8,7 @@ Description: A programmatic interface to the Web Service methods
     retrieving information on data providers, getting species occurrence
     records, getting counts of occurrence records, and using the GBIF
     tile map service to make rasters summarizing huge amounts of data.
-Version: 3.7.2
+Version: 3.7.3
 License: MIT + file LICENSE
 Authors@R: c(
     person("Scott", "Chamberlain", role = "aut", comment = c(ORCID="0000-0003-1444-9135")),
@@ -39,7 +39,7 @@ X-schema.org-keywords: GBIF, specimens, API, web-services, occurrences,
         species, taxonomy
 X-schema.org-isPartOf: https://ropensci.org
 NeedsCompilation: no
-Packaged: 2022-04-11 12:38:20 UTC; ftw712
+Packaged: 2022-09-03 18:26:18 UTC; ftw712
 Author: Scott Chamberlain [aut] (<https://orcid.org/0000-0003-1444-9135>),
   Damiano Oldoni [aut] (<https://orcid.org/0000-0003-3445-7562>),
   Vijay Barve [ctb] (<https://orcid.org/0000-0002-4852-2567>),
@@ -51,4 +51,4 @@ Author: Scott Chamberlain [aut] (<https://orcid.org/0000-0003-1444-9135>),
   John Waller [aut, cre] (<https://orcid.org/0000-0002-7302-5976>)
 Maintainer: John Waller <jwaller@gbif.org>
 Repository: CRAN
-Date/Publication: 2022-04-11 13:40:02 UTC
+Date/Publication: 2022-09-03 19:10:02 UTC

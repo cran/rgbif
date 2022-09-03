@@ -32,7 +32,9 @@ gbifparser <- function(input, fields= "minimal") {
 
     # issues
     x[names(x) %in% "issues"] <- collapse_issues(x)
-
+    # networkKeys
+    x[names(x) %in% "networkKeys"] <- sapply(x[names(x) %in% "networkKeys"], function(x) paste(unlist(x),collapse=","))
+    
     # media
     if ("media" %in% names(x)) {
       media <- x[names(x) %in% "media"]
@@ -65,7 +67,7 @@ gbifparser <- function(input, fields= "minimal") {
     if (any(fields == "minimal")) {
       if (all(c("decimalLatitude","decimalLongitude") %in% names(x))) {
         x <-
-          x[c("key", "scientificName", "decimalLatitude",
+          x[c("key","datasetKey", "scientificName", "decimalLatitude",
             "decimalLongitude", "issues")]
       } else {
         x <- data.frame(x["key"], x["scientificName"],
@@ -739,6 +741,10 @@ check_inputs <- function(x) {
 }
 
 is_download_key <- function(x) grepl("^[0-9]{7}-[0-9]{15}$",x)
+
+is_uuid <- function(x) grepl("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",x)
+
+is_empty <- function(x) length(x) == 0
 
 bind_rows <- function(x) tibble::as_tibble(data.table::rbindlist(x,fill=TRUE))
 
