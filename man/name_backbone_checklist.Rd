@@ -9,7 +9,8 @@ name_backbone_checklist(name_data = NULL, verbose = FALSE, curlopts = list())
 \arguments{
 \item{name_data}{(data.frame or vector) see details.}
 
-\item{verbose}{(logical) should the matching return non-exact matches}
+\item{verbose}{(logical) If true it shows alternative matches which were
+considered but then rejected}
 
 \item{curlopts}{list of named curl options passed on to
 \code{\link[crul]{HttpClient}}. see \code{curl::curl_options}
@@ -60,11 +61,13 @@ This function can also be used with a character vector of names. In that case
 no column names are needed of course.
 
 This function is very similar to the GBIF species-lookup tool.
-\href{https://www.gbif.org/tools/species-lookup}{https://www.gbif.org/tools/species-lookup}
+\href{https://www.gbif.org/tools/species-lookup}{https://www.gbif.org/tools/species-lookup}.
 
 If you have 1000s of names to match, it can take some minutes to get back all
 of the matches. I have tested it with 60K names. Scientific names with author details
 usually get better matches.
+
+See also article \href{https://docs.ropensci.org/rgbif/articles/taxonomic_names.html}{Working With Taxonomic Names}.
 }
 \examples{
 \dontrun{
