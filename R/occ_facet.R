@@ -8,7 +8,7 @@
 #' variable, e.g., `country.facetLimit`
 #' @template occ
 #' @seealso [occ_search()] also has faceting ability, but
-#' can include occurrence data in addition to facets
+#' can include occurrence data in addition to facets.
 #' @details All fields can be faceted on except for last "lastInterpreted",
 #' "eventDate", and "geometry"
 #'
@@ -43,6 +43,7 @@
 #'   curlopts = list(verbose = TRUE))
 #' }
 occ_facet <- function(facet, facetMincount = NULL, curlopts = list(), ...) {
+  .Deprecated(msg="occ_facet() is deprecated since rgbif 3.7.6. Use occ_count(facet='x') instead.")
   args <- rgbif_compact(list(facetMincount = facetMincount, limit = 0))
   args <- c(args, collargs("facet"), yank_args(...))
   tt <- gbif_GET(paste0(gbif_base(), '/occurrence/search'), args,
@@ -54,31 +55,3 @@ occ_facet <- function(facet, facetMincount = NULL, curlopts = list(), ...) {
   }), vapply(tt$facets, function(x) to_camel(x$field), ""))
 }
 
-collargs <- function(x){
-  outlist <- list()
-  for (i in seq_along(x)) {
-    outlist[[i]] <- makemultiargs(x[[i]])
-  }
-  as.list(unlist(rgbif_compact(outlist)))
-}
-
-makemultiargs <- function(x){
-  value <- get(x, envir = parent.frame(n = 2))
-  if ( length(value) == 0 ) {
-    NULL
-  } else {
-    if ( any(sapply(value, is.na)) ) {
-      NULL
-    } else {
-      if ( !is.character(value) ) {
-        value <- as.character(value)
-      }
-      names(value) <- rep(x, length(value))
-      value
-    }
-  }
-}
-
-to_camel <- function(x) {
-  gsub("(_)([a-z])", "\\U\\2", tolower(x), perl = TRUE)
-}

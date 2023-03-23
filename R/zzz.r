@@ -500,6 +500,11 @@ convmany <- function(x) {
   return(x)
 }
 
+convmany_rename <- function(x,y) { 
+  if (is.null(x)) return(x) 
+  stats::setNames(convmany(x),rep(y,length(x))) 
+  }
+
 check_vals <- function(x, y){
   if (is.na(x) || is.null(x))
     stop(sprintf("%s can not be NA or NULL", y), call. = FALSE)
@@ -680,17 +685,14 @@ last <- function(x) x[length(x)]
 
 mssg <- function(v, ...) if (v) message(...)
 
-rgbif_ck <- conditionz::ConditionKeeper$new(times = 1, condition = "warning")
 pchk <- function(from, fun, pkg_version = "v3.0.0") {
   assert(deparse(substitute(from)), "character")
   assert(pkg_version, "character")
   param_mssg <- "`%s` param in `%s` function is defunct as of rgbif %s, and is ignored"
   parms_help <- "\nSee `?rgbif` for more information."
-  once_per <- "\nThis warning will be thrown once per R session."
   mssg <- c(sprintf(param_mssg, deparse(substitute(from)), fun, pkg_version),
-    parms_help, once_per)
-  if (!is.null(from))
-    rgbif_ck$handle_conditions(warning(mssg))
+    parms_help)
+  if (!is.null(from)) warning(mssg)
 }
 
 tryDefault <- function(expr, default, quiet = FALSE) {
@@ -740,9 +742,9 @@ check_inputs <- function(x) {
   }
 }
 
-is_download_key <- function(x) grepl("^[0-9]{7}-[0-9]{15}$",x)
+is_download_key <- function(x) ifelse(!is.null(x),grepl("^[0-9]{7}-[0-9]{15}$",x),FALSE)
 
-is_uuid <- function(x) grepl("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",x)
+is_uuid <- function(x) ifelse(!is.null(x),grepl("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",x),FALSE)
 
 is_empty <- function(x) length(x) == 0
 
@@ -760,4 +762,34 @@ prep_output <- function(x) {
     results = tibble::as_tibble(x$results)
   )
 }
+
+collargs <- function(x){
+  outlist <- list()
+  for (i in seq_along(x)) {
+    outlist[[i]] <- makemultiargs(x[[i]])
+  }
+  as.list(unlist(rgbif_compact(outlist)))
+}
+
+makemultiargs <- function(x){
+  value <- get(x, envir = parent.frame(n = 2))
+  if ( length(value) == 0 ) {
+    NULL
+  } else {
+    if ( any(sapply(value, is.na)) ) {
+      NULL
+    } else {
+      if ( !is.character(value) ) {
+        value <- as.character(value)
+      }
+      names(value) <- rep(x, length(value))
+      value
+    }
+  }
+}
+
+to_camel <- function(x) {
+  gsub("(_)([a-z])", "\\U\\2", tolower(x), perl = TRUE)
+}
+
 

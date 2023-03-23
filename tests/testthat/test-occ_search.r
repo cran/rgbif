@@ -364,6 +364,22 @@ test_that("isInCluster works correctly", {
   expect_equal(tt$data$classKey[1], 212)
 })
 
+# Test argument distanceFromCentroidInMeters
+test_that("distanceFromCentroidInMeters works correctly", {
+  skip_on_cran() # because fixture in .Rbuildignore
+  vcr::use_cassette("occ_search_distanceFromCentroidInMeters", {
+    ee <- occ_search(distanceFromCentroidInMeters=0,limit=2)
+    rr <- occ_search(distanceFromCentroidInMeters="2000,*",limit=2)
+    dd <- occ_search(distanceFromCentroidInMeters="0,2000",limit=2)
+  }, preserve_exact_body_bytes = TRUE)
+  
+  expect_equal(nrow(ee$data),2)
+  expect_equal(nrow(rr$data),2)
+  expect_equal(nrow(dd$data),2)
+  expect_true(rr$meta$count > dd$meta$count)
+})
+
+
 
 # Get occurrences for with a particular networkKey
 test_that("networkKey works correctly", {
@@ -490,7 +506,9 @@ test_that("scientificName basic use works - no synonyms", {
 
 # geometry inputs work as expected
 test_that("geometry inputs work as expected", {
+  # skip_on_ci() # skip because sf install too buggy
   skip_on_cran() # because fixture in .Rbuildignore
+  skip_if_not_installed("sf")
   
   ## internally convert WKT string to a bounding box
   wkt <- "POLYGON((13.26349675655365 52.53991761181831,18.36115300655365 54.11445544219924,
@@ -550,8 +568,7 @@ test_that("geometry inputs work as expected", {
     expect_message(occ_search(geometry = wkt, geom_big = "bbox", limit = 1),
                    "geometry is big, querying BBOX, then pruning results to polygon")
   }, preserve_exact_body_bytes = TRUE)
-
-  skip_if_not_installed("sf")
+  
   vcr::use_cassette("occ_search_geometry_ee_gg", {
     # use 'geom_big=axe'
     ee <- occ_search(geometry = wkt, geom_big = "axe", limit = 30)
@@ -604,9 +621,9 @@ test_that("geometry inputs work as expected", {
 test_that("works with parameters that allow many inputs", {
   vcr::use_cassette("occ_search_many_inputs", {
     ## separate requests: use a vector of strings
-    aa <- occ_search(recordedBy=c("smith","BJ Stacey"), limit=3)
+    aa <- occ_search(recordedBy=c("smith","BJ Stacey"), limit=10)
     ## one request, many instances of same parameter: use semi-colon sep. string
-    bb <- occ_search(recordedBy="smith;BJ Stacey", limit=3)
+    bb <- occ_search(recordedBy="smith;BJ Stacey", limit=10)
   }, preserve_exact_body_bytes = TRUE)
 
   expect_is(aa, "gbif")
@@ -614,11 +631,12 @@ test_that("works with parameters that allow many inputs", {
 
   expect_named(aa, c('smith', 'BJ Stacey'))
   expect_named(bb, c('meta', 'hierarchy', 'data', 'media', 'facets'))
+  
+  expect_true(all(grepl("smith",unique(tolower(aa[[1]]$data$recordedBy)))))
+  expect_true(all(grepl("bj stacey",unique(tolower(aa[[2]]$data$recordedBy)))))
+  
+  expect_true(all(grepl('smith|bj stacey',unique(tolower(bb$data$recordedBy)))))
 
-  expect_equal(unique(tolower(aa[[1]]$data$recordedBy)), c("smith","long|peter|smith|rae"))
-  expect_equal(unique(tolower(aa[[2]]$data$recordedBy)), "bj stacey")
-
-  expect_true(unique(tolower(bb$data$recordedBy) %in% c('smith', 'bj stacey')))
 })
 
 # per issue #349

@@ -107,7 +107,8 @@ occ_data <- function(taxonKey=NULL,
                     relativeOrganismQuantity = NULL,
                     iucnRedListCategory = NULL,
                     lifeStage = NULL,
-                    isInCluster = NULL, 
+                    isInCluster = NULL,
+                    distanceFromCentroidInMeters = NULL,
                     curlopts = list()) {
 
   geometry <- geometry_handler(geometry, geom_big, geom_size, geom_n)
@@ -131,23 +132,11 @@ occ_data <- function(taxonKey=NULL,
     args <- rgbif_compact(
       list(
         hasCoordinate = hasCoordinate,
-        lastInterpreted = lastInterpreted,
-        decimalLatitude = decimalLatitude,
-        decimalLongitude = decimalLongitude,
         hasGeospatialIssue = hasGeospatialIssue,
         occurrenceStatus = occurrenceStatus,
         q = search,
         repatriated = repatriated,
-        elevation = elevation,
-        depth = depth, 
         limit = check_limit(as.integer(limit)),
-        eventDate = eventDate, 
-        month = month, 
-        year = year,
-        coordinateUncertaintyInMeters = coordinateUncertaintyInMeters,
-        organismQuantity = organismQuantity,
-        organismQuantityType = organismQuantityType,
-        relativeOrganismQuantity = relativeOrganismQuantity,
         isInCluster = isInCluster,
         offset = check_limit(as.integer(start))
       )
@@ -155,6 +144,18 @@ occ_data <- function(taxonKey=NULL,
     args <- c(
       args,
       parse_issues(issue),
+      convmany(lastInterpreted),
+      convmany(decimalLatitude),
+      convmany(decimalLongitude),
+      convmany(elevation),
+      convmany(depth), 
+      convmany(eventDate),
+      convmany(month),
+      convmany(year),
+      convmany(coordinateUncertaintyInMeters),
+      convmany(organismQuantity),
+      convmany(organismQuantityType),
+      convmany(relativeOrganismQuantity),
       convmany(taxonKey),
       convmany(scientificName),
       convmany(country),
@@ -196,7 +197,8 @@ occ_data <- function(taxonKey=NULL,
       convmany(networkKey),
       convmany(occurrenceId),
       convmany(iucnRedListCategory),
-      convmany(lifeStage)
+      convmany(lifeStage),
+      convmany(distanceFromCentroidInMeters)
     )
     argscoll <<- args
 
@@ -300,7 +302,8 @@ occ_data <- function(taxonKey=NULL,
     relativeOrganismQuantity=relativeOrganismQuantity,
     iucnRedListCategory=iucnRedListCategory,
     lifeStage=lifeStage,
-    coordinateUncertaintyInMeters = coordinateUncertaintyInMeters
+    coordinateUncertaintyInMeters=coordinateUncertaintyInMeters,
+    distanceFromCentroidInMeters=distanceFromCentroidInMeters
   )
   if (!any(sapply(params, length) > 0)) {
     stop(sprintf("At least one of the parmaters must have a value:\n%s",

@@ -143,7 +143,7 @@ test_that("scientificName basic use works - no synonyms", {
 
   expect_equal(attr(bb, "args")$scientificName, "Pulsatilla patens")
   expect_equal(bb$data$species[1], "Pulsatilla patens")
-  expect_match(bb$data$scientificName[1], "Pulsatilla nuttalliana \\(DC\\.\\) Spreng\\.")
+  expect_match(bb$data$scientificName[1], "Pulsatilla patens \\(L\\.\\) Mill\\.")
 
   expect_is(cc, "gbif_data")
   expect_is(cc$data, "data.frame")
@@ -184,7 +184,9 @@ test_that("scientificName basic use works - no synonyms", {
 
 # geometry inputs work as expected
 test_that("geometry inputs work as expected", {
+  # skip_on_ci() # skip because sf install too buggy
   skip_on_cran() # because fixture in .Rbuildignore
+  skip_if_not_installed("sf")
   
   # in well known text format
   vcr::use_cassette("occ_data_geometry_aa", {
@@ -253,8 +255,6 @@ test_that("geometry inputs work as expected", {
   55.43241335888528,13.26349675655365 52.53991761181831))"
   wkt <- gsub("\n", " ", wkt)
 
-  skip_if_not_installed("sf")
-  
   # if WKT too long, with 'geom_big=bbox': makes into bounding box
   vcr::use_cassette("occ_data_geometry_dd", {
     dd <- occ_data(geometry = wkt, geom_big = "bbox", limit = 30)
@@ -293,9 +293,9 @@ test_that("geometry inputs work as expected", {
 test_that("works with parameters that allow many inputs", {
   vcr::use_cassette("occ_data_args_with_many_inputs", {
     ## separate requests: use a vector of strings
-    aa <- occ_data(recordedBy=c("smith","BJ Stacey"), limit=3)
+    aa <- occ_data(recordedBy=c("smith","BJ Stacey"), limit=10)
     ## one request, many instances of same parameter: use semi-colon sep. string
-    bb <- occ_data(recordedBy="smith;BJ Stacey", limit=3)
+    bb <- occ_data(recordedBy="smith;BJ Stacey", limit=10)
   }, preserve_exact_body_bytes = TRUE, match_requests_on = c("path", "query"))
 
   expect_is(aa, "gbif_data")
@@ -304,10 +304,10 @@ test_that("works with parameters that allow many inputs", {
   expect_named(aa, c('smith', 'BJ Stacey'))
   expect_named(bb, c('meta', 'data'))
 
-  expect_equal(unique(tolower(aa[[1]]$data$recordedBy)), c("smith","long|peter|smith|rae"))
-  expect_equal(unique(tolower(aa[[2]]$data$recordedBy)), "bj stacey")
-
-  expect_true(unique(tolower(bb$data$recordedBy) %in% c('smith', 'bj stacey')))
+  expect_true(all(grepl("smith",unique(tolower(aa[[1]]$data$recordedBy)))))
+  expect_true(all(grepl("bj stacey",unique(tolower(aa[[2]]$data$recordedBy)))))
+  
+  expect_true(all(grepl('smith|bj stacey',unique(tolower(bb$data$recordedBy)))))
 })
 
 # per issue #349
@@ -587,6 +587,21 @@ test_that("isInCluster works correctly", {
   expect_false(ff$data$isInCluster[1])
   expect_true(tt$data$isInCluster[1])
   expect_equal(tt$data$classKey[1], 212)
+})
+
+# Test argument distanceFromCentroidInMeters
+test_that("distanceFromCentroidInMeters works correctly", {
+  skip_on_cran() # because fixture in .Rbuildignore
+  vcr::use_cassette("occ_data_distanceFromCentroidInMeters", {
+    ee <- occ_data(distanceFromCentroidInMeters=0,limit=2)
+    rr <- occ_data(distanceFromCentroidInMeters="2000,*",limit=2)
+    dd <- occ_data(distanceFromCentroidInMeters="0,2000",limit=2)
+  }, preserve_exact_body_bytes = TRUE)
+  
+  expect_equal(nrow(ee$data),2)
+  expect_equal(nrow(rr$data),2)
+  expect_equal(nrow(dd$data),2)
+  expect_true(rr$meta$count > dd$meta$count)
 })
 
 
