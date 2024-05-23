@@ -37,7 +37,7 @@ test_that("occ_download: real requests work", {
   vcr::use_cassette("occ_download_2", {
     x <- occ_download(
       pred_and(
-        pred_within("POLYGON((-14 42, 9 38, -7 26, -14 42))"),
+        pred_within("POLYGON((-14 42,-7 26,9 38,-14 42))"),
         pred_gte("elevation", 5000)
       )
     )
@@ -86,11 +86,11 @@ test_that("occ_download: real requests work", {
     pred_gte("year", 1900),
     pred_not(pred("basisOfRecord", "FOSSIL_SPECIMEN")),
     pred_or(
-    pred_not(pred_in("establishmentMeans",c("MANAGED","INTRODUCED"))),
-    pred_isnull("establishmentMeans"),
-    pred_lt("coordinateUncertaintyInMeters",10000),
-    pred_isnull("coordinateUncertaintyInMeters"),
-    pred_like("catalogNumber","PAPS5-560*")
+      pred_not(pred_in("establishmentMeans",c("MANAGED","INTRODUCED"))),
+      pred_isnull("establishmentMeans"),
+      pred_lt("coordinateUncertaintyInMeters",10000),
+      pred_isnull("coordinateUncertaintyInMeters"),
+      pred_like("catalogNumber","PAPS5-560*")
     ),
     format = "SIMPLE_CSV"
     )
@@ -107,7 +107,7 @@ test_that("occ_download: real requests work", {
   expect_is(attr(ccc,"downloadLink"),"character")
   expect_output(print.occ_download(ccc),"<<gbif download>>")
   expect_equal(length(capture.output(print(ccc))),22)
-
+  
   # test new key
   vcr::use_cassette("occ_download_5", {
     vvv <- occ_download(
@@ -149,7 +149,7 @@ test_that("occ_download: real requests work", {
   expect_is(attr(ooo,"downloadLink"),"character")
   expect_output(print.occ_download(ooo),"<<gbif download>>")
   expect_equal(length(capture.output(print(ooo))),22)
-
+  
   # test new key
   vcr::use_cassette("occ_download_7", {
     sss <- occ_download(
@@ -190,6 +190,9 @@ test_that("occ_download: real requests work", {
   expect_is(attr(ddd,"downloadLink"),"character")
   expect_output(print.occ_download(ddd),"<<gbif download>>")
   expect_equal(length(capture.output(print(ddd))),22)
+  
+  # check that full downloads fail well 
+  expect_error(occ_download(), "You are requesting a full download. Please use a predicate to filter the data. For example, pred_default().")
   
 })
 

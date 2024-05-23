@@ -191,6 +191,7 @@
 #' - isInCluster (IS_IN_CLUSTER)
 #' - lifeStage (LIFE_STAGE)
 #' - distanceFromCentroidInMeters (DISTANCE_FROM_CENTROID_IN_METERS)
+#' - gbifId (GBIF_ID)
 #' 
 #' @references Download predicates docs:
 #' <https://www.gbif.org/developer/occurrence#predicates>
@@ -296,6 +297,7 @@ print.occ_predicate_list <- function(x, ...) {
     }
   }
 }
+
 
 # helpers
 pred_factory <- function(type) {
@@ -503,7 +505,9 @@ key_lkup <- list(
   LIFE_STAGE="LIFE_STAGE",
   distanceFromCentroidInMeters="DISTANCE_FROM_CENTROID_IN_METERS",
   DISTANCE_FROM_CENTROID_IN_METERS="DISTANCE_FROM_CENTROID_IN_METERS",
-  datasetName = "DATASET_NAME" # rgbif/issues/589
+  datasetName = "DATASET_NAME", # rgbif/issues/589
+  GBIF_ID = "GBIF_ID",
+  gbifId = "GBIF_ID"
   )
 
 parse_pred <- function(key, value, type = "and") {
@@ -576,7 +580,10 @@ sub_str <- function(str, max = 100) {
 }
 parse_predicates <- function(user, email, type, format, ...) {
   tmp <- list(...)
-  clzzs <- vapply(tmp,
+  if(length(tmp) == 0) { 
+    stop("You are requesting a full download. Please use a predicate to filter the data. For example, pred_default().")
+  }  
+clzzs <- vapply(tmp,
     function(z) inherits(z, c("occ_predicate", "occ_predicate_list")),
     logical(1)
   )

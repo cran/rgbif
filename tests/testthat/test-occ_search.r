@@ -282,16 +282,16 @@ test_that("speciesKey works correctly", {
 test_that("identifiedBy works correctly", {
   skip_on_cran() # because fixture in .Rbuildignore
   vcr::use_cassette("occ_search_identifiedBy", {
-    ww <- occ_search(identifiedBy="John Waller",limit=2)
-    bb <- occ_search(identifiedBy="John Waller;Matthew Blissett",limit=2)
-    cc <- occ_search(identifiedBy=c("John Waller", "Matthew Blissett"),limit=2)
-    dd <- occ_search(country="DK",identifiedBy="John Waller",limit=2)
+    ww <- occ_search(identifiedBy="Tim Robertson",limit=2)
+    bb <- occ_search(identifiedBy="Tim Robertson;Matthew Blissett",limit=2)
+    cc <- occ_search(identifiedBy=c("Tim Robertson", "Matthew Blissett"),limit=2)
+    dd <- occ_search(country="DK",identifiedBy="Tim Robertson",limit=2)
   }, preserve_exact_body_bytes = TRUE)
   
-  expect_equal(ww$data$identifiedBy[1],"John Waller")
-  expect_true(all(bb$data$identifiedBy %in% c("John Waller", "Matthew Blissett")))
-  expect_true(all(cc$data$identifiedBy %in% c("John Waller", "Matthew Blissett")))
-  expect_equal(dd$data$identifiedBy[1],"John Waller")
+  expect_equal(ww$data$identifiedBy[1],"Tim Robertson")
+  expect_true(all(bb$data$identifiedBy %in% c("Tim Robertson", "Matthew Blissett")))
+  expect_true(all(cc$data$identifiedBy %in% c("Tim Robertson", "Matthew Blissett")))
+  expect_equal(dd$data$identifiedBy[1],"Tim Robertson")
   expect_equal(dd$data$countryCode[1], "DK")
 })
 
@@ -335,16 +335,16 @@ test_that("lifeStage works correctly", {
 test_that("degreeOfEstablishment works correctly", {
   skip_on_cran() # because fixture in .Rbuildignore
   vcr::use_cassette("occ_search_degreeOfEstablishment", {
-    ee <- occ_search(degreeOfEstablishment="Established",limit=2)
-    ii <- occ_search(degreeOfEstablishment="Established;Invasive",limit=2)
-    cc <- occ_search(degreeOfEstablishment=c("Established", "Invasive"),limit=2)
-    tt <- occ_search(taxonKey=1,degreeOfEstablishment="Established",limit=2)
+    ee <- occ_search(degreeOfEstablishment="established",limit=2)
+    ii <- occ_search(degreeOfEstablishment="established;Invasive",limit=2)
+    cc <- occ_search(degreeOfEstablishment=c("established", "invasive"),limit=2)
+    tt <- occ_search(taxonKey=1,degreeOfEstablishment="established",limit=2)
   }, preserve_exact_body_bytes = TRUE)
   
-  expect_equal(ee$data$degreeOfEstablishment[1],"Established")
-  expect_true(all(ii$data$degreeOfEstablishment %in% c("Established", "Invasive")))
-  expect_true(all(cc$data$degreeOfEstablishment %in% c("Established", "Invasive")))
-  expect_equal(tt$data$degreeOfEstablishment[1],"Established")
+  expect_equal(ee$data$degreeOfEstablishment[1],"established")
+  expect_true(all(ii$data$degreeOfEstablishment %in% c("established", "invasive")))
+  expect_true(all(cc$data$degreeOfEstablishment %in% c("established", "invasive")))
+  expect_equal(tt$data$degreeOfEstablishment[1],"established")
   expect_equal(tt$data$kingdomKey[1], 1)
 })
 
@@ -569,12 +569,8 @@ test_that("geometry inputs work as expected", {
                    "geometry is big, querying BBOX, then pruning results to polygon")
   }, preserve_exact_body_bytes = TRUE)
   
-  vcr::use_cassette("occ_search_geometry_ee_gg", {
-    # use 'geom_big=axe'
-    ee <- occ_search(geometry = wkt, geom_big = "axe", limit = 30)
-    ## more calls
-    gg <- occ_search(geometry = wkt, geom_big = "axe", geom_size = 30, limit = 5)
-  }, preserve_exact_body_bytes = TRUE)
+  # use 'geom_big=axe', which is deprecated since rgbif 3.8.0
+  expect_warning(expect_error(occ_search(geometry = wkt, geom_big = "axe", limit = 30)))
 
   vcr::use_cassette("occ_search_geometry_errors", {
     # bad wkt is caught and handled appropriately
@@ -613,7 +609,6 @@ test_that("geometry inputs work as expected", {
 
   expect_lt(nchar(attr(dd, "args")$geometry), nchar(wkt))
 
-  expect_gt(length(names(ee)), length(names(gg)))
 })
 
 
@@ -663,6 +658,16 @@ test_that("multiple values for parameters fails", {
     taxonKey=c(1,2),
     basisOfRecord=c("PRESERVED_SPECIMEN","HUMANA_OBSERVATION")),
     "You can have multiple values for only one of")
+})
+
+test_that("geoDistance works as expected", {
+  vcr::use_cassette("occ_search_geoDistance", {
+    aa <- occ_search(geoDistance = "50.0,10.0,10km", limit = 2)
+  }, preserve_exact_body_bytes = TRUE)
+  expect_is(aa, "gbif")
+  expect_is(aa$data, "data.frame")
+  expect_equal(attr(aa, "args")$geoDistance, "50.0,10.0,10km")
+  expect_equal(nrow(aa$data), 2)
 })
 
 
