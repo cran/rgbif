@@ -1,0 +1,161 @@
+http_interactions:
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/grscicoll/institution?q=Kansas&limit=1
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+    body:
+      string: '{"offset":0,"limit":1,"endOfRecords":false,"count":19,"results":[{"key":"956f3e1f-ebd2-48e3-a3ee-42bfb1950a47","code":"PECA","name":"Pratt
+        Education Center and Aquarium","description":"The emphasis of the Pratt Education
+        Center is to discover the wildlife of Kansas. Numerous displays, dioramas,
+        and exhibits provide close encounters with the native birds, fish, mammals,
+        and reptiles of Kansas.\n\nOur \"winter\" diorama provides a glimpse of how
+        wildlife deals with the snow and cold of Kansas winters.\n\nThe grassland
+        display depicts the three grasslands (short, mixed and tall) of Kansas and
+        wildlife common to each region; including a rare black-footed ferret. Our
+        raptor exhibit features owls, hawks, falcons, and kites; all with hooked beaks
+        and sharp talons. The wetland wall display includes Cheyenne Bottoms, one
+        of the five most important wetlands in North America.\n\nThe Aquarium Room
+        contains twelve, 400-600 gallon aquariums; each displaying fish species native
+        to Kansas or that have been successfully introduced into Kansas. On the east
+        wall are two wall panels. One featuring the early history of the Pratt Hatchery.
+        The other features the catfish rearing program along with a working model
+        of Seth Way''s ingenious incubating trough.  Over one hundred and twenty-eight
+        species of birds and their eggs","types":[],"active":true,"email":[],"phone":[],"homepage":"https://ksoutdoors.com/KDWP-Info/Locations/Museums-and-Nature-Centers/Pratt-Education-Center","catalogUrls":[],"apiUrls":[],"institutionalGovernances":[],"disciplines":[],"latitude":37.632106,"longitude":-98.693794,"mailingAddress":{"key":46553,"country":"US"},"address":{"key":46554,"province":"KS","country":"US"},"additionalNames":[],"createdBy":"GRBIO","modifiedBy":"gbif-collections","created":"2013-05-21T01:38:00.000+00:00","modified":"2024-05-23T12:37:31.514+00:00","tags":[],"identifiers":[{"key":350269,"type":"NCBI_BIOCOLLECTION","identifier":"945030","createdBy":"mgrosjean","created":"2023-08-15T11:08:06.053+00:00","primary":false},{"key":178149,"type":"GRSCICOLL_URI","identifier":"http://grscicoll.org/institution/pratt-education-center-and-aquarium","createdBy":"registry-migration-grbio.gbif.org","created":"2019-08-15T08:12:27.572+00:00","primary":false},{"key":169988,"type":"GRSCICOLL_URI","identifier":"http://grbio.org/institution/pratt-education-center-and-aquarium","createdBy":"registry-migration-grbio.gbif.org","created":"2019-08-15T08:12:20.362+00:00","primary":false},{"key":134524,"type":"GRSCICOLL_ID","identifier":"17487","createdBy":"registry-migration-grbio.gbif.org","created":"2018-11-15T10:23:01.527+00:00","primary":false},{"key":141621,"type":"GRSCICOLL_URI","identifier":"http://grbio.org/cool/sfj9-st9f","createdBy":"registry-migration-grbio.gbif.org","created":"2018-11-15T10:23:01.527+00:00","primary":false}],"contactPersons":[],"machineTags":[],"alternativeCodes":[],"comments":[],"occurrenceMappings":[],"masterSource":"GRSCICOLL","displayOnNHCPortal":true,"occurrenceCount":0,"typeSpecimenCount":0}]}'
+  recorded_at: 2025-09-04 07:12:55
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/grscicoll/institution?numberSpecimens=1000%2C%2A&limit=2
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+    body:
+      string: '{"offset":0,"limit":2,"endOfRecords":false,"count":2819,"results":[{"key":"46f8cffb-33f8-4428-81db-8e97bf5c4dc2","code":"MNKNU","name":"Museum
+        of Nature of the V.N. Karazin Kharkiv National University","types":["Museum"],"active":true,"email":["mnknu.gbif@gmail.com"],"phone":["+380971112471"],"homepage":"http://muzei-prirody.blogspot.com/","catalogUrls":[],"apiUrls":[],"institutionalGovernances":["State"],"disciplines":["Zoology","Geology","Paleontology"],"latitude":50.008000,"longitude":36.235000,"mailingAddress":{"key":56567,"address":"Trinkler
+        str., 8","city":"Kharkiv","province":"Kharkiv","postalCode":"61000","country":"UA"},"address":{"key":56566,"address":"Trinkler
+        str., 8","city":"Kharkiv","province":"Kharkiv","postalCode":"61000","country":"UA"},"additionalNames":["Музей
+        Природи Харківського Національного Університету ім. В.Н. Каразіна"],"foundingDate":1807,"numberSpecimens":250000,"logoUrl":"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgo4S7o98ocyTrkuVmKCmNMtEi0JEWR898y7DHH5lmywyrSsDkHobRxgYrlxlTIJtktYynl-q9yiNELNsTKSVliQeD1t5C8Ab7asv58LGN5WJtzYBdpOxwiZk04ufiKfJkqiVMdtrPvkgc/s1600/%25D0%2593%25D0%25B5%25D1%2580%25D0%25B1+%25D0%25BC%25D1%2583%25D0%25B7%25D0%25B5%25D1%258F+%25D0%25BC%25D0%25B0%25D0%25BB%25D0%25B5%25D0%25BD%25D1%258C%25D0%25BA%25D0%25B8%25D0%25B9.jpg","createdBy":"oleg.borodin","modifiedBy":"oleg.borodin","created":"2025-09-02T07:31:49.291+00:00","modified":"2025-09-02T07:31:49.291+00:00","tags":[],"identifiers":[],"contactPersons":[],"machineTags":[],"alternativeCodes":[],"comments":[],"occurrenceMappings":[],"masterSource":"GRSCICOLL","displayOnNHCPortal":true,"occurrenceCount":0,"typeSpecimenCount":0},{"key":"c298021c-eaea-4bf8-bf15-5a8c5f768aa5","code":"CEBREM","name":"Center
+        for Biodiversity Research and Extension in Mindanao (CEBREM)","description":"The
+        Center for Biodiversity Research and Extension in Mindanao (CEBREM) was established
+        to protect and conserve the remaining biodiversity in Mindanao through research,
+        training, education and community involvement. CEBREM is an integral part
+        of Central Mindanao University (CMU) whose vision and mission call for environmental
+        consciousness for a sustainable environment and a humane society.\n\nThe CMU
+        Board of regents through Resolution No. 103, s 2011 institutionalized CEBREM
+        on November 17, 2011. CEBREM is composed of six units: Biodiversity Research
+        Unit (BRU), Biodiversity Education and Training Unit (BETU), Biodiversity
+        Laboratories and Facilities Unit (BLFU), Biodiversity Extension and Public
+        Awareness Unit (BEPAU), University Museum and the Mt. Musuan Zoological and
+        Botanical Garden (MMZBG).","types":["Museum","Herbarium","OtherTypeResearchInstitutionBiorepository","OtherInstitutionalType"],"active":true,"email":["cebrem@cmu.edu.ph"],"phone":["888-828-896"],"homepage":"http://cmu.edu.ph/home/cebrem/","catalogUrls":[],"apiUrls":[],"institutionalGovernances":["Academic","State","NonProfit"],"disciplines":["Health","Zoology","Taxonomy","PathologyAnimalPlant","MolecularBiology","GeneticsGenomics","EvolutionaryBiology","Ecology","DevelopmentBiologyEmbryology","CellularBiologyAndHistology","AnatomyAndPhysiology","Biological","SoilSciences","PlantSciences","NaturalResources","Agricultural","AnimalScience","AnimalSciencePoultry"],"latitude":10.093262,"longitude":125.859375,"mailingAddress":{"key":56305,"address":"Central
+        Mindanao University, University Town, Musuan, 8714","city":"Musuan","province":"Bukidnon","postalCode":"8714","country":"PH"},"address":{"key":56304,"address":"Central
+        Mindanao University, University Town, Musuan, 8714","city":"Musuan","province":"Bukidnon","postalCode":"8714","country":"PH"},"additionalNames":[],"foundingDate":2011,"numberSpecimens":500000,"logoUrl":"http://www.cmu.edu.ph/wp-content/uploads/2023/06/cmulogobanner.png","createdBy":"lily_shrestha","modifiedBy":"lily_shrestha","created":"2025-07-31T06:56:04.598+00:00","modified":"2025-07-31T06:56:04.598+00:00","tags":[],"identifiers":[],"contactPersons":[],"machineTags":[],"alternativeCodes":[],"comments":[],"occurrenceMappings":[],"masterSource":"GRSCICOLL","displayOnNHCPortal":true,"occurrenceCount":0,"typeSpecimenCount":0,"featuredImageLicense":"CC_BY_4_0"}]}'
+  recorded_at: 2025-09-04 07:12:55
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/grscicoll/institution?numberSpecimens=1000%2C%2A&occurrenceCount=10%2C%2A&limit=2
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+    body:
+      string: '{"offset":0,"limit":2,"endOfRecords":false,"count":1370,"results":[{"key":"e4cf34ea-6d63-4e05-a63a-ca62460f4a71","code":"TUR","name":"University
+        of Turku Natural History Museum","description":"The Natural History Museum
+        of the University of Turku maintains and develops the second largest natural
+        history collections in Finland. Approximately 5 million samples span a time
+        period from the late 18th / early 19th century to the present day. The museum
+        also contains the zoological and botanical collections of Åbo Akademi, and
+        both universities collaborate in studying the collections. The main focus
+        of the museum is to carry out research and teaching, based on the collections
+        and on fieldwork. Major research fields include taxonomy, systematics and
+        biogeography. Research projects run by the staff and PhD students of the museum
+        study the diversity of mosses and vascular plants, arthropods and vertebrates
+        throughout the world. We are especially interested in the evolutionary history
+        and classification of taxa. The collections contain specimens from all over
+        the world. Research currently focuses on Europe, Africa, South America and
+        Papua New Guinea.","types":["Museum"],"active":true,"email":["elainmuseo@utu.fi","kasvimuseu@utu.fi"],"phone":[],"homepage":"https://collections.utu.fi/en/","catalogUrls":[],"apiUrls":[],"institutionalGovernances":["Academic"],"disciplines":["Biological"],"latitude":60.455259,"longitude":22.283680,"mailingAddress":{"key":56274,"address":"Henrikinkatu
+        2","city":"Turku","province":"Southwest Finland","postalCode":"FI-20014","country":"FI"},"address":{"key":56273,"address":"Henrikinkatu
+        2","city":"Turku","province":"Southwest Finland","postalCode":"FI-20014","country":"FI"},"additionalNames":[],"foundingDate":1919,"numberSpecimens":5000000,"logoUrl":"https://upload.wikimedia.org/wikipedia/en/thumb/a/ab/University_of_Turku.svg/250px-University_of_Turku.svg.png","createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T11:44:32.579+00:00","modified":"2025-07-24T11:44:32.579+00:00","tags":[],"identifiers":[],"contactPersons":[{"key":43196,"firstName":"Ilari","lastName":"Sääksjärvi","position":["Unit
+        Head"],"phone":["+358 29 450 3740"],"fax":[],"email":["ileesa@utu.fi"],"address":["Vesilinnantie
+        5"],"city":"Turku","province":"Southwest Finland","country":"FI","postalCode":"FI-20500","primary":true,"taxonomicExpertise":[],"userIds":[{"type":"ORCID","id":"https://orcid.org/0000-0002-8107-5607"}],"createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T11:57:52.435+00:00","modified":"2025-07-24T11:57:52.435+00:00"},{"key":43197,"firstName":"Sanna","lastName":"Huttunen","position":["Unit
+        Vice Head"],"phone":["+358 29 450 4353"],"fax":[],"email":["shuttu@utu.fi"],"address":["    Vesilinnantie
+        5"],"city":"Turku","province":"Southwest Finland","country":"FI","postalCode":"FI-20500","primary":false,"taxonomicExpertise":[],"userIds":[{"type":"ORCID","id":"http://orcid.org/0000-0003-1374-9857"}],"createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T12:01:27.856+00:00","modified":"2025-07-24T12:01:27.856+00:00"},{"key":43198,"firstName":"Anssi","lastName":"Teräs","position":["Senior
+        Museum Technician"],"phone":[],"fax":[],"email":["anssi.teras@abo.fi"],"address":[],"city":"Turku","province":"Southwest
+        Finland","country":"FI","primary":false,"taxonomicExpertise":[],"userIds":[],"createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T12:05:04.219+00:00","modified":"2025-07-24T12:05:04.219+00:00"},{"key":43199,"firstName":"Seppo","lastName":"Huhtinen","position":["Museum
+        Manager"],"phone":[],"fax":[],"email":["sephuh@utu.fi"],"address":["Vesilinnantie
+        5"],"city":"Turku","province":"Southwest Finland","country":"FI","postalCode":"FI-20500","primary":false,"taxonomicExpertise":[],"userIds":[{"type":"ORCID","id":"https://orcid.org/0000-0002-6706-2092"}],"createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T12:08:58.719+00:00","modified":"2025-07-24T12:10:20.708+00:00"},{"key":43200,"firstName":"Nelly","lastName":"Llerena
+        Martinez","position":["Museum Caretaker"],"phone":["+358 29 450 4355"],"fax":[],"email":["nellle@utu.fi"],"address":["Vesilinnantie
+        5"],"city":"Turku","province":"Southwest Finland","country":"FI","postalCode":"Fi-20500","primary":false,"taxonomicExpertise":[],"userIds":[],"createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T12:13:06.682+00:00","modified":"2025-07-24T12:13:06.682+00:00"}],"machineTags":[],"alternativeCodes":[{"code":"TUR-A","description":"Used
+        for the botanical collections of Åbo Akademi University"},{"code":"ZMUT","description":"Used
+        for zoological collections"},{"code":"ZMAA","description":"Used for the zoological
+        collections of Åbo Akademi University"}],"comments":[],"occurrenceMappings":[],"masterSource":"GRSCICOLL","displayOnNHCPortal":true,"occurrenceCount":288726,"typeSpecimenCount":1169,"featuredImageUrl":"https://collections.utu.fi/wp-content/uploads/2019/10/MG_0668.jpg","featuredImageLicense":"UNSPECIFIED"},{"key":"91eb815d-2189-41ee-9170-7dc23450be87","code":"TMP","name":"Tampere
+        Museum of Natural History","description":"The Natural History Museum of Tampere
+        is a source of natural knowledge in the Pirkanmaa region. The museum is located
+        in the Vapriikki Museum Centre in the center of Tampere. There are sensory
+        exhibitions and diverse information about nature available. Additionally,
+        the museum organizes nature-themed events, conducts scientific research in
+        the field of natural sciences, maintains collections, answers inquiries about
+        nature, and identifies specimens brought in by the public. The museum serves
+        as a regional responsibility museum in the Pirkanmaa area.","types":["Museum"],"active":true,"email":["vapriikki@tampere.fi"],"phone":["+358
+        3 5656 6966"],"homepage":"https://www.vapriikki.fi/en/the-museum/tampere-museum-of-natural-history/","catalogUrls":[],"apiUrls":[],"institutionalGovernances":["Local"],"disciplines":["Biological"],"latitude":61.502970,"longitude":23.760540,"mailingAddress":{"key":56267,"address":"Alaversataanraitti
+        5","city":"Tampere","province":"Pirkanmaa","postalCode":"FI-33100","country":"FI"},"address":{"key":56266,"address":"Alaverstaanraitti
+        5","city":"Tampere","province":"Pirkanmaa","postalCode":"FI-33100","country":"FI"},"additionalNames":["Vapriikki","Tampereen
+        luonnontieteellinen museo"],"foundingDate":1961,"numberSpecimens":20000,"logoUrl":"https://www.sttinfo.fi/data/images/00350/af1ac79d-fd45-477c-8c0b-abb6fc9656e9.jpg","createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T08:43:52.498+00:00","modified":"2025-07-24T12:26:46.213+00:00","tags":[],"identifiers":[],"contactPersons":[{"key":43191,"firstName":"Tomi","lastName":"Kumpulainen","position":["Curator"],"phone":["+358
+        40 801 6614"],"fax":[],"email":["tomi.kumpulainen@tampere.fi"],"address":[],"primary":true,"taxonomicExpertise":[],"userIds":[],"createdBy":"finbif","modifiedBy":"finbif","created":"2025-07-24T08:49:05.141+00:00","modified":"2025-07-24T08:49:05.141+00:00"}],"machineTags":[],"alternativeCodes":[{"code":"TMPM","description":"Used
+        for zoological collections"}],"comments":[],"occurrenceMappings":[],"masterSource":"GBIF_REGISTRY","masterSourceMetadata":{"key":9857,"source":"ORGANIZATION","sourceId":"89240267-4f00-4808-96de-1358f5d47ce0","createdBy":"finbif","created":"2025-07-24T08:43:52.498+00:00"},"displayOnNHCPortal":true,"occurrenceCount":21401,"typeSpecimenCount":0,"featuredImageUrl":"https://tms.production.geniem.io/uploads/sites/81/2023/08/5fb12bf4-lumi-iidesjarvi-01-2-1920x645.jpg","featuredImageLicense":"UNSPECIFIED"}]}'
+  recorded_at: 2025-09-04 07:12:55
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/grscicoll/institution?limit=1&source=IH_IRN
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+    body:
+      string: '{"offset":0,"limit":1,"endOfRecords":false,"count":3787,"results":[{"key":"473103ee-e47a-4656-8e08-d89be038999f","code":"PSGCASH","name":"PSG
+        College of Arts & Science","types":[],"active":true,"email":["aryasindu001@gmail.com"],"phone":[],"catalogUrls":[],"apiUrls":[],"institutionalGovernances":[],"disciplines":[],"address":{"key":55986,"address":"PSG
+        College of Arts & Science, Civil Aerodrome Post","city":"Coimbatore","province":"Tamil
+        Nadu","postalCode":"641014","country":"IN"},"additionalNames":[],"createdBy":"mgrosjean","modifiedBy":"mgrosjean","created":"2025-06-13T07:36:09.626+00:00","modified":"2025-06-13T07:36:09.626+00:00","tags":[],"identifiers":[{"key":442779,"type":"IH_IRN","identifier":"gbif:ih:irn:267351","createdBy":"mgrosjean","created":"2025-06-13T07:36:09.637+00:00","primary":false}],"contactPersons":[{"key":42806,"firstName":"Arya","lastName":"Sindhu","position":["Assistant
+        Professor"],"phone":["8891017715"],"fax":[],"email":["aryasindu001@gmail.com"],"address":["Civil
+        aerodrome Post"],"city":"Coimbatore","province":"Tamil Nadu","country":"IN","postalCode":"695011","primary":false,"taxonomicExpertise":[],"userIds":[{"type":"IH_IRN","id":"267377"}],"createdBy":"mgrosjean","modifiedBy":"mgrosjean","created":"2025-06-13T07:36:09.648+00:00","modified":"2025-06-13T07:36:09.648+00:00"}],"machineTags":[],"alternativeCodes":[],"comments":[],"occurrenceMappings":[],"masterSource":"IH","masterSourceMetadata":{"key":9834,"source":"IH_IRN","sourceId":"267351","createdBy":"mgrosjean","created":"2025-06-13T07:36:09.644+00:00"},"displayOnNHCPortal":true,"occurrenceCount":0,"typeSpecimenCount":0}]}'
+  recorded_at: 2025-09-04 07:12:55
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/grscicoll/institution?limit=1&country=US
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+    body:
+      string: '{"offset":0,"limit":1,"endOfRecords":false,"count":2568,"results":[{"key":"200dfb5f-58ed-478d-8058-8ac565b509cf","code":"MEMZOO","name":"Memphis
+        Zoo","description":"The Memphis Zoo is a zoo in Midtown, Memphis, Tennessee,
+        United States. It is home to more than 3,500 animals representing over 500
+        different species. ","types":["ZooAquarium"],"active":true,"email":[],"phone":[],"homepage":"https://www.memphiszoo.org/","catalogUrls":[],"apiUrls":[],"institutionalGovernances":["NonProfit"],"disciplines":["Zoology","Biological"],"latitude":35.150331,"longitude":-89.993305,"mailingAddress":{"key":55998,"address":"2000
+        Prentiss Place","city":"Memphis","province":"Tennessee","postalCode":"38112","country":"US"},"address":{"key":55997,"address":"2000
+        Prentiss Place","city":"Memphis","province":"Tennessee","postalCode":"38112","country":"US"},"additionalNames":["Memphis
+        Zoological Society"],"foundingDate":1906,"numberSpecimens":3500,"logoUrl":"https://prod.speakcdn.com/sitefiles/2879/images/white-logo.svg","createdBy":"catchapman","modifiedBy":"catchapman","created":"2025-06-17T15:15:27.291+00:00","modified":"2025-06-17T15:15:27.291+00:00","tags":[],"identifiers":[],"contactPersons":[{"key":42822,"firstName":"Sinlan","lastName":"Poo","position":["Curator
+        of Research"],"phone":[],"fax":[],"email":["spoo@memphiszoo.org"],"address":[],"city":"Memphis","province":"Tennessee","country":"US","primary":true,"taxonomicExpertise":[],"userIds":[{"type":"ORCID","id":"https://orcid.org/0000-0002-7767-8173"}],"createdBy":"dbloom","modifiedBy":"dbloom","created":"2025-06-18T22:37:57.149+00:00","modified":"2025-06-18T22:37:57.149+00:00"}],"machineTags":[],"alternativeCodes":[],"comments":[],"occurrenceMappings":[],"masterSource":"GRSCICOLL","displayOnNHCPortal":true,"occurrenceCount":0,"typeSpecimenCount":0}]}'
+  recorded_at: 2025-09-04 07:12:55
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/grscicoll/institution?typeSpecimenCount=10%2C100&limit=1
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+    body:
+      string: '{"offset":0,"limit":1,"endOfRecords":false,"count":609,"results":[{"key":"967647c6-b1af-4f0a-9bb0-94d0dbb1ca9f","code":"UAT","name":"Universidad
+        Autónoma de Tamaulipas","types":[],"active":true,"email":[],"phone":["[52]
+        834 318 1800"],"homepage":"https://www.uat.edu.mx/","catalogUrls":[],"apiUrls":[],"institutionalGovernances":["Academic","Governmental"],"disciplines":[],"latitude":23.732532,"longitude":-99.144592,"mailingAddress":{"key":56451,"address":"Mariano
+        Matamoros s/n, zona Centro","city":"Ciudad Victoria","province":"Tamaulipas","postalCode":"87000","country":"MX"},"address":{"key":56450,"address":"Mariano
+        Matamoros s/n, zona Centro","city":"Ciudad Victoria","province":"Tamaulipas","postalCode":"87000","country":"MX"},"additionalNames":[],"createdBy":"vaguirojas","modifiedBy":"vaguirojas","created":"2025-08-25T22:28:20.656+00:00","modified":"2025-08-25T22:28:20.656+00:00","tags":[],"identifiers":[],"contactPersons":[],"machineTags":[],"alternativeCodes":[],"comments":[],"occurrenceMappings":[],"masterSource":"GRSCICOLL","displayOnNHCPortal":true,"occurrenceCount":192,"typeSpecimenCount":16}]}'
+  recorded_at: 2025-09-04 07:12:55
+recorded_with: VCR-vcr/2.0.0

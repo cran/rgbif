@@ -1,109 +1,70 @@
 http_interactions:
 - request:
-    method: get
+    method: GET
     uri: https://api.gbif.org/v1/dataset/search?limit=0&facetLimit=5&facet=doi
-    body:
-      encoding: ''
-      string: ''
-    headers:
-      Accept-Encoding: gzip, deflate
-      Accept: application/json, text/xml, application/xml, */*
   response:
-    status:
-      status_code: '200'
-      message: OK
-      explanation: Request fulfilled, document follows
+    status: 200
     headers:
       status: HTTP/1.1 200 OK
       content-type: application/json
     body:
-      encoding: ''
-      file: no
-      base64_string: eyJvZmZzZXQiOjAsImxpbWl0IjowLCJlbmRPZlJlY29yZHMiOmZhbHNlLCJjb3VudCI6MTE0Mzg1LCJy
-        ZXN1bHRzIjpbXSwiZmFjZXRzIjpbeyJmaWVsZCI6IkRPSSIsImNvdW50cyI6W3sibmFtZSI6IjEwLjUy
-        ODEvemVub2RvLjI5MTk3MSIsImNvdW50IjoyNn0seyJuYW1lIjoiMTAuNTUzOS9lbnJyLnYybjNwMTE1
-        IiwiY291bnQiOjZ9LHsibmFtZSI6IjEwLjEwMDcvczEwNzUwLTAwNy05MjM1LTYiLCJjb3VudCI6M30s
-        eyJuYW1lIjoiMTAuMTE2NDYvem9vdGF4YS40MDA2LjIuMTAiLCJjb3VudCI6M30seyJuYW1lIjoiMTAu
-        MTU0NjgvMjhwN2hjIiwiY291bnQiOjN9XX1dfQ==
-  recorded_at: 2025-06-10 14:16:14 GMT
-  recorded_with: vcr/1.2.0, webmockr/0.9.0
+      raw_gzip: |-
+        eJx1zM2qwjAQBeB3mXWaZNImabt240pwe3ER2gkWalKaKqLcdzfo5foDMpvDnG/mCtH7RAu0
+        ksE4HIZ
+        HotBv/Ja6OPcJWu/GRAy6eAy5RjTGKgYzpeO45Ppnx8C7ju75Cn6gsYcWVps1/B09
+        iuAOlPcouVY1ig
+        uF2EeuGmwswv97ZX7Zm9VlIyjMMz+pUE6I+mk/KEppRUJptSxyLBpV6sI8
+        efnB0VRGXGJc3NnxSkrDV
+        f7x3evK1ELVk913r2iX5wYBol8S
+  recorded_at: 2025-09-04 07:12:37
 - request:
-    method: get
+    method: GET
     uri: https://api.gbif.org/v1/dataset/search?limit=0&facetLimit=5&facet=type
-    body:
-      encoding: ''
-      string: ''
-    headers:
-      Accept-Encoding: gzip, deflate
-      Accept: application/json, text/xml, application/xml, */*
   response:
-    status:
-      status_code: '200'
-      message: OK
-      explanation: Request fulfilled, document follows
+    status: 200
     headers:
       status: HTTP/1.1 200 OK
       content-type: application/json
     body:
-      encoding: ''
-      file: no
-      base64_string: eyJvZmZzZXQiOjAsImxpbWl0IjowLCJlbmRPZlJlY29yZHMiOmZhbHNlLCJjb3VudCI6MTE0Mzg1LCJy
-        ZXN1bHRzIjpbXSwiZmFjZXRzIjpbeyJmaWVsZCI6IlRZUEUiLCJjb3VudHMiOlt7Im5hbWUiOiJDSEVD
-        S0xJU1QiLCJjb3VudCI6NTk0NzJ9LHsibmFtZSI6Ik9DQ1VSUkVOQ0UiLCJjb3VudCI6NTA4MTF9LHsi
-        bmFtZSI6IlNBTVBMSU5HX0VWRU5UIiwiY291bnQiOjM2NjR9LHsibmFtZSI6Ik1FVEFEQVRBIiwiY291
-        bnQiOjQzOH1dfV19
-  recorded_at: 2025-06-10 14:16:14 GMT
-  recorded_with: vcr/1.2.0, webmockr/0.9.0
+      raw_gzip: |-
+        eJxNjcsKgzAQRf9l1lk0rUbqTtLQSn2haaEUKaIJCFHB6Er894ZaVGZz4Zx7Z4JOSi0GcA8I
+        VN3USxJ
+        tFctUlF1faXBlobRAUHZjazDGhDhHBL3QoxoMfucIZFGKX55A1kJV4AJ/JQz+rYW0
+        RSMMoDdG74GfcV
+        g3CcY2mdGqxJQ+0pRFlG2ObR7bOyfzwiTwo+uHPVm02zqdD85OCxn3Lh73
+        NsGyrDk39wWhqkye
+  recorded_at: 2025-09-04 07:12:37
 - request:
-    method: get
+    method: GET
     uri: https://api.gbif.org/v1/dataset/search?limit=0&facetLimit=5&facet=publishingCountry
-    body:
-      encoding: ''
-      string: ''
-    headers:
-      Accept-Encoding: gzip, deflate
-      Accept: application/json, text/xml, application/xml, */*
   response:
-    status:
-      status_code: '200'
-      message: OK
-      explanation: Request fulfilled, document follows
+    status: 200
     headers:
       status: HTTP/1.1 200 OK
       content-type: application/json
     body:
-      encoding: ''
-      file: no
-      base64_string: eyJvZmZzZXQiOjAsImxpbWl0IjowLCJlbmRPZlJlY29yZHMiOmZhbHNlLCJjb3VudCI6MTE0Mzg1LCJy
-        ZXN1bHRzIjpbXSwiZmFjZXRzIjpbeyJmaWVsZCI6IlBVQkxJU0hJTkdfQ09VTlRSWSIsImNvdW50cyI6
-        W3sibmFtZSI6IkNIIiwiY291bnQiOjUzODI2fSx7Im5hbWUiOiJGUiIsImNvdW50IjoyNzIxOH0seyJu
-        YW1lIjoiREUiLCJjb3VudCI6OTA0NH0seyJuYW1lIjoiQ08iLCJjb3VudCI6MzMzNH0seyJuYW1lIjoi
-        VVMiLCJjb3VudCI6Mjc3NX1dfV19
-  recorded_at: 2025-06-10 14:16:14 GMT
-  recorded_with: vcr/1.2.0, webmockr/0.9.0
+      raw_gzip: |-
+        eJxNzcsKgzAQBdB/mXUWJvW9rH0oFC1aF6VIEZ1AICoYXUn/vaEWDbO5cC53Fhg4VzhBaBGQ
+        ohNrwr7
+        NeI7NMLYKQl5LhQSaYe41U+q6HiMwoprlpPlVEeB1g7+8ABcoWwjhXh5vSREn6fUd
+        ZWX6yJ/w31h7fd
+        2hrkUxbNOOzXz2IZtd8t2Yr/8adjrvFlh2YFCU7XSwqWNQWRiLnn5W6fsC
+        ZxpPMg==
+  recorded_at: 2025-09-04 07:12:37
 - request:
-    method: get
+    method: GET
     uri: https://api.gbif.org/v1/dataset/search?limit=0&facetLimit=5&facetMincount=10000&facet=license
-    body:
-      encoding: ''
-      string: ''
-    headers:
-      Accept-Encoding: gzip, deflate
-      Accept: application/json, text/xml, application/xml, */*
   response:
-    status:
-      status_code: '200'
-      message: OK
-      explanation: Request fulfilled, document follows
+    status: 200
     headers:
       status: HTTP/1.1 200 OK
       content-type: application/json
     body:
-      encoding: ''
-      file: no
-      base64_string: eyJvZmZzZXQiOjAsImxpbWl0IjowLCJlbmRPZlJlY29yZHMiOmZhbHNlLCJjb3VudCI6MTE0Mzg1LCJy
-        ZXN1bHRzIjpbXSwiZmFjZXRzIjpbeyJmaWVsZCI6IkxJQ0VOU0UiLCJjb3VudHMiOlt7Im5hbWUiOiJD
-        QzBfMV8wIiwiY291bnQiOjU5NTY5fSx7Im5hbWUiOiJDQ19CWV80XzAiLCJjb3VudCI6NDY2NjN9XX1d
-        fQ==
-  recorded_at: 2025-06-10 14:16:14 GMT
-  recorded_with: vcr/1.2.0, webmockr/0.9.0
+      raw_gzip: |-
+        eJxNjLEKwyAURf/lzQ4qqaGOlQyF0EI7lRJE9AmCUYjJFPLvlaaUcJcL59y7Qva+4AySEohh
+        DHvD5O7
+        +gTZProD0JhYkYPOSKmZMiJYTmLAsca74PRDwxuK3r+ADRgcS+qvqbs8OfsMdJjNi
+        ZUpRzTSF/6lg/E
+        Q3chD05aWbo9K0lJ+3oeYDPlI3sg==
+  recorded_at: 2025-09-04 07:12:37
+recorded_with: VCR-vcr/2.0.0
