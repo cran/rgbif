@@ -185,6 +185,48 @@ test_that("occ_download: real requests work", {
   # check that full downloads fail well 
   expect_error(occ_download(), "You are requesting a full download. Please use a predicate to filter the data. For example, pred_default().")
   
+  vcr::use_cassette("occ_download_9", {
+    bbb <- occ_download(
+      pred("taxonKey",22),
+      format = "DWCA",
+      verbatim_extensions=
+      c("http://rs.gbif.org/terms/1.0/DNADerivedData",
+      "http://rs.tdwg.org/dwc/terms/MeasurementOrFact")
+    )
+  }, match_requests_on = c("method", "uri", "body"))
+  expect_is(unclass(bbb), "character")
+  expect_match(unclass(bbb)[1], "^[0-9]{7}-[0-9]{15}$")
+  expect_equal(attr(bbb, "user"), Sys.getenv("GBIF_USER"))
+  expect_equal(attr(bbb, "email"), Sys.getenv("GBIF_EMAIL"))
+  expect_equal(attr(bbb, "format"), "DWCA")
+  expect_is(attr(bbb,"citation"),"character")
+  expect_is(attr(bbb,"downloadLink"),"character")
+  expect_output(print.occ_download(bbb),"<<gbif download>>")
+  expect_equal(length(capture.output(print(bbb))),22)
+
+  vcr::use_cassette("occ_download_10", {
+    eee <- occ_download(
+      pred("taxonKey", "5WZLF",
+      checklistKey = "7ddf754f-d193-4cc9-b351-99906754a03b"),
+      format = "DWCA")
+  }, match_requests_on = c("method", "uri", "body"))
+  expect_is(unclass(eee), "character")
+  expect_match(unclass(eee)[1], "^[0-9]{7}-[0-9]{15}$")
+  expect_equal(attr(eee, "user"), Sys.getenv("GBIF_USER"))
+  expect_equal(attr(eee, "email"), Sys.getenv("GBIF_EMAIL"))
+  expect_equal(attr(eee, "format"), "DWCA")
+  expect_is(attr(eee,"citation"),"character")
+  expect_is(attr(eee,"downloadLink"),"character")
+  expect_output(print.occ_download(eee),"<<gbif download>>")
+  expect_equal(length(capture.output(print(eee))),22)
+
+  # test that invalid key value fails well
+  expect_error(
+    occ_download(
+      pred("country", "UA",
+      checklistKey = "7ddf754f-d193-4cc9-b351-99906754a03b"),
+      format = "SIMPLE_CSV")
+    )
 })
 
 

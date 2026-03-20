@@ -3,6 +3,9 @@
 #' @name download_predicate_dsl
 #' @param key (character) the key for the predicate. See "Keys" below
 #' @param value (various) the value for the predicate
+#' @param checklistKey (character) A checklistKey to use for downloading using 
+#' alternative taxonomies. The default is `NULL`, which means the GBIF backbone
+#' taxonomy will be used.
 #' @param ...,.list For `pred_or()` or `pred_and()`, one or more objects of
 #' class `occ_predicate`, created by any `pred*` function
 #' @section predicate methods and their equivalent types:
@@ -168,7 +171,7 @@
 #' - parentEventId/parentEventID (PARENT_EVENT_ID)
 #' - identifiedBy (IDENTIFIED_BY)
 #' - identifiedById/identifiedByID (IDENTIFIED_BY_ID)
-#' - license (LICENSE)
+#' - license (LICENSE) - Note: Use underscores, not spaces (e.g., "CC_BY_4_0" not "CC BY 4.0")
 #' - locality(LOCALITY)
 #' - pathway (PATHWAY)
 #' - preparations (PREPARATIONS)
@@ -221,10 +224,12 @@
 #' pred_or(pred("taxonKey", 2977832), pred("taxonKey", 2977901),
 #'   pred("taxonKey", 2977966))
 #' pred_in("taxonKey", c(2977832, 2977901, 2977966, 2977835))
+#' pred("license", "CC_BY_4_0")
+#' pred_in("license", c("CC_BY_4_0", "CC_BY_NC_4_0"))
 
 #' @rdname download_predicate_dsl
 #' @export
-pred <- function(key, value) pred_factory("=")(key, value)
+pred <- function(key, value, checklistKey = NULL) pred_factory("=")(key, value, checklistKey)
 #' @rdname download_predicate_dsl
 #' @export
 pred_gt <- function(key, value) pred_factory(">")(key, value)
@@ -302,10 +307,18 @@ print.occ_predicate_list <- function(x, ...) {
 
 # helpers
 pred_factory <- function(type) {
-  function(key, value) {
+  function(key, value, checklistKey = NULL) {
     if (!length(key) == 1) stop("'key' must be length 1", call. = FALSE)
     if (!length(value) == 1) stop("'value' must be length 1", call. = FALSE)
-    z <- parse_pred(key, value, type)
+    if (!is.null(checklistKey)) {
+      if (!key %in% c("taxonKey", "TAXON_KEY")) {
+        stop("`checklistKey` can only be used when `key` is 'taxonKey' or 'TAXON_KEY'", call. = FALSE)
+      }
+      if (!is_uuid(checklistKey)) {
+        stop("`checklistKey` must be a valid UUID", call. = FALSE)
+      }
+    }
+    z <- parse_pred(key, value, type, checklistKey)
     structure(z, class = "occ_predicate")
   }
 }
@@ -513,9 +526,10 @@ key_lkup <- list(
   INSTITUTION_KEY = "INSTITUTION_KEY"
   )
 
-parse_pred <- function(key, value, type = "and") {
+parse_pred <- function(key, value, type = "and", checklistKey = NULL) {
   assert(key, "character")
   assert(type, "character")
+  assert(checklistKey, "character")
 
   ogkey <- key
   key <- key_lkup[[key]]
@@ -544,6 +558,13 @@ parse_pred <- function(key, value, type = "and") {
     list(type = unbox(type), parameter = unbox(key))
   } else if (type == "isNull") {
     list(type = unbox(type), parameter = unbox(key))
+  } else if (type == "equals" & !is.null(checklistKey) & key == "TAXON_KEY") {
+    list(
+      type = unbox(type),
+      key = unbox(key),
+      value = unbox(as_c(value)),
+      checklistKey = unbox(checklistKey)
+    )
   } else {
     list(type = unbox(type), key = unbox(key), value = unbox(as_c(value)))
   }
@@ -581,7 +602,7 @@ sub_str <- function(str, max = 100) {
   if (nchar(str) < max) return(str)
   paste0(substring(str, 1, max), " ... ", sprintf("(N chars: %s)", nchar(str)))
 }
-parse_predicates <- function(user, email, type, format, ...) {
+parse_predicates <- function(user, email, type, format, verbatim_extensions, ...) {
   tmp <- list(...)
   if(length(tmp) == 0) { 
     stop("You are requesting a full download. Please use a predicate to filter the data. For example, pred_default().")
@@ -593,12 +614,25 @@ clzzs <- vapply(tmp,
   if (!all(clzzs))
     stop("all inputs must be class occ_predicate/occ_predicate_list; ?occ_download",
       call. = FALSE)
-  payload <- list(
-    creator = unbox(user),
-    notification_address = email,
-    format = unbox(format),
-    predicate = list()
-  )
+  if (!is.null(verbatim_extensions)) {
+    if(format != "DWCA") {
+      warning("verbatim_extensions can only be used with format = 'DWCA'. Ignoring verbatim_extensions.")
+    }
+    payload <- list(
+      creator = unbox(user),
+      notification_address = email,
+      format = unbox(format),
+      verbatimExtensions = verbatim_extensions,
+      predicate = list()
+    )
+  } else {
+    payload <- list(
+      creator = unbox(user),
+      notification_address = email,
+      format = unbox(format),
+      predicate = list()
+    )
+  }
   if (any(vapply(tmp, function(w) "predicates" %in% names(w), logical(1)))) {
     payload$predicate <- list(unclass(tmp[[1]]))
   } else {

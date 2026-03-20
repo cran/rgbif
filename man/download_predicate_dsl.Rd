@@ -18,7 +18,7 @@
 \alias{pred_default}
 \title{Download predicate DSL (domain specific language)}
 \usage{
-pred(key, value)
+pred(key, value, checklistKey = NULL)
 
 pred_gt(key, value)
 
@@ -50,6 +50,10 @@ pred_default()
 \item{key}{(character) the key for the predicate. See "Keys" below}
 
 \item{value}{(various) the value for the predicate}
+
+\item{checklistKey}{(character) A checklistKey to use for downloading using
+alternative taxonomies. The default is \code{NULL}, which means the GBIF backbone
+taxonomy will be used.}
 
 \item{..., .list}{For \code{pred_or()} or \code{pred_and()}, one or more objects of
 class \code{occ_predicate}, created by any \verb{pred*} function}
@@ -237,7 +241,7 @@ be supported that is not yet.
 \item parentEventId/parentEventID (PARENT_EVENT_ID)
 \item identifiedBy (IDENTIFIED_BY)
 \item identifiedById/identifiedByID (IDENTIFIED_BY_ID)
-\item license (LICENSE)
+\item license (LICENSE) - Note: Use underscores, not spaces (e.g., "CC_BY_4_0" not "CC BY 4.0")
 \item locality(LOCALITY)
 \item pathway (PATHWAY)
 \item preparations (PREPARATIONS)
@@ -289,6 +293,8 @@ pred_within("POLYGON((-14 42, 9 38, -7 26, -14 42))")
 pred_or(pred("taxonKey", 2977832), pred("taxonKey", 2977901),
   pred("taxonKey", 2977966))
 pred_in("taxonKey", c(2977832, 2977901, 2977966, 2977835))
+pred("license", "CC_BY_4_0")
+pred_in("license", c("CC_BY_4_0", "CC_BY_NC_4_0"))
 }
 \references{
 Download predicates docs:
@@ -305,6 +311,12 @@ Other downloads:
 \code{\link{occ_download_list}()},
 \code{\link{occ_download_meta}()},
 \code{\link{occ_download_queue}()},
+\code{\link{occ_download_stats_dataset_records}()},
+\code{\link{occ_download_stats_dataset}()},
+\code{\link{occ_download_stats_export}()},
+\code{\link{occ_download_stats_source}()},
+\code{\link{occ_download_stats_user_country}()},
+\code{\link{occ_download_stats}()},
 \code{\link{occ_download_wait}()},
 \code{\link{occ_download}()}
 }

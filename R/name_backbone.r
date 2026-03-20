@@ -246,8 +246,12 @@ process_name_backbone_output <- function(tt, args) {
   }
   classification <- if (!is.null(tt$classification)) {
     c <- bind_rows(lapply(tt$classification, tibble::as_tibble))
+    if(any(duplicated(c$rank))) {
+      c$rank <- make.unique(c$rank)
+    }
     nv <- stats::setNames(c$name, tolower(c$rank))
     kv <- stats::setNames(c$key,  paste0(tolower(c$rank), "Key"))
+    
     c <- tibble::as_tibble(as.list(c(nv, kv)))
     c
   } else {
@@ -255,6 +259,14 @@ process_name_backbone_output <- function(tt, args) {
   }
   synonym <- if (!is.null(tt$synonym)) {
     tibble::as_tibble(tt$synonym)
+  } else {
+    NULL
+  }
+  acceptedUsage <- if (!is.null(tt$acceptedUsage)) {
+    a <- tibble::as_tibble(tt$acceptedUsage)[c("key","name")]
+    colnames(a)[colnames(a) == "key"] <- "acceptedUsageKey"
+    colnames(a)[colnames(a) == "name"] <- "acceptedScientificName"
+    a
   } else {
     NULL
   }
@@ -269,8 +281,8 @@ process_name_backbone_output <- function(tt, args) {
   } else {
     NULL
   }
-  
-  out <- do.call("cbind", rgbif_compact(list(usage, 
+  out <- do.call("cbind", rgbif_compact(list(usage,
+                                             acceptedUsage, 
                                              diagnostics, 
                                              classification,
                                              synonym,
