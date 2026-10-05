@@ -12,6 +12,8 @@ collection_search(
   preservationType = NULL,
   contentType = NULL,
   numberSpecimens = NULL,
+  occurrenceCount = NULL,
+  typeSpecimenCount = NULL,
   accessionStatus = NULL,
   personalCollection = NULL,
   sourceId = NULL,
@@ -19,6 +21,8 @@ collection_search(
   code = NULL,
   alternativeCode = NULL,
   contact = NULL,
+  contactUserId = NULL,
+  contactEmail = NULL,
   institutionKey = NULL,
   country = NULL,
   city = NULL,
@@ -47,6 +51,8 @@ collection_export(
   preservationType = NULL,
   contentType = NULL,
   numberSpecimens = NULL,
+  occurrenceCount = NULL,
+  typeSpecimenCount = NULL,
   accessionStatus = NULL,
   personalCollection = NULL,
   sourceId = NULL,
@@ -54,6 +60,9 @@ collection_export(
   code = NULL,
   alternativeCode = NULL,
   contact = NULL,
+  contactUserId = NULL,
+  contactEmail = NULL,
+  institution = NULL,
   institutionKey = NULL,
   country = NULL,
   city = NULL,
@@ -94,6 +103,14 @@ https://techdocs.gbif.org/en/openapi/v1/registry#/Collections/listCollections}
 \item{numberSpecimens}{Number of specimens. It supports ranges and a \code{*} can
 be used as a wildcard.}
 
+\item{occurrenceCount}{(character) Count of occurrences linked. It supports
+ranges and a \code{*} can be used as a wildcard. Optional parameter for filtering
+results.}
+
+\item{typeSpecimenCount}{(character) Count of type specimens linked. It
+supports ranges and a \code{*} can be used as a wildcard. Optional parameter for
+filtering results.}
+
 \item{accessionStatus}{Accession status of a GrSciColl collection. Accepted
 values : INSTITUTIONAL, PROJECT}
 
@@ -111,6 +128,12 @@ collection.}
 
 \item{contact}{Filters collections and institutions whose contacts contain
 the person key specified.}
+
+\item{contactUserId}{(numeric) Filters collections by the user ID of a
+contact. Optional parameter for filtering results.}
+
+\item{contactEmail}{(character) Filters collections by the email of a
+contact. Optional parameter for filtering results.}
 
 \item{institutionKey}{Keys of institutions to filter by.}
 
@@ -166,6 +189,8 @@ Available values : ASC, DESC.}
 Only used for \link{collection_export}.}
 
 \item{curlopts}{curlopts options passed on to \link[crul:HttpClient]{crul::HttpClient}.}
+
+\item{institution}{Name of institutions hosting collections.}
 }
 \value{
 a \code{list}

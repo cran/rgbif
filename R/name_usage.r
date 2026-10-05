@@ -1,5 +1,10 @@
 #' Lookup details for specific names in all taxonomies in GBIF.
 #'
+#' @section Deprecation Notice:
+#' **This function is deprecated.** It only works with the GBIF Backbone
+#' Taxonomy and does not support COL (Catalogue of Life) Extended Release.
+#' Use `rcol::col_usage()` from the rcol package instead for COL XR support.
+#'
 #' @export
 #' @template occ
 #' @template nameusage
@@ -25,6 +30,11 @@
 #' searches for names. This function encompasses a bunch of API endpoints,
 #' most of which require that you already have a taxon key, but there is one
 #' endpoint that allows name searches (see examples below).
+#'
+#' **Important:** When `key` is provided, the `datasetKey` parameter is ignored
+#' by the GBIF API. The API returns data based solely on the key, regardless of
+#' what `datasetKey` is set to. A warning will be issued if both parameters are
+#' provided.
 #'
 #' Note that `data="verbatim"` hasn't been working.
 #'
@@ -59,21 +69,21 @@
 #' name_usage(key=2435099, data='references')
 #'
 #' # Species profiles, descriptions
-#' name_usage(key=3119195, data='speciesProfiles')
-#' name_usage(key=3119195, data='descriptions')
+#' name_usage(key=5231190, data='speciesProfiles')
+#' name_usage(key=5231190, data='descriptions')
 #' name_usage(key=2435099, data='children')
 #'
 #' # Vernacular names for a name usage
-#' name_usage(key=3119195, data='vernacularNames')
+#' name_usage(key=5231190, data='vernacularNames')
 #'
 #' # Limit number of results returned
-#' name_usage(key=3119195, data='vernacularNames', limit=3)
+#' name_usage(key=5231190, data='vernacularNames', limit=3)
 #'
 #' # Search for names by dataset with datasetKey parameter
 #' name_usage(datasetKey="d7dddbf4-2cf0-4f39-9b2a-bb099caae36c")
 #'
 #' # Search for a particular language
-#' name_usage(key=3119195, language="FRENCH", data='vernacularNames')
+#' name_usage(key=5231190, language="FRENCH", data='vernacularNames')
 #'
 #' # get root usage with a uuid
 #' name_usage(data = "root", uuid = "73605f3a-af85-4ade-bbc5-522bfb90d847")
@@ -93,6 +103,15 @@ name_usage <- function(key=NULL, name=NULL, data='all', language=NULL,
   start=0, limit=100, return=NULL, 
   curlopts = list(http_version = 2)) {
 
+  if (is.null(datasetKey)) {
+    warning("name_usage() works by default with the out-of-date GBIF Backbone Taxonomy. Consider using rcol::col_usage() instead.", call. = FALSE)
+  }
+  
+  # Warn if datasetKey is ignored due to key being provided
+  if (!is.null(datasetKey) && !is.null(key)) {
+    warning("datasetKey is ignored when key is provided. The GBIF API returns data based on the key only, regardless of datasetKey.", call. = FALSE)
+  }
+  
   pchk(return, "name_usage")
   # check limit and start params
   check_vals(limit, "limit")

@@ -13,7 +13,17 @@ dataset_export <- function(query = NULL,
                            projectId = NULL,
                            hostingCountry = NULL,
                            networkKey = NULL,
-                           doi = NULL
+                           doi = NULL,
+                           installationKey = NULL,
+                           endpointType = NULL,
+                           category = NULL,
+                           continent = NULL,
+                           taxonKey = NULL,
+                           recordCount = NULL,
+                           modifiedDate = NULL,
+                           createdDate = NULL,
+                           contactUserId = NULL,
+                           contactEmail = NULL
                            ) {
   
   assert(query,"character")
@@ -29,11 +39,35 @@ dataset_export <- function(query = NULL,
   assert(hostingCountry,"character")
   assert(networkKey,"character")
   assert(doi,"character")
+  assert(installationKey,"character")
+  assert(endpointType,"character")
+  assert(category,"character")
+  assert(continent,"character")
+  assert(taxonKey,"numeric")
+  assert(recordCount,"character")
+  assert(modifiedDate,"character")
+  assert(createdDate,"character")
+  assert(contactUserId,"numeric")
+  assert(contactEmail,"character")
+  
+  # Deprecation warning for taxonKey
+  if (!is.null(taxonKey)) {
+    warning("The taxonKey parameter in dataset_export() only works with the out-of-date GBIF Backbone Taxonomy and does not support COL (Catalogue of Life) Extended Release.", call. = FALSE)
+  }
+  
+  # Deprecation warning for continent
+  if (!is.null(continent)) {
+    warning("The continent parameter in dataset_export() is deprecated and may be removed in a future version.", call. = FALSE)
+  }
   
   # args with single value 
   args <- rgbif_compact(list(
             format = "TSV",
-            q = query
+            q = query,
+            recordCount = recordCount,
+            modifiedDate = modifiedDate,
+            createdDate = createdDate,
+            contactEmail = contactEmail
             ))
   
   args <- rgbif_compact(c(
@@ -50,7 +84,13 @@ dataset_export <- function(query = NULL,
                 convmany(projectId),
                 convmany(hostingCountry),
                 convmany(networkKey),
-                convmany(doi)
+                convmany(doi),
+                convmany(installationKey),
+                convmany(endpointType),
+                convmany(category),
+                convmany(continent),
+                convmany(taxonKey),
+                convmany(contactUserId)
                 ))
   
   url_query <- paste0(names(args),"=",args,collapse="&")

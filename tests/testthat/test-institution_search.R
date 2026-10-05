@@ -7,6 +7,9 @@ test_that("institution search works as expected", {
   e <- institution_search(source = "IH_IRN", limit=1)
   c <- institution_search(country = "US;GB", limit=1)
   t <- institution_search(typeSpecimenCount = "10,100",limit=1)
+  d <- institution_search(discipline = "Paleontology", limit = 1)
+  u <- institution_search(contactUserId = 1, limit = 1)
+  m <- institution_search(contactEmail = "info@ynhm.org", limit = 1)
   })
   
   expect_is(q, "list")
@@ -50,12 +53,40 @@ test_that("institution search works as expected", {
   expect_true(nrow(t$data) > 0)
   expect_gte(t$meta$count, 500)
   expect_gte(ncol(t$data), 30)
+
+  expect_is(d, "list")
+  expect_is(d$data, "tbl_df")
+  expect_is(d$meta, "data.frame")
+  expect_gte(d$meta$count, 1)
+
+  expect_is(u, "list")
+  expect_is(u$data, "tbl_df")
+  expect_is(u$meta, "data.frame")
+
+  expect_is(m, "list")
+  expect_is(m$data, "tbl_df")
+  expect_is(m$meta, "data.frame")
   
   })
 
+test_that("institution_search validates discipline, contactEmail, contactUserId parameter types", {
+  expect_error(institution_search(discipline = 1), "discipline must be of class")
+  expect_error(institution_search(contactUserId = "1"), "contactUserId must be of class")
+  expect_error(institution_search(contactEmail = 1), "contactEmail must be of class")
+})
+
+test_that("institution_export validates new parameter types", {
+  expect_error(institution_export(institution = 1), "institution must be of class")
+  expect_error(institution_export(contentType = 1), "contentType must be of class")
+  expect_error(institution_export(preservationType = 1), "preservationType must be of class")
+  expect_error(institution_export(accessionStatus = 1), "accessionStatus must be of class")
+  expect_error(institution_export(personalCollection = "yes"), "personalCollection must be of class")
+  expect_error(institution_export(contactUserId = "1"), "contactUserId must be of class")
+  expect_error(institution_export(contactEmail = 1), "contactEmail must be of class")
+})
+
 test_that("institution_export works as expected", {
   skip_on_cran()
-  skip_on_ci()
   
   q <- institution_export(query = "Kansas")
   s <- institution_export(numberSpecimens = "1000,*")
@@ -76,4 +107,35 @@ test_that("institution_export works as expected", {
   expect_gte(ncol(o), 10)
   expect_true("key" %in% names(o))
   
+})
+
+test_that("institution_export filters by active status, source, gbifRegion, contactEmail, and contactUserId", {
+  skip_on_cran()
+  
+  a <- institution_export(active = TRUE)
+  src <- institution_export(source = "IH_IRN")
+  r <- institution_export(gbifRegion = "NORTH_AMERICA")
+  m <- institution_export(contactEmail = "info@ynhm.org")
+  u <- institution_export(contactUserId = 1)
+  
+  expect_is(a, "tbl_df")
+  expect_gte(nrow(a), 1)
+  expect_gte(ncol(a), 10)
+  expect_true("key" %in% names(a))
+  
+  expect_is(src, "tbl_df")
+  expect_gte(nrow(src), 1)
+  expect_gte(ncol(src), 10)
+  expect_true("key" %in% names(src))
+  
+  expect_is(r, "tbl_df")
+  expect_gte(nrow(r), 1)
+  expect_gte(ncol(r), 10)
+  expect_true("key" %in% names(r))
+  
+  expect_is(m, "tbl_df")
+  expect_true("key" %in% names(m))
+  
+  expect_is(u, "tbl_df")
+  expect_true("key" %in% names(u))
 })

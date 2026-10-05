@@ -21,7 +21,17 @@ dataset_export(
   projectId = NULL,
   hostingCountry = NULL,
   networkKey = NULL,
-  doi = NULL
+  doi = NULL,
+  installationKey = NULL,
+  endpointType = NULL,
+  category = NULL,
+  continent = NULL,
+  taxonKey = NULL,
+  recordCount = NULL,
+  modifiedDate = NULL,
+  createdDate = NULL,
+  contactUserId = NULL,
+  contactEmail = NULL
 )
 
 dataset_search(
@@ -41,6 +51,14 @@ dataset_search(
   doi = NULL,
   installationKey = NULL,
   endpointType = NULL,
+  category = NULL,
+  continent = NULL,
+  taxonKey = NULL,
+  recordCount = NULL,
+  modifiedDate = NULL,
+  createdDate = NULL,
+  contactUserId = NULL,
+  contactEmail = NULL,
   facet = NULL,
   facetLimit = NULL,
   facetOffset = NULL,
@@ -67,6 +85,16 @@ dataset_suggest(
   hostingCountry = NULL,
   networkKey = NULL,
   doi = NULL,
+  installationKey = NULL,
+  endpointType = NULL,
+  category = NULL,
+  continent = NULL,
+  taxonKey = NULL,
+  recordCount = NULL,
+  modifiedDate = NULL,
+  createdDate = NULL,
+  contactUserId = NULL,
+  contactEmail = NULL,
   limit = 100,
   start = NULL,
   description = FALSE,
@@ -124,6 +152,29 @@ country given as a ISO 639-1 (2 letter) country code.}
 Available values : EML, FEED, WFS, WMS, TCS_RDF, TCS_XML, DWC_ARCHIVE, DIGIR,
 DIGIR_MANIS, TAPIR, BIOCASE, BIOCASE_XML_ARCHIVE, OAI_PMH, COLDP,
 CAMTRAP_DP, BIOM_1_0, BIOM_2_1, ACEF, TEXT_TREE, OTHER}
+
+\item{category}{Filters datasets by their dataset category tag. For example
+"eDNA", "CitizenScience", "Tracking".}
+
+\item{continent}{Filters datasets by the continent of their spatial coverage.
+Available values: "AFRICA", "ANTARCTICA", "ASIA", "EUROPE",
+"NORTH_AMERICA", "OCEANIA", "SOUTH_AMERICA".}
+
+\item{taxonKey}{Filters datasets by a taxon key from the GBIF backbone.
+The dataset must index records linked to this taxon or any of its descendants.}
+
+\item{recordCount}{Filters datasets by number of occurrence records. Accepts
+ranges, e.g. "1000,5000".}
+
+\item{modifiedDate}{Filters datasets by their last modified date. Accepts
+date ranges, e.g. "2020-01-01,2021-01-01".}
+
+\item{createdDate}{Filters datasets by their created date. Accepts date
+ranges, e.g. "2020-01-01,2021-01-01".}
+
+\item{contactUserId}{Filters datasets by the user ID of a dataset contact.}
+
+\item{contactEmail}{Filters datasets by the email of a dataset contact.}
 
 \item{facet}{A facet name used to retrieve the most frequent values for a field.}
 
@@ -195,6 +246,11 @@ dataset_search(projectId = "GRIIS;BID-AF2020-140-REG")
 dataset_search(hostingCountry = "NO;SE")
 dataset_search(doi="10.15468/aomfnb;10.15468/igasai")
 dataset_search(installationKey = "d209e552-7e6e-4840-b13c-c0596ef36e55")
+dataset_search(category = "eDNA")
+dataset_search(recordCount = "10000,100000", limit = 5)
+dataset_search(modifiedDate = "2020-01-01,2021-01-01", limit = 5)
+dataset_search(createdDate = "2015-01-01,2016-01-01", limit = 5)
+dataset_search(contactEmail = "helpdesk@gbif.org", limit = 5)
 
 # multiple filters
 dataset_search(license = "CC0_1_0",subtype = "TAXONOMIC_AUTHORITY")

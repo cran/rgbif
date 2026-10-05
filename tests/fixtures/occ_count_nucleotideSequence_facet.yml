@@ -1,0 +1,71 @@
+http_interactions:
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/occurrence/search?occurrenceStatus=PRESENT&limit=0&offset=0&checklistKey=7ddf754f-d193-4cc9-b351-99906754a03b&facet=nucleotideSequence.targetGene&facetLimit=
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+      x-varnish-rli: '18'
+      x-varnish-rlg: '250'
+    body:
+      raw_gzip: |-
+        eJx9UE9rwyAc/S6ec4jGqOmtdFICW7Il6WkUyRLTyowWkx5G6XefrKO1UIqXH7x/vncCdhgm
+        OYNFHAG
+        tRnW5pOnLoZKddf0EFkOrJxmBzh6NhxMG44RQnNIIODkd9ewpn9sIDG0n/+4TGJTU
+        PViAYrN65WWTv3
+        BR848NL1ZcNMtqzRux5gUH/6YXkWlH6TWV+rKTHVstqmIJrrEQZgzRlLBz
+        dKW+OztLZURne2V2YieNv
+        AlQipKMsTjgv6nZdntreqe8/eGpGjOMGAvTVmUe4hRllGQBXtcb
+        4e7/jBmjaUYCUt7UwsmdsiakpTDG
+        ED7wEpDVQh6/W/djZ9WFmphCgh7lC4hqMYZVbzKS+Vlw
+        WGqvrbMH3U7z80ESQgim901gsAfyZfF5698
+        vs7W81A==
+  recorded_at: 2026-10-01 08:14:23
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/occurrence/search?occurrenceStatus=PRESENT&limit=0&offset=0&checklistKey=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&facet=nucleotideSequence.targetGene&facetLimit=5&taxonKey=212
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+      x-varnish-rli: '18'
+      x-varnish-rlg: '250'
+    body:
+      raw_gzip: |-
+        eJx9jctuwjAQRf9l1l6AAzHJDgULIUHS5rGqkJXaY2rJsSs7rBD/3qhUNN1Us7nSPefODbzW
+        EUfIFwS
+        sGcwjoVOVrlH6oCLkurcRCUh/dVNNk/WGLRcsYwQCxqsdJ+TtTED3Er/zDbRBqyCH
+        siuOvGoPOy4a/t
+        rxsuCi3dZ73oo9Lzn8jD4k1w84OS/Bj2ickF4ZdxEXdAjP5+lmxdZ38oRP
+        ZvTywzsVTG/F5/8qpelML
+        arDrKQrmszK2rz76Idpsy63v9iSZZTNsKbpRPhLpBlL7ufpvgDZ
+        7G8v
+  recorded_at: 2026-10-01 08:14:26
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/occurrence/search?occurrenceStatus=PRESENT&limit=0&offset=0&checklistKey=7ddf754f-d193-4cc9-b351-99906754a03b&facet=nucleotideSequence.targetGene&facetLimit=&nucleotideSequence.invalid=FALSE
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+      x-varnish-rli: '18'
+      x-varnish-rlg: '250'
+    body:
+      raw_gzip: |-
+        eJx9kF9rgzAUxb9Lnn0wMcbYt+JCKWx2U/s0RnAa27CYW6J9GKXffWEdawql3JcL5/zO/XNC
+        MAyTmtE
+        ijpDRo750yvaboVIduH5Ci6E1k4pQB0frZUxpzhOWsQg5NR3N7B3vHxEa2k799ic0
+        aGV6tEDltngWm2
+        b9JGQt3raiLIRsltVKNHIlSoH+Mi+QbUflmUp/wgRja2RVLtF1KuY5TuOc
+        n6N/66uDWWkrO+i13cmds
+        uoKkJTElDAa+F/0DN0ebO+0jz88pCmPM5KRgC4261BnubckgV7X
+        W+lud6YZzTAPV143tXRqp8Gim4cS
+        zO9lScxrqY5frfuGWXcBk+Qsj1NylyG1HMNTrxhL/d7h
+        oGJvwMHBtNP8+CEJY4xmt5fg4B8EU07PH75
+        +ABskvJI=
+  recorded_at: 2026-10-01 08:14:32
+recorded_with: VCR-vcr/2.0.0

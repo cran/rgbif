@@ -1,4 +1,4 @@
-
+# testthat::test_file("tests/testthat/test-collection_search.R")
 test_that("collection_search works as expected", {
   vcr::use_cassette("collection_search",{
   q <- collection_search(query="insect",limit=2)
@@ -46,15 +46,28 @@ test_that("collection_search works as expected", {
   
 })
 
+test_that("collection_search validates occurrence/contact filter parameter types", {
+  expect_error(collection_search(occurrenceCount = 1), "occurrenceCount must be of class")
+  expect_error(collection_search(typeSpecimenCount = 1), "typeSpecimenCount must be of class")
+  expect_error(collection_search(contactUserId = "1"), "contactUserId must be of class")
+  expect_error(collection_search(contactEmail = 1), "contactEmail must be of class")
+})
+
 
 test_that("collection_export works as expected", {
   skip_on_cran()
   skip_on_ci()
+  skip("collection_export endpoint unreliable - downloads large TSV files that frequently timeout (60+ seconds)")
   
   q <- collection_export(query = "insect")
   i <- collection_export(name="Insects;Entomology")
   s <- collection_export(numberSpecimens = "0,100")
   c <- collection_export(query = "insect", country = "US;GB")
+  n <- collection_export(
+    occurrenceCount = "0,*",
+    typeSpecimenCount = "1,*",
+    sortOrder = "DESC"
+  )
   
   expect_is(q, "tbl_df")
   expect_gte(nrow(q), 400)
@@ -75,6 +88,18 @@ test_that("collection_export works as expected", {
   expect_gte(nrow(c), 100)
   expect_gte(ncol(c), 30)
   expect_true("key" %in% names(c))
+
+  expect_is(n, "tbl_df")
+  expect_gte(nrow(n), 1)
+  expect_gte(ncol(n), 30)
+  expect_true("key" %in% names(n))
   
 })
 
+test_that("collection_export validates filter and contact parameter types", {
+  expect_error(collection_export(institution = 1), "institution must be of class")
+  expect_error(collection_export(occurrenceCount = 1), "occurrenceCount must be of class")
+  expect_error(collection_export(typeSpecimenCount = 1), "typeSpecimenCount must be of class")
+  expect_error(collection_export(contactUserId = "1"), "contactUserId must be of class")
+  expect_error(collection_export(contactEmail = 1), "contactEmail must be of class")
+})

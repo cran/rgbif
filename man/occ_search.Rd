@@ -123,10 +123,23 @@ occ_search(
   member = NULL,
   bed = NULL,
   associatedSequences = NULL,
+  nucleotideSequence.nucleotideSequenceID = NULL,
+  nucleotideSequence.targetGene = NULL,
+  nucleotideSequence.sequence = NULL,
+  nucleotideSequence.sequenceLength = NULL,
+  nucleotideSequence.gcContent = NULL,
+  nucleotideSequence.nonIupacFraction = NULL,
+  nucleotideSequence.nonACGTNFraction = NULL,
+  nucleotideSequence.nFraction = NULL,
+  nucleotideSequence.nRunsCapped = NULL,
+  nucleotideSequence.naturalLanguageDetected = NULL,
+  nucleotideSequence.endsTrimmed = NULL,
+  nucleotideSequence.gapsOrWhitespaceRemoved = NULL,
+  nucleotideSequence.invalid = NULL,
   isSequenced = NULL,
   startDayOfYear = NULL,
   endDayOfYear = NULL,
-  checklistKey = NULL,
+  checklistKey = "7ddf754f-d193-4cc9-b351-99906754a03b",
   limit = 500,
   start = 0,
   fields = "all",
@@ -143,7 +156,7 @@ occ_search(
 \item{taxonKey}{(numeric) A taxon key from the GBIF backbone. All included
 and synonym taxa are included in the search, so a search for aves with
 taxononKey=212 will match all birds, no matter which species. You can pass
-many keys to \code{occ_search(taxonKey=c(1,212))}.}
+many keys to \code{occ_search(taxonKey=c("N","V2"))}.}
 
 \item{scientificName}{A scientific name from the GBIF backbone. All included
 and synonym taxa are included in the search.}
@@ -463,7 +476,7 @@ Example : 8fa58e08-08de-4ac1-b69c-1235340b7001}
 
 \item{acceptedTaxonKey}{(numeric) A taxon key from the GBIF backbone. Only
 synonym taxa are included in the search, so a search for Aves with
-acceptedTaxonKey=212 will match occurrences identified as birds, but not
+acceptedTaxonKey="V2" will match occurrences identified as birds, but not
 any known family, genus or species of bird.}
 
 \item{collectionKey}{(character) A key (UUID) for a collection registered in
@@ -566,6 +579,44 @@ which the material entity was collected.}
 identifier, URI) of genetic sequence information associated with the
 material entity. Example : http://www.ncbi.nlm.nih.gov/nuccore/U34853.1}
 
+\item{nucleotideSequence.nucleotideSequenceID}{(character) Identifier for the
+nucleotide sequence associated with the occurrence.}
+
+\item{nucleotideSequence.targetGene}{(character) Gene targeted by the
+nucleotide sequence. See possible values at
+\url{https://registry.gbif.org/vocabulary/target_gene/concepts}}
+
+\item{nucleotideSequence.sequence}{(character) Nucleotide sequence string.}
+
+\item{nucleotideSequence.sequenceLength}{(numeric) Length of the nucleotide
+sequence.}
+
+\item{nucleotideSequence.gcContent}{(numeric) GC content fraction or range.}
+
+\item{nucleotideSequence.nonIupacFraction}{(numeric) Fraction or range of
+non-IUPAC characters in the sequence.}
+
+\item{nucleotideSequence.nonACGTNFraction}{(numeric) Fraction or range of
+characters outside A, C, G, T, and N.}
+
+\item{nucleotideSequence.nFraction}{(numeric) Fraction or range of N
+characters in the sequence.}
+
+\item{nucleotideSequence.nRunsCapped}{(numeric) Count or range of capped N
+runs in the sequence.}
+
+\item{nucleotideSequence.naturalLanguageDetected}{(logical) Whether natural
+language was detected in the sequence.}
+
+\item{nucleotideSequence.endsTrimmed}{(logical) Whether sequence ends were
+trimmed.}
+
+\item{nucleotideSequence.gapsOrWhitespaceRemoved}{(logical) Whether gaps or
+whitespace were removed from the sequence.}
+
+\item{nucleotideSequence.invalid}{(logical) Whether the sequence is marked as
+invalid.}
+
 \item{isSequenced}{(logical) Indicates whether \code{associatedSequences} genetic
 sequence information exists.}
 
@@ -626,8 +677,8 @@ for curl options}
 \value{
 An object of class \code{gbif}, which is a S3 class list, with
 slots for metadata (\code{meta}), the occurrence data itself (\code{data}),
-the taxonomic hierarchy data (\code{hier}), and media metadata
-(\code{media}).
+the taxonomic hierarchy data (\code{hier}), media metadata (\code{media}),
+taxonomic classifications (\code{classifications}), and facets (\code{facets}).
 In addition, the object has attributes listing the user supplied arguments
 and whether it was a 'single' or 'many' search; that is, if you supply two
 values of the \code{datasetKey} parameter to searches are done, and it's a
@@ -636,6 +687,12 @@ endOfRecords and count fields. \code{data} is a tibble (aka data.frame). \code{h
 is a list of data.frames of the unique set of taxa found, where each
 data.frame is its taxonomic classification. \code{media} is a list of media
 objects, where each element holds a set of metadata about the media object.
+\code{classifications} is a named list of tibbles, with one tibble per checklistKey.
+Each tibble contains one row per occurrence with the full taxonomic classification
+path pivoted into camelCase columns: checklistKey, kingdomName, kingdomKey, phylumName,
+phylumKey, className, classKey, orderName, orderKey, familyName, familyKey,
+genusName, genusKey, subgenusName, subgenusKey, speciesName, speciesKey. The function
+dynamically discovers all taxonomic ranks from the API. Known checklists (COL, backbone) are shown with friendly names, while unknown checklists use their UUID.
 }
 \description{
 Search for GBIF occurrences
@@ -643,6 +700,13 @@ Search for GBIF occurrences
 \note{
 Maximum number of records you can get with this function is 100,000.
 See https://www.gbif.org/developer/occurrence
+
+When numeric taxonomic keys (taxonKey, speciesKey, kingdomKey, etc.) are
+detected and checklistKey is set to COL XR (the default), the function
+automatically switches to the GBIF Backbone taxonomy checklistKey and issues
+a warning. These numeric keys are legacy identifiers. If you explicitly set
+checklistKey to Backbone or another taxonomy, no warning is issued. Consider
+migrating to COL XR identifiers using \code{\link[=gbif_to_col]{gbif_to_col()}}.
 }
 \section{Multiple values passed to a parameter}{
 
@@ -805,8 +869,8 @@ occ_search(recordedByID="https://orcid.org/0000-0003-1691-239X", limit=20)
 occ_search(identifiedByID="https://orcid.org/0000-0003-4710-2648", limit=20)
 
 # Pass in curl options for extra fun
-occ_search(taxonKey=2433407, limit=20, curlopts=list(verbose=TRUE))$hier
-occ_search(taxonKey=2433407, limit=20,
+occ_search(taxonKey="Q2M4", limit=20, curlopts=list(verbose=TRUE))$hier
+occ_search(taxonKey="Q2M4", limit=20,
   curlopts = list(
     noprogress = FALSE,
     progressfunction = function(down, up) {
@@ -815,7 +879,7 @@ occ_search(taxonKey=2433407, limit=20,
     }
   )
 )$hier
-# occ_search(taxonKey=2433407, limit=20,
+# occ_search(taxonKey="Q2M4", limit=20,
 #   curlopts = list(timeout_ms = 1))
 
 # Search for many species
@@ -953,19 +1017,19 @@ occ_search(search = "kingfisher", limit=20)
 occ_search(phylumKey = 7707728, limit = 5)
 
 # search on kingdomKey
-occ_search(kingdomKey = 1, limit = 5)
+occ_search(kingdomKey = "N", limit = 5)
 
 # search on classKey
-occ_search(classKey = 216, limit = 5)
+occ_search(classKey = "H6", limit = 5)
 
 # search on orderKey
-occ_search(orderKey = 7192402, limit = 5)
+occ_search(orderKey = "X3", limit = 5)
 
 # search on familyKey
-occ_search(familyKey = 3925, limit = 5)
+occ_search(familyKey = "C7ZVG", limit = 5)
 
 # search on genusKey
-occ_search(genusKey = 1935496, limit = 5)
+occ_search(genusKey = "9WLSS", limit = 5)
 
 # search on establishmentMeans
 occ_search(establishmentMeans = "INVASIVE", limit = 5)
@@ -1041,10 +1105,10 @@ occ_search(mediaType = 'Sound')$media
 
 # Query based on issues - see Details for options
 ## one issue
-occ_search(taxonKey=1, issue='DEPTH_UNLIKELY', fields =
+occ_search(taxonKey="N", issue='DEPTH_UNLIKELY', fields =
    c('name','key','decimalLatitude','decimalLongitude','depth'))
 ## two issues
-occ_search(taxonKey=1, issue=c('DEPTH_UNLIKELY','COORDINATE_ROUNDED'))
+occ_search(taxonKey="N", issue=c('DEPTH_UNLIKELY','COORDINATE_ROUNDED'))
 # Show all records in the Arizona State Lichen Collection that cant be matched to the GBIF
 # backbone properly:
 occ_search(datasetKey='84c0e1a0-f762-11e1-a439-00145eb45e9a',
@@ -1069,7 +1133,7 @@ res \%>\% occ_issues(mutate = "split_expand")
 res \%>\% occ_issues(-cudc, mutate = "split_expand")
 
 # If you try multiple values for two different parameters you are wacked on the hand
-# occ_search(taxonKey=c(2482598,2492010), recordedBy=c("smith","BJ Stacey"))
+# occ_search(taxonKey=c("N","Q2M4"), recordedBy=c("smith","BJ Stacey"))
 
 # Get a lot of data, here 1500 records for Helianthus annuus
 # out <- occ_search(taxonKey=key, limit=1500)

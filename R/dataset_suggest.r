@@ -14,6 +14,16 @@ dataset_suggest <- function(query = NULL,
                             hostingCountry = NULL,
                             networkKey = NULL,
                             doi = NULL, 
+                            installationKey = NULL,
+                            endpointType = NULL,
+                            category = NULL,
+                            continent = NULL,
+                            taxonKey = NULL,
+                            recordCount = NULL,
+                            modifiedDate = NULL,
+                            createdDate = NULL,
+                            contactUserId = NULL,
+                            contactEmail = NULL,
                             limit = 100,
                             start = NULL,
                             description = FALSE,
@@ -32,12 +42,35 @@ dataset_suggest <- function(query = NULL,
   assert(hostingCountry,"character")
   assert(networkKey,"character")
   assert(doi,"character")
-
-  # args with single value 
+  assert(installationKey,"character")
+  assert(endpointType,"character")
+  assert(category,"character")
+  assert(continent,"character")
+  assert(taxonKey,"numeric")
+  assert(recordCount,"character")
+  assert(modifiedDate,"character")
+  assert(createdDate,"character")
+  assert(contactUserId,"numeric")
+  assert(contactEmail,"character")
+  
+  # Deprecation warning for taxonKey
+  if (!is.null(taxonKey)) {
+    warning("The taxonKey parameter in dataset_suggest() only works with the out-of-date GBIF Backbone Taxonomy and does not support COL (Catalogue of Life) Extended Release.", call. = FALSE)
+  }
+  
+  # Deprecation warning for continent
+  if (!is.null(continent)) {
+    warning("The continent parameter in dataset_suggest() is deprecated and may be removed in a future version.", call. = FALSE)
+  }
+  
   args <- as.list(
     rgbif_compact(c(q=query,
                     limit=limit,
-                    offset=start
+                    offset=start,
+                    recordCount=recordCount,
+                    modifiedDate=modifiedDate,
+                    createdDate=createdDate,
+                    contactEmail=contactEmail
                     )))
   
   args <- rgbif_compact(c(
@@ -54,7 +87,13 @@ dataset_suggest <- function(query = NULL,
     convmany(projectId),
     convmany(hostingCountry),
     convmany(networkKey),
-    convmany(doi)
+    convmany(doi),
+    convmany(installationKey),
+    convmany(endpointType),
+    convmany(category),
+    convmany(continent),
+    convmany(taxonKey),
+    convmany(contactUserId)
   ))
   
   url <- paste0(gbif_base(), '/dataset/suggest')

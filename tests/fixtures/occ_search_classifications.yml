@@ -1,0 +1,102 @@
+http_interactions:
+- request:
+    method: GET
+    uri: https://api.gbif.org/v1/occurrence/search?occurrenceStatus=PRESENT&limit=5&offset=0&checklistKey=7ddf754f-d193-4cc9-b351-99906754a03b&scientificName=Homo+sapiens
+  response:
+    status: 200
+    headers:
+      status: HTTP/1.1 200 OK
+      content-type: application/json
+      x-varnish-rli: '18'
+      x-varnish-rlg: '250'
+    body:
+      raw_gzip: |-
+        eJztnFtz2koSgP+KSw/nZREeSaPLUCdnCwO22RhwcbE3m0q5BmkEWguJ1SU5JJu/tU/7dv7Y
+        9gwXCTB
+        OvEkq+HjekNQ9l57uHvVXIz4pse+nLFNqqKKEwSyAX2ZFYZHX8/vMjRMvVWo+DVNW
+        Udw4j+CxjrFmVZ
+        SEpXmYwdO3n5R7tgA1YtjEMmwEDz2aUWj1Nb+vWNQ1fNvGqkf8sYpBSB0b
+        jKhEH/uW62gucrBSUeb5O
+        AzSaRBNeslkqTkeW9jyfF+lBJkqxshQKSZj1fIM23F110ceUTa9
+        NWjGJnECim+VRpAFH1k0cAMWuUx5
+        V1GCKM1oGNIsiKNl64blUoZNV9WIY6jYGTOVuD5RkWXr
+        LqYWsjQdWp/GabYcFI2CjyX9rxxdMa8GNyA
+        fn9Js8QdJnMVuHML1WbvXqA/4zZCmWSOhH0Lm
+        wX0d6ZaKiKqTIbJrul3DZhUT+y8I1RBaSV/TJN0SNt
+        AQWTXdqCG7amFjI+zyZtsgiQ0CS/x7
+        xqIUJgNL+OlzRRnTNEjXiw6tXY469e5d72zQ6t/Uh+1eF1qIX
+        TdPEm7RQUazHDSV635r0OoO
+        efMwmDTwA1eYiLeq2J7n2yb2VU8jYGHXJbDypqYSQsDIJqbIGHO5PKUT
+        xn/cLx2mc2bwFiM6
+        Y3wk8Sw+SekcljI9uQqiiLI8rZxotumAUEKjexAaXLca7daAjyP2uNY/er2r3kW
+        7Ub+CezTP
+        pnECizCHJ3tNTFjEksDtFt3BzXTOXD6b1jzIpjxAlNUQ4JkfJzOaZcxbqfwa/Ma1fj0Nfj
+        uB
+        3ytBcbnTGRiaui6bg+7oJU06o7/HUTwL3I3j1BuN1vWw1dzznCKjKI2BeXle2KSV39NkEWe0
+        sECz
+        16m3u9DDWqVbiNejYEbDoCT9ut29AI2SeONSLxQaYC6eSwqF68s3V6OyvHODb4xC44Yl
+        GRsnWzqD0dm
+        DamahdhHRjKeVeLal2e6e9+sP6N7cnhW6vTRjgTvNpguWlgZa79/saZLGa+e2
+        0ByyLKHz2Cv12Gld1B
+        tX9cGgpGXpOr4otDp0tmPFBxSsRqmbKfjVtj12Na4uyoua7SgIM+yq
+        GLd2oXOdwMpm5fn3+s1WvySOm
+        +VYovMwThJIwcHWsPaUrjuF0gA2w4D7fLkbMbRdNdO52orb
+        IIoDj21Z4LrVP6932ldvtsxmWsMdxcCj
+        rNDbU/nb9eWuQlRWgDntd2NYf9e3tOJC4aLVHW0t
+        5eEktJ91PvNdNU1zxl8C3kGQe5DvvbGPVb73qdg
+        3YI8f61QdjxEhLqUMdtwH0r2ODdimrD9t
+        7juQ8P/s0/7/Ur72tPyN8ZPSt2GSp2Q2mzhPSTomdozd+H
+        w8oJc+YH5teD7qMl8M0PWaiLfX
+        VVMV5R5eTL14Jm5q8FI6XYT58grj1TqJKzAdvAAmHkvEJZgG/IPOg
+        nAhrvnchYflaal9c+Vf
+        LN3udB0Sw/3xpPyVPeOu0f2asNgWrz/q/+teB0/rYmWhbY9c2mnb64R1tj1l
+        aaEdbxBW2olA
+        lu4v55PjVSxvfzdRPBqIHrQGc7qCOMxynlBMVEUGNk27eBZHk9VDp2pqhNiEZx+YLew
+        +GRtB
+        OZBkNIiyRTvqsIwl0IVuVhEXAjNHjFeNSmvU713zCmdCvRnPgiF7z0LEf00CXnA0W6PSGxKD
+        z
+        BMteB4RctqWXNW+K+WJS5amLNqI6juiVVwWPucx4udJdkJnJx0Y9UbP2NOral/QBNUFo7Dk
+        vPSqKDOY
+        7lREkUd5xECR9R4m3wQjKevyTFORMVxXZFCRJvB40fPfiGYMUXlv39gEsNLoQcJp
+        d+vD1l2/N+o2xfp
+        dtHrN1rDduGvWh6POHeSvUafVvLu9GIiiutHrDttdKNDuIFW1b+DJeb/X
+        uSuaGvDamJeR7QhWbp7A+n
+        1NLZkwn4lCkLvTNMvmae30lEX/jBfgEnnCqhHLTv86YeOAZa80
+        Q7eRaUFZ/QtESj57hYwq0qq69QtM/
+        5Vm2RqxTGKJgjZwwZXZqlFo000YuOZ7qEpnYN60GieT
+        05VQejpenOIqOg3ZhIZiO+TmGrB/5Xxk3gZc
+        wNuYCHfhmbDTFNfQT55ENdiFaBhPat362ejf
+        YgKT3L1nyf4N1TAcYjo2wSK7zpgH2QCSK490V9CQd9w
+        44boGfitScDtqhDm8tyebISWizGbe
+        Gc8Nqq4hCwJLs3hq9yK6nkK7uWwhyt2QxRmMe/1keX/CYNJZ4D
+        a5VaGh9aqLrL29w7lL9tBY
+        vjQI/lCMod1cD3VtmfLNyTjw+2wi9ukijN0NzFjH6gZ1cO2Lh5WWhu7ms
+        7EwfsmclfWK59F9
+        FH+IxEoLZHHHX0Fmc55EsMH3b45yICFxE6/ms7tOD7cG+SykCfMaS5Cl6DpBmoZ5
+        YRHGLhgq
+        W5TjvHJyHuaTKfVZdNKfsiASUQ93+/WH20/X+TWKs7uEvQ/YB/BCbqowZO7jw+VG5sutFBi
+        t
+        2PjFPRshw5Bo7RjQGq4hUrUsidaOrOSQaE2iNYnWJFqTaO2FMCaJ1iRak2hNorXngdYwqcJS
+        2lh/G
+        K1hotnY/Aq0hn4oW9uCXmfUY5F6+8d/E16DQ9E+OcTZOM8pa3ZoFEHRPDvE17j8dl+F
+        xuNcTTvA1bSD
+        XE3b5WrakXC1vULySVxNNXVi6KaBrTVX054tV9NMA2FD05zvC9aQaSOiY8z3
+        gRcF1kr2PBqydpUHKYv
+        mNLk/UU820f6DUZrAZmWUZjrEMS2eaCVKOwaUhq0q0ZBEacdVYkiU
+        JlGaRGkSpUmU9kKYkkRpEqVJlC
+        ZR2vNAaaZeJRgqIPwQStNQ1bQ0ZNg/naWRMt/qQvUPvVJ3
+        +shxNVI1tpRGLPzIDh5S49JV6yH5xxGae
+        QChmQcRmrmL0MyjQWg7BeTTjqaZjo6RTmxzjdDM
+        54rQDM1GkJ10/TsCNANrtm7qYv4vCZ8VtjwaeLYM
+        7JNbGnr8AOrrP/4TBZNUEPkfSdDWtGyH
+        oBHdJPIw2lEQNKOmO1XTlofRjqyykARNEjRJ0CRBkwTthaA
+        kSdAkQZMETRK0Z0LQxHeejmUc
+        +M5TR5pwDPmd55dgGjkA08hBmEZ2YRo5Epi2V0t+43ee5LnCNPB+mx
+        jO96VpL/c7z5I5jwao
+        /fTvPNcYbRetGbo4ISzR2k9Ha5jvkthyJFo7rpJDojWJ1iRak2hNorUXwpgkW
+        pNoTaI1idae
+        CVqTh9O+5XDan+h/0/YKyG88nPZ8/zdNQ7qtw1SIKY+nfYevOwtrHg1P+3kH1AQxE24F
+        vsSW
+        zvT5f5hMC/Y=
+  recorded_at: 2026-10-01 08:22:31
+recorded_with: VCR-vcr/2.0.0
